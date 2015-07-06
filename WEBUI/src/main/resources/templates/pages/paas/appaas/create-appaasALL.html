@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.app}"></title>
+
+
+<link rel="stylesheet"
+	th:href="@{/static/assets/css/jquery.fileupload.css}" />
+
+
+
+<script th:src="@{/static/assets/js/jquery.bootstrap.wizard.min.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.validate.min.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.ui.widget.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/upload/jquery.iframe-transport.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/upload/jquery.fileupload.js}"
+	type="text/javascript"></script>
+<script
+	th:src="@{/static/assets/js/upload/jquery.fileupload-process.js}"
+	type="text/javascript"></script>
+<script
+	th:src="@{/static/assets/js/upload/jquery.fileupload-validate.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/upload/jquery.fileupload-ui.js}"
+	type="text/javascript"></script>
+
+<script th:src="@{/static/assets/js/dialog/appaas.js}"
+	type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+var defaultDNS = /*[[${@urlService.getDefaultDNSSuffix()}]]*/ 'prismacloud.it';
+/*]]>*/
+
+$(document).ready(function() {
+	changeURL();
+	
+	$('#testbed').change(function () {
+		changeURL();
+	});
+});
+
+function changeURL(){
+	switch($('#testbed option:selected').val()){
+	case 'sielte':
+		$('#urlName').html('sielte.ponsmartcities-prisma.it');
+		break;
+	case 'infn':
+		$('#urlName').html(defaultDNS);
+		break;
+}
+}
+</script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+//leggo in questo modo le variabili dal controller spring
+var uploadSize = [[${uploadFileSize}]];
+var createPagePath = [[${createPageURL}]];
+var uploadPagePath = [[${uploadPageURL}]];
+var deletePagePath = [[${deletePageURL}]];
+var serverType = [[${serverType}]];
+
+
+$(document).ready(function() {
+	console.log(uploadSize);
+	
+	var $validator = $("#appaasForm").validate({
+		rules: {
+			applicationName: {
+				minlength: 4,
+				maxlength: 30,
+				regex: "^([A-Za-z])[A-Za-z0-9-._-]"
+			},
+			appDescription: {
+				minlength: 4,
+				maxlength: 200
+			},
+			environmentName: {
+				minlength: 4,
+				maxlength: 30,
+				regex: "^([A-Za-z])[A-Za-z0-9-._-]"
+			},
+			environmentDescription: {
+				minlength: 4,
+				maxlength: 200,
+			},
+			sourceLabel: {
+				minlength: 4,
+			},
+			urlStorage: {
+				minlength: 4,
+			},
+			sourceLabelPRISMA: {
+				minlength: 4,
+			},			
+			notificationEmail: {
+				regex: "^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$",
+			}
+		},
+		errorPlacement: function(error, element) {
+		},
+		highlight: function(element, errorClass, validClass) {
+			$(element).parent().removeClass('has-success').addClass('has-error');
+			$('#' + $(element).attr('id') + '-error').removeClass('hidden');
+		},
+		unhighlight: function(element, errorClass, validClass) {
+			$(element).parent().removeClass('has-error').addClass('has-success');
+			$('#' + $(element).attr('id') + '-error').addClass('hidden');
+		}
+	});
+	
+	$.validator.addMethod(
+		"regex",
+	     function(value, element, regexp) {
+	     	var re = new RegExp(regexp);
+	        return this.optional(element) || re.test(value);
+	     },
+		"regex error."
+	);
+	$.validator.addMethod(
+		"fileUploaded",
+		function(value, element, written) {
+	    	if($('#secureConnection').is(":checked")){
+	        	if($('#addCertificato').hasClass('hide')){
+	        		return true;
+	        	}
+	        	$('#certificateUpload-error').html("Carica un certificato o disabilita le connessioni sicure");
+		        	return false;
+	        }
+			return true;
+		},
+		"fileUploaded error."
+	);
+	
+	//Se l'utente valida il dato tolgo il div di errore
+	$('#sourceLabelPRISMA').keyup(function(){
+		if($('#sourceLabelPRISMA').val().length > 4 && $('#urlStorage').val().length > 4){
+			$('#fileSystemPRISMA-error').addClass('hidden');
+		}
+	});
+	$('#urlStorage').keyup(function(){
+		if($('#sourceLabelPRISMA').val().length > 4 && $('#urlStorage').val().length > 4){
+			$('#fileSystemPRISMA-error').addClass('hidden');
+		}
+	});
+	$('#sourceLabel').keyup(function(){
+		if($('#sourceLabel').val().length > 4 ){
+			$('#localFile-error').addClass('hidden');
+		}
+	});
+	$('#sourceFile').click(function(){
+		if(!($('#localFile-error').hasClass('hidden'))){
+			$('#localFile-error').addClass("hidden");
+		}
+	});
+	
+	$('#rootwizard').bootstrapWizard({
+		'tabClass': 'nav nav-pills',
+		'onTabClick': function(tab, navigation, index) {
+			return false;
+		},
+		'onNext': function(tab, navigation, index) {
+
+			var $valid = $("#appaasForm").valid();
+			if(!$valid) {
+				$validator.focusInvalid();
+				return false;
+			}
+			
+			var $total = navigation.find('li').length;
+			var $current = index+1;
+
+			if($current == $total){
+				fillTable();
+			}
+			// If it's the last tab then hide the last button and show the finish instead
+			if($current >= $total) {
+				$('#rootwizard').find('.pager .next').hide();
+				$('#rootwizard').find('.pager .finish').show();
+				//$('#rootwizard').find('.pager .finish').removeClass('disabled');
+			} else {
+				$('#rootwizard').find('.pager .next').show();
+				$('#rootwizard').find('.pager .finish').hide();
+			}
+
+		
+		},
+		'onPrevious': function(tab, navigation, index) {
+			var $total = navigation.find('li').length;
+			var $current = index+1;
+
+			if($current < $total) {
+				$('#rootwizard').find('.pager .next').show();
+				$('#rootwizard').find('.pager .finish').hide();
+				//$('#rootwizard').find('.pager .finish').addClass('disabled');
+			}
+		}
+	});	
+
+	$('#rootwizard .finish').click(function() {
+		//alert('Finished!, Starting over!');
+		//$('#rootwizard').find("a[href*='tab1']").trigger('click');
+		return true;
+	});
+	
+	
+});	
+ 
+ 
+ /*
+  *  Show div after radio selection in tab "seleziona Sorgente"
+  */
+ var prevRadio = null;
+
+ function radioDivShow(radioValue){
+	
+ 	switch(radioValue){
+ 		case 'localApp':
+ 			
+ 			$('#sourceLabel').prop('required', true);
+ 			$('#sourceFile').prop('required', true);
+ 			
+ 			$('#urlStorage').prop('required', false);
+ 			$('#urlStorage').parent().removeClass('has-error');
+ 			$('#sourceLabelPRISMA').prop('required', false);
+ 			$('#sourceLabelPRISMA').parent().removeClass('has-error');
+
+ 			$('#urlStorage-error').addClass('hidden');
+ 			$('#sourceLabelPRISMA-error').addClass('hidden');
+ 			
+ 			
+ 			$('#source-localApp').removeClass("hidden");
+ 			
+ 			break;
+ 		case 'prismaApp':
+ 			$('#urlStorage').prop('required', true);
+ 			$('#sourceLabelPRISMA').prop('required', true);
+ 			
+ 			$('#sourceFile').prop('required', false);
+ 			$('#sourceLabel').prop('required', false);
+ 			$('#sourceLabel').parent().removeClass('has-error');
+ 			$('#sourceFile-error').addClass('hidden');
+ 			$('#sourceLabel-error').addClass('hidden'); 			
+ 			$('#source-prismaApp').removeClass("hidden");	
+ 			break;
+ 		case 'privateApp':
+ 			$('#source-privateApp').removeClass("hidden");;
+ 			break;
+ 		case 'publicApp':
+ 			$('#source-publicApp').removeClass("hidden");
+ 			break;
+ 	}
+ 	if(prevRadio != null){
+ 		var id = '#source-' + prevRadio;
+ 		$(id).addClass("hidden");
+ 		$(id).children('input').each(function () {
+ 		    alert(this.value); // "this" is the current element in the loop
+ 		});
+ 	}
+ 	prevRadio = radioValue;
+ }
+
+
+function fillTable(){
+	
+	$('#tableAppName').html($('#applicationName').val());
+	$('#tableAppDesc').html($('#appDescription').val());
+	
+	$('#tableEnvName').html($('#environmentName').val());
+	$('#tableEnvDesc').html($('#environmentDescription').val());
+	$('#tableEnvURL').html($('#url').val()+ $('#urlName').val());
+	
+	 if($('#secureConnection').checked){
+		$('#tableEnvConn').html("SI");
+	} else {
+		$('#tableEnvConn').html("No secure connection");
+	}
+	
+	$('#tableServerType').html($('#serverType').val());
+	$('#tableServerName').html($('#serverName').val());
+	$('#tableLB').html($('#loadBal').val());
+	
+	
+	switch($('input[type=radio][name=source]:checked').val()){
+		case 'localApp':
+			$('#tableAppSource').html($('#localFile').text());
+			$('#tableAppLabel').html($('#sourceLabel').val());
+			break;
+		case 'prismaApp':
+			$('#tableAppSource').html($('#urlStorage').val());
+			$('#tableAppLabel').html($('#sourceLabelPRISMA').val());
+			break;
+		case 'privateApp':
+			$('#tableAppSource').html($('#sourceAppPrivatePrisma').val());
+			break;
+		case 'publicApp':
+			$('#tableAppSource').html($('#sourceAppPublicPrisma').val());
+			break;
+
+		default:
+
+	}
+	
+	$('#tableInstanceType').html($('#instanceType').val());
+	$('#tableEmail').html($('#notificationEmail').val());
+	$('#tableSecurityGroup').html($('#securityGroup').val()); 
+}
+
+
+
+
+
+/// START UPLOADER CERTIFICATO
+$(function() {
+	'use strict';
+
+	var url = window.location.href.replace(createPagePath, uploadPagePath);
+	$('#file').fileupload({
+		add : function(e, data) {
+			var uploadErrors = [];
+			// var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+			// if(data.originalFiles[0]['type'].length &&
+			// !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+			// uploadErrors.push('Not an accepted file type');
+			// }
+			console.log(data.originalFiles[0]['size'] > uploadSize);
+			//if(data.originalFiles[0]['size'].length &&
+			if(data.originalFiles[0]['size'] > uploadSize) {
+				console.log('Filesize is too big');
+				uploadErrors.push('Filesize is too big');
+				$('#certificateUpload-error').html("Dimensione del file non consentita");
+			} else {
+				$('#certificateUpload-error').html("");
+				data.submit();
+			}
+		},
+		url : url,
+		dataType : 'json',
+		done : function(e, data) {
+			console.log("Upload Finished");
+			$.each(data.result.files, function(index, file) {
+				$('#files').html(file.name);
+			});
+			if($('#files').text() != "Errore durante l'upload"){
+				$('#deleteCertificato').removeClass("hide");
+				$('#addCertificato').addClass("hide");
+			}
+			$('#previousButton').removeClass("disabled");
+			$('#nextButton').removeClass("disabled");
+		},
+		progressall : function(e, data) {
+			var progress = parseInt(data.loaded / data.total * 100, 10);
+			console.log(progress);
+			$('#files').html(progress + '%');
+		}
+	}).prop('disabled', !$.support.fileInput).parent().addClass(
+			$.support.fileInput ? undefined : 'disabled');
+	
+	
+	//Disabilito i bottoni di avanti e indietro appena parte l'upload
+	$('#file').bind('fileuploadstart', function (e, data) {
+		console.log("start");
+		$('#previousButton').addClass("disabled");
+		$('#nextButton').addClass("disabled");
+	});
+	
+	// Pulisco lo span degli errori quando l'utente clicca sul bottone
+	$("#file").click(function() {
+		$('#certificateUpload-error').html("");
+	});
+	
+	//Mostro o oscuro il div del certificato verificando lo stato del checkbox
+	$('#secureConnection').change(function() {
+		var isChecked = $('#secureConnection').is(":checked");
+		if(isChecked){
+			$('#secureDiv').removeClass('hide');
+ 			$('#file').prop('required', true);
+
+		} else{
+			$('#secureDiv').addClass('hide');
+ 			$('#file').prop('required', false);
+
+		}
+	});
+
+	//Carico l'elenco dei Web Server o Application Server quando cambia lo stato del select precedente
+	$("#serverType").change(function() {
+        var val = $(this).val();
+        console.log("val " + val);
+        if (val == "webserver") {
+            $("#serverName").html("<option value='apache'>Apache HTTP Server</option>");
+        } else if (val == "applicationserver") {
+            $("#serverName").html("<option value='iis'>IIS</option><option value='tomcat'>Tomcat</option>><option value='JBoss'>JBoss</option>");
+        }
+    });	
+});
+
+
+	
+function deleteCert() {
+
+	// Server-side upload handler and delete handler:
+	var urlDelete = window.location.href.replace(createPagePath, deletePagePath);
+
+	$.ajax({
+		type : "POST",
+		url : urlDelete,
+		data : "filename=" + $("#files").text(),
+		dataType : "json",
+		success : function(data) {
+			if (data.success == true) {
+				$("#files").text("Nessun certificato caricato");
+			} else {
+				$("#files").text("Errore. Ricarica il certificato");
+			}
+			$('#addCertificato').removeClass("hide");
+			$('#deleteCertificato').addClass("hide");
+		},
+		error : function() {
+			alert("Chiamata fallita, si prega di riprovare...");
+		}
+	});
+	$('#addCertificato').removeClass("hide");
+	$('#deleteCertificato').addClass("hide");
+}
+
+
+
+/// START UPLOADER FILE
+$(function() {
+	'use strict';
+
+	// Server-side upload handler
+	var url = window.location.href.replace(createPagePath, uploadPagePath);
+	$('#sourceFile').fileupload({
+		add : function(e, data) {
+			var uploadErrors = [];
+			// var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+			// if(data.originalFiles[0]['type'].length &&
+			// !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+			// uploadErrors.push('Not an accepted file type');
+			// }
+			console.log(data.originalFiles[0]['size'] > uploadSize);
+			if(data.originalFiles[0]['size'] > uploadSize) {
+				console.log('Filesize is too big');
+				uploadErrors.push('Filesize is too big');
+				$('#sourceFile-error').html("Dimensione del file non consentita");
+			}
+
+			else {
+				$('#fileUpload-error').html("");
+				data.submit();
+			}
+		},
+		url : url,
+		dataType : 'json',
+		done : function(e, data) {
+			console.log("Upload Finished");
+			$.each(data.result.files, function(index, file) {
+				// $('<p/>').text(file.name).appendTo('#files');
+				$('#localFile').html(file.name);
+			});
+			if($('#sourceFile').text() != "Errore durante l'upload"){
+				$('#deleteSourceFile').removeClass("hide");
+				$('#localApp').addClass("hide");
+			}
+			$('#previousButton').removeClass("disabled");
+			$('#nextButton').removeClass("disabled");
+		},
+		progressall : function(e, data) {
+			var progress = parseInt(data.loaded / data.total * 100, 10);
+			console.log(progress);
+			$('#localFile').html(progress + '%');
+		}
+	}).prop('disabled', !$.support.fileInput).parent().addClass(
+			$.support.fileInput ? undefined : 'disabled');
+	
+	
+	//Disabilito i bottoni di avanti e indietro appena parte l'upload
+	$('#sourceFile').bind('fileuploadstart', function (e, data) {
+		console.log("start");
+		$('#previousButton').addClass("disabled");
+		$('#nextButton').addClass("disabled");
+	});
+	
+	// Pulisco lo span degli errori quando l'utente clicca sul bottone
+	$("#sourceFile").click(function() {
+		$('#fileUpload-error').html("");
+	});
+	
+});
+
+
+	
+function deleteSourceFile() {
+
+	// Server-side upload handler and delete handler:
+	var urlDelete = window.location.href.replace(createPagePath, deletePagePath);
+		$.ajax({
+		type : "POST",
+		url : urlDelete,
+		data : "filename=" + $("#localFile").text(),
+		dataType : "json",
+		success : function(data) {
+			if (data.success == true) {
+				$("#localFile").text("Nessun certificato caricato");
+			} else {
+				$("#localFile").text("Errore. Ricarica il certificato");
+			}
+			$('#deleteSourceFile').addClass("hide");
+			$('#localApp').removeClass("hide");
+		},
+		error : function() {
+			alert("Chiamata fallita, si prega di riprovare...");
+		}
+	});
+	$('#localApp').removeClass("hide");
+	$('#deleteSourceFile').addClass("hide");
+}
+
+
+function getKey(value){
+    var flag=false;
+    var keyVal;
+    for (key in myMap){
+         if (myMap[key] == value){
+             flag=true;
+             keyVal=key;
+             break;
+         }
+    }
+    if(flag){
+         return keyVal;
+    }
+    else{
+         return false;
+    }
+}
+
+
+/*]]>*/		
+</script>
+
+
+</head>
+
+
+
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Dashboard <small>Pannello di Controllo</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi PaaS</a></li>
+					<li><a th:href="@{/paas/biaas}"> APPlication as a Service</a></li>
+					<li class="active"></li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="bs-docs-section" style="margin-bottom: 30px">
+					<h1 id="c1">Creazione guidata di un servizio APPaaS</h1>
+					<p>
+						<strong>APP</strong>lication <strong>as a S</strong>ervice è un
+						servizio pronto all&rsquo;uso per effettuare il deploy di
+						applicazioni web e servizi sviluppati in Java, .NET, PHP, Node.js,
+						Python, Ruby, e Docker su uno tra gli application server messi a
+						disposizione tra cui Apache HTTP Server, Apache Tomcat, JBoos, e
+						IIS 7.5/8. Potrai semplicemente caricare una tua applicazione o
+						utilizzare quelle messe a disposizione dal portale ed accedere al
+						servizio.
+					</p>
+				</div>
+				<hr />
+
+				<form id="appaasForm" th:object="${APPaaSForm}"
+					th:action="@{/paas/appaas/deploy}" action="" method="post">
+
+					<div id="rootwizard" class="row">
+						<div class="col-md-3 col-xs-12">
+
+							<ul class="nav nav-pills nav-stacked">
+								<li><a href="#tab1" data-toggle="tab">Configurazione
+										Applicazione</a></li>
+								<li><a href="#tab2" data-toggle="tab">Configurazione
+										Ambiente</a></li>
+								<li><a href="#tab3" data-toggle="tab">Tipologia Server</a></li>
+								<li><a href="#tab4" data-toggle="tab">Selezione
+										Sorgente</a></li>
+								<li><a href="#tab5" data-toggle="tab">Dettagli di
+										Configurazione</a></li>
+								<li><a href="#tab6" data-toggle="tab">Riepilogo</a></li>
+							</ul>
+
+						</div>
+
+						<div class="col-md-9 col-xs-12">
+							<div class="tab-content well">
+								<article class="tab-pane" id="tab1">
+									<h2>
+										<i class="fa fa-sliders"></i> Informazioni Generali
+									</h2>
+									<hr />
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" style="width: 15%"></div>
+									</div>
+
+									<div
+										th:replace="fragments/wizard/text-field :: text-field('applicationName', 'Nome Applicazione', 'fa fa-cog', 'kunagi', '30', 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/description-field :: description-field('appDescription', 'Descrizione dell&rsquo; applicazione', 'fa fa-file-text-o', 'Descrizione..', '200', 4, 50, 8)"></div>
+
+
+									<div class="clearfix"></div>
+								</article>
+
+
+								<article class="tab-pane" id="tab2">
+									<h2>
+										<i class="fa fa-sliders"></i> Dettagli Ambiente
+									</h2>
+									<hr />
+
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" style="width: 30%"></div>
+									</div>
+
+									<div
+										th:replace="fragments/wizard/text-field :: text-field('environmentName', 'Nome ambiente', 'fa fa-cog', 'Es. tomcat-prisma', '30', 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/description-field :: description-field('environmentDescription', 'Descrizione...', 'fa fa-file-text-o', 'Descrizione..', '200', 4, 50, 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/url-field :: url-field('url', 'URL applicazione', 'fa fa-globe', '', '100', 'urlName', 'pon-smartcities.it', 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/checkbox-field :: checkbox-field ('secureConnection', 'Connessioni Sicure (Https)', 'secure', 'Abilita https', 8)"></div>
+
+
+									<div class="inputs hide" id="secureDiv"
+										style="margin-left: 15px;">
+										<div class="row fileupload-buttonbar">
+											<div class="col-md-8">
+												<!-- The fileinput-button span is used to style the file input field as button -->
+												<span class="btn btn-success fileinput-button btn-sm"
+													style="width: 160px !important;" id="addCertificato">
+													<i class="glyphicon glyphicon-plus"></i> <span>Carica
+														certificato</span> <input id="file" type="file" name="file" />
+												</span> <span class="btn btn-danger btn-sm hide"
+													style="width: 160px !important;" id="deleteCertificato"
+													onclick="deleteCert();"> <i
+													class="glyphicon glyphicon-trash"></i> <span>Elimina</span>
+												</span> <span id="files" class="files text-right">Nessun
+													certificato caricato</span>
+											</div>
+										</div>
+										<br />
+										<div
+											class="alert alert-info alert-dismissable col-md-8 hidden"
+											role="alert" id="file-error">
+											<button type="button" class="close" data-dismiss="alert">
+												<span>&times;</span><span class="sr-only">Chiudi</span>
+											</button>
+											<div class="error-msg">
+												<strong>Errore!</strong>
+												<ul>
+													<li>Carica un certificato</li>
+												</ul>
+											</div>
+										</div>
+										<div class="row fileupload-buttonbar" style="margin-top: 5px;">
+											<div class="col-md-8">
+												<span
+													class="btn btn-success btn-sm fileinput-button disabled"
+													style="width: 160px !important;" id="loadCertPrisma">
+													<i class="glyphicon glyphicon-plus"></i> <span>Usa
+														certificato PRISMA</span>
+												</span> <span class="btn btn-danger btn-sm hide"
+													style="width: 160px !important;" id="deleteCertPrisma"
+													onclick="deleteCertPrisma();"> <i
+													class="glyphicon glyphicon-trash"></i> <span>Elimina</span>
+												</span> <span id="filesPrisma" class="files text-right">Nessun
+													certificato richiesto</span>
+											</div>
+										</div>
+
+										<div class="row" style="margin-top: 15px;">
+											<div class="col-md-3"></div>
+											<div class="col-md-5">
+												<span id="certificateUpload-error" style="color: red;">
+												</span>
+											</div>
+										</div>
+									</div>
+									<div class="clearfix"></div>
+
+								</article>
+
+
+								<article class="tab-pane" id="tab3">
+									<h2>
+										<i class="fa fa-sliders"></i> Tipologia Server
+									</h2>
+									<hr />
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" style="width: 45%"></div>
+									</div>
+
+
+									<div
+										th:replace="fragments/wizard/select-field :: select-field('serverType', 'Tipologia di Server', 'fa fa-desktop', 'Scegli un Server', ${serverType}, 8)"></div>
+
+
+									<div class="inputs">
+										<label>Nome Server</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span class="input-group-addon"><i
+												class="fa fa-desktop"></i></span> <select name="serverName"
+												id="serverName" class="form-control" required="required">
+												<option value="">Seleziona prima la tipologia di
+													Server</option>
+											</select>
+
+										</div>
+									</div>
+
+									<div
+										th:replace="fragments/wizard/select-field :: select-field('loadBal', 'Istanze in Load balancing', 'fa fa-circle-o', 'Scegli il numero di istanze in balancing', ${loadBalancing}, 8)"></div>
+
+									<div class="clearfix"></div>
+								</article>
+
+								<article class="tab-pane" id="tab4">
+									<h2>
+										<i class="fa fa-sliders"></i> Seleziona Sorgente
+									</h2>
+									<hr />
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" style="width: 60%"></div>
+									</div>
+
+									<div class="inputs">
+										<div class="wizard-input-section input-group col-md-8">
+
+											<div
+												th:replace="fragments/wizard/radio-field :: radio-field('radioLocalApp', 'source', 'localApp', 'Carica applicazione da File System locale', 'radioDivShow(this.value);')"></div>
+
+
+											<!-- <div class="radio">
+												<label> <input type="radio" class="required"
+													name="source" value="localApp" id="radioLocalApp"
+													onclick="radioDivShow(this.value);" /> Carica applicazione
+													da File System locale
+												</label>
+											</div> -->
+											<div style="margin-left: 30px; margin-top: 15px"
+												class="hidden" id="source-localApp">
+												<div class="row fileupload-buttonbar col-md-12">
+
+
+													<span class="btn btn-success fileinput-button btn-sm"
+														style="width: 160px !important;" id="localApp"> <i
+														class="glyphicon glyphicon-plus"></i> <span>Carica
+															File</span> <input id="sourceFile" type="file" name="file"
+														required="required" />
+													</span> <span class="btn btn-danger btn-sm hide"
+														style="width: 160px !important;" id="deleteSourceFile"
+														onclick="deleteSourceFile();"> <i
+														class="glyphicon glyphicon-trash"></i> <span>Elimina</span>
+													</span> <span id="localFile" class="files text-right">Nessun
+														file caricato</span>
+
+												</div>
+												<br /> <br />
+												<div
+													class="alert alert-info alert-dismissable col-md-12 hidden"
+													role="alert" id="sourceFile-error">
+													<button type="button" class="close" data-dismiss="alert">
+														<span >&times;</span><span
+															class="sr-only">Chiudi</span>
+													</button>
+													<div class="error-msg">
+														<strong>Errore!</strong>
+														<ul>
+															<li>Carica un file correttamente</li>
+														</ul>
+													</div>
+												</div>
+												<div class="row" style="margin-top: 20px;">
+													<label for="sourceLabel" class="col-md-12 control-label">Etichetta
+														sorgente</label>
+												</div>
+												<div class="row">
+													<div class="col-md-12">
+														<input type="text" class="form-control" id="sourceLabel"
+															name="sourceLabel" placeholder="Es. kunagi versione 1"
+															required="required" />
+													</div>
+												</div>
+												<br />
+												<div
+													class="alert alert-info alert-dismissable col-md-12 hidden"
+													role="alert" id="sourceLabel-error">
+													<button type="button" class="close" data-dismiss="alert">
+														<span>&times;</span><span
+															class="sr-only">Chiudi</span>
+													</button>
+													<div class="error-msg">
+														<strong>Errore!</strong>
+														<ul>
+															<li>Inserisci un'etichetta di almeno 5 carattreri</li>
+														</ul>
+													</div>
+												</div>
+												<div class="row" style="margin-top: 10px;">
+													<label for="appVisibility" class="col-md-6 control-label">Rendi
+														l'applicazione </label>
+													<div class="col-md-3">
+														<input type="radio" name="appVisibility" value="public" />Pubblica
+													</div>
+													<div class="col-md-3">
+														<input type="radio" name="appVisibility" value="private"
+															checked="checked" />Privata
+													</div>
+												</div>
+
+											</div>
+											<hr />
+
+											<div
+												th:replace="fragments/wizard/radio-field :: radio-field('radioPrismaApp', 'source', 'prismaApp', 'Carica applicazione da File System PRISMA', 'radioDivShow(this.value);')"></div>
+
+											<div style="margin-left: 30px; margin-top: 15px"
+												id="source-prismaApp" class="hidden">
+												<div class="row" style="margin-top: 10px;">
+													<label for="urlStorage" class="col-md-12 control-label">URL
+														Storage ad Oggetti</label>
+												</div>
+												<div class="row">
+													<div class="col-md-12">
+														<input type="text" class="form-control" id="urlStorage"
+															name="urlStorage"
+															placeholder="Es. Swift di Openstack, S3 di Amazon" />
+													</div>
+												</div>
+												<br />
+												<div
+													class="alert alert-info alert-dismissable col-md-12 hidden"
+													role="alert" id="urlStorage-error">
+													<button type="button" class="close" data-dismiss="alert">
+														<span>&times;</span><span
+															class="sr-only">Chiudi</span>
+													</button>
+													<div class="error-msg">
+														<strong>Errore!</strong>
+														<ul>
+															<li>Inserisci un URL</li>
+														</ul>
+													</div>
+												</div>
+												<div class="row" style="margin-top: 10px;">
+													<label for="sourceLabelPRISMA"
+														class="col-md-12 control-label">Etichetta sorgente</label>
+												</div>
+												<div class="row">
+													<div class="col-md-12">
+														<input type="text" class="form-control"
+															id="sourceLabelPRISMA" name="sourceLabelPRISMA"
+															placeholder="Es. kunagi versione 1" />
+													</div>
+												</div>
+												<br />
+												<div
+													class="alert alert-info alert-dismissable col-md-12 hidden"
+													role="alert" id="sourceLabelPRISMA-error">
+													<button type="button" class="close" data-dismiss="alert">
+														<span>&times;</span><span
+															class="sr-only">Chiudi</span>
+													</button>
+													<div class="error-msg">
+														<strong>Errore!</strong>
+														<ul>
+															<li>Inserisci un'etichetta di almeno 5 caratteri</li>
+														</ul>
+													</div>
+												</div>
+												<div class="row" style="margin-top: 10px;">
+													<label for="appVisibilityPRISMA"
+														class="col-md-6 control-label">Rendi
+														l'applicazione </label>
+													<div class="col-md-3">
+														<input type="radio" name="appVisibilityPRISMA"
+															value="public" />Pubblica
+													</div>
+													<div class="col-md-3">
+														<input type="radio" name="appVisibilityPRISMA"
+															value="private" checked="checked" />Privata
+													</div>
+												</div>
+												<div
+													class="alert alert-info alert-dismissable col-md-12 hidden"
+													role="alert" id="fileSystemPRISMA-error">
+													<button type="button" class="close" data-dismiss="alert">
+														<span>&times;</span><span
+															class="sr-only">Chiudi</span>
+													</button>
+													<div class="error-msg">
+														<strong>Errore!</strong> Completa i campi correttamente.
+													</div>
+												</div>
+											</div>
+
+											<hr />
+
+											<div
+												th:replace="fragments/wizard/radio-field :: radio-field('radioPrivateApp', 'source', 'privateApp', 'Scegli tra una applicazione privata precedentemente caricata', 'radioDivShow(this.value);')"></div>
+
+
+											<div style="margin-left: 30px; margin-top: 15px"
+												id="source-privateApp" class="hidden">
+												<div class="row" style="margin-top: 10px;">
+
+													<div class="col-md-12">
+														<button class="btn btn-primary btn-sm" data-toggle="modal"
+															data-target="#modalPrivate" disabled="disabled">
+															Vai all'Application Repository <strong>privato</strong>
+															di PRISMA
+														</button>
+													</div>
+												</div>
+											</div>
+											<hr />
+
+											<div
+												th:replace="fragments/wizard/radio-field :: radio-field('radioPublicApp', 'source', 'publicApp', 'Scegli tra una applicazione pubblica precedentemente caricata', 'radioDivShow(this.value);')"></div>
+
+											<div style="margin-left: 30px; margin-top: 15px"
+												id="source-publicApp" class="hidden">
+												<div class="row" style="margin-top: 10px;">
+													<div class="col-md-12">
+														<button class="btn btn-primary btn-sm" data-toggle="modal"
+															data-target="#modalPublic" id="modalPublicAjax">
+															Vai all'Application Repository <strong>pubblico</strong>
+															di PRISMA
+														</button>
+													</div>
+												</div>
+											</div>
+
+											<!-- Modal -->
+											<div class="modal fade" id="modalPublic" tabindex="-1"
+												role="dialog" style="">
+												<div class="modal-dialog">
+													<div class="modal-content">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal">
+																<span>&times;</span><span
+																	class="sr-only">Close</span>
+															</button>
+															<h4 class="modal-title" id="myModalPublic">Applicazioni
+																pubbliche</h4>
+														</div>
+
+														<div class="modal-body">
+															<div class="box-body table-responsive no-padding">
+																<img id="appPublicLoader"
+																	th:src="@{/static/assets/img/spinner.gif}"
+																	class="center-block" /> <span id="appPublicAppError"
+																	class="hidden"> Servizio non disponibile.</span>
+																<table id="tablePublicApp" data-height="299"
+																	class="table table-striped table-hover table-bordered hidden">
+																	<thead class="fixed">
+																		<tr>
+																			<th></th>
+																			<th>Etichetta Sorgente</th>
+																			<th>Data Upload</th>
+																			<th>Sorgente</th>
+																			<th>Autore</th>
+																			<th>Descrizione</th>
+																		</tr>
+																	</thead>
+																	<tbody id="publicAppBody">
+
+																	</tbody>
+																</table>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-default"
+																data-dismiss="modal">Close</button>
+															<button type="button" id="savePublic"
+																class="btn btn-primary">Salva</button>
+															<span id="errorPubAppNoSel"></span>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<!-- Modal -->
+											<div class="modal fade" id="modalPrivate" tabindex="-1"
+												role="dialog" style="">
+												<div class="modal-dialog">
+													<div class="modal-content">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal">
+																<span>&times;</span><span
+																	class="sr-only">Close</span>
+															</button>
+															<h4 class="modal-title" id="myModalPrivate">Applicazioni
+																private</h4>
+														</div>
+														<div class="modal-body"></div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-default"
+																data-dismiss="modal">Chiudi</button>
+															<button type="button" class="btn btn-primary">Scegli</button>
+														</div>
+													</div>
+												</div>
+											</div>
+
+
+										</div>
+									</div>
+									<div class="clearfix"></div>
+								</article>
+
+
+								<article class="tab-pane" id="tab5">
+									<h2>
+										<i class="fa fa-sliders"></i> Dettagli di configurazione
+										ambiente
+									</h2>
+									<hr />
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" style="width: 90%"></div>
+									</div>
+
+									<div
+										th:replace="fragments/wizard/select-field :: select-field('instanceType', 'Tipo di Istanza (determina la potenza di
+											calcolo del servizio)', 'fa fa-desktop', 'Scegli una tipologia', ${iaasFlavor}, 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/email-field-current-user :: email-field-current-user('notificationEmail', 'Email per le notifiche', 'fa fa-envelope', 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/select-field :: select-field('securityGroup', 'Security Group (Assegna specifici permessi al servizio. Es apre la porta 80)', 'fa fa-desktop', 'Scegli un Security Group', ${securityGroup}, 8)"></div>
+
+									<div class="clearfix"></div>
+								</article>
+								<article class="tab-pane" id="tab6">
+
+									<h2>
+										<i class="fa fa-sliders"></i> Riepilogo
+									</h2>
+
+									<hr />
+
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" style="width: 100%"></div>
+									</div>
+
+									<div class="control-group">
+										<table class="table table-striped table-hover table-bordered">
+											<thead>
+												<tr>
+													<th>Nome</th>
+													<th>Valore</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Nome Applicazione</td>
+													<td><span id="tableAppName"></span></td>
+												</tr>
+												<tr>
+													<td>Descrizione Applicazione</td>
+													<td><span id="tableAppDesc"></span></td>
+												</tr>
+												<tr>
+													<td>Nome Ambiente</td>
+													<td><span id="tableEnvName"></span></td>
+												</tr>
+												<tr>
+													<td>URL Ambiente</td>
+													<td><span id="tableEnvURL"></span></td>
+												</tr>
+												<tr>
+													<td>Descrizione Ambiente</td>
+													<td><span id="tableEnvDesc"></span></td>
+												</tr>
+												<tr>
+													<td>Connessione Sicura</td>
+													<td><span id="tableEnvConn"></span></td>
+												</tr>
+												<tr>
+													<td>Tipologia Server</td>
+													<td><span id="tableServerType"></span></td>
+												</tr>
+												<tr>
+													<td>Nome Server</td>
+													<td><span id="tableServerName"></span></td>
+												</tr>
+												<tr>
+													<td>Load Balancer</td>
+													<td><span id="tableLB"></span></td>
+												</tr>
+												<tr>
+													<td>Sorgente Applicazione</td>
+													<td><span id="tableAppSource"></span></td>
+												</tr>
+												<tr>
+													<td>Etichetta Applicazione</td>
+													<td><span id="tableAppLabel"></span></td>
+												</tr>
+
+												<tr>
+													<td>Tipologia di istanza</td>
+													<td><span id="tableInstanceType"></span></td>
+												</tr>
+												<tr>
+													<td>Email per le notifiche</td>
+													<td><span id="tableEmail"></span></td>
+												</tr>
+												<tr>
+													<td>Security Group</td>
+													<td><span id="tableSecurityGroup"></span></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</article>
+
+								<ul class="pager wizard">
+									<li id="previousButton" class="previous"><a href="#">Indietro</a></li>
+									<li id="nextButton" class="next"><a href="#">Avanti</a></li>
+									<li id="finishButton" class="next finish"
+										style="display: none;"><a href="javascript:{}"
+										onclick="document.getElementById('appaasForm').submit();"
+										onmouseover="$('#finishButton').removeClass('disabled');">Crea
+											servizio</a></li>
+									<!-- onclick="document.getElementById('appaasForm').submit();" -->
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</form>
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+
+	<!-- End content -->
+</body>
+
+
+
+</html>

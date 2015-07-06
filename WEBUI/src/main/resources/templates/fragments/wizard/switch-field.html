@@ -1,0 +1,43 @@
+<!-- 
+
+	Parametri: 
+				@param id: 				id and name of the input
+				@param label:			label above the input
+				@param value:			value of the switch ("true" or "false")
+				@param opt1:			first option
+				@param opt2:			second option
+				@param colSize:     	column size of the div. Use 8 as default, use 12 for inner input
+
+
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+
+<body>
+	<div th:fragment="switch-field (id, label, value, opt1, opt2, colSize)" class="inputs">
+		<label th:for="${id}" th:text="${label}">Nome</label>
+
+		<div class="btn-group btn-toggle" data-toggle="buttons">
+			<label th:if="${value}" class="btn btn-primary active">
+				<input name="approvedWG" type="radio" th:text="${opt1}"/>
+			</label>
+			<label th:unless="${value}" class="btn btn-primary">
+				<input name="approvedWG" type="radio" th:text="${opt1}"/>
+			</label>
+
+			<label th:unless="${value}" class="btn btn-primary active">
+				<input name="approvedWG" type="radio" th:text="${opt2}"/>
+			</label>
+			<label th:if="${value}" class="btn btn-primary">
+				<input name="approvedWG" type="radio" th:text="${opt2}"/>
+			</label>
+		</div>
+
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<style>
+		body {
+			font-family: Georgia, Times New Roman, Times, serif;
+		}
+	</style>
+</head>
+<body>
+	<h1>Benvenuto <strong>${fullName}</strong></h1>
+	<p>
+		Grazie per esserti registrato alla piattaforma PRISMA. Per attivare
+		l'account &egrave; necessario confermare l'indirizzo email specificato
+		cliccando sul link sottostante:<br />
+		<br />
+		<a href="${confirmationRequestURI}">${confirmationRequestURI}</a>
+	</p>
+	<p>
+		Qualora si riscontrassero problemi con il collegamento sopra
+		riportato, &egrave; possibile completare l'operazione manualmente,
+		recandosi alla pagina <a href="${confirmationPageURI}">${confirmationPageURI}</a> e specificando:
+		<ul>
+			<li>Email: <strong>${email}</strong></li>
+			<li>Codice di attivazione: <strong><code>${token}</code></strong></li>
+		</ul>
+		Assicurati di non aggiungere caratteri aggiuntivi, spazi compresi.
+	</p>
+	<p>
+		Nel caso in cui non si riuscisse a completare l'operazione o si
+		riscontrassero problemi tecnici, si prega di contattare l'assistenza
+		all'indirizzo: <a href="${support}">${support}</a>.
+	</p>
+	<p>
+		Cordiali saluti e buona navigazione.
+	</p>
+</body>
+</html>

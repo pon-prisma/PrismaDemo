@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="list-service-head (description, createLink, buttonText)"
+		class="inputs">
+		<div class="bs-docs-section" style="margin-bottom: 20px">
+			<div class="row">
+				<div class="col-lg-10 col-md-9 hidden-sm hidden-xs">
+					<p class="text-justify" th:text="${description}">
+						
+					</p>
+				</div>
+				<div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 pull-right">
+					<a th:href="${createLink}"
+						class="btn btn-primary navbar-btn pull-right" th:text="${buttonText}">Crea nuovo
+						servizio</a>
+				</div>
+			</div>
+			<hr />
+		</div>
+	</div>
+</body>
+
+</html>

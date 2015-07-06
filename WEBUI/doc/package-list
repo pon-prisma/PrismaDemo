@@ -1,0 +1,6 @@
+it.prisma.presentationlayer.webui
+it.prisma.presentationlayer.webui.components
+it.prisma.presentationlayer.webui.configs
+it.prisma.presentationlayer.webui.controllers
+it.prisma.presentationlayer.webui.core
+it.prisma.presentationlayer.webui.representations

@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>it.prisma</groupId>
+	<artifactId>prisma-domain</artifactId>
+	<version>1.4.1-ALPHA</version>
+	<name>PRISMA - Domain</name>
+	<description>
+		Contains domain classes. They represents info shared across all layers of the PRISMA platform.
+	</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.7</java.version>
+		<jackson.version>2.4.4</jackson.version>
+	</properties>
+
+	<!-- Bill of Materials -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>it.prisma</groupId>
+				<artifactId>prisma-bom</artifactId>
+				<version>1.4.1-ALPHA</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+
+		<!-- Resteasy -->
+
+		<!-- <dependency> <groupId>org.jboss.resteasy</groupId> <artifactId>jaxrs-api</artifactId> 
+			</dependency> -->
+
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+
+
+		<!-- Apache commons -->
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.2</version>
+		</dependency>
+
+		<!-- Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>MIUR_PRISMA-2.1-DAL</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<!-- Publish versioned releases here -->
+		<repository>
+			<id>nexus-repo-public-prisma</id>
+			<name>PRISMA - Domain</name>
+			<url>http://prismanexus.cloud.reply.eu:8081/nexus/content/repositories/releases</url>
+		</repository>
+
+		<!-- Publish snapshots here -->
+		<snapshotRepository>
+			<id>nexus-repo-public-prisma</id>
+			<name>PRISMA - Domain</name>
+			<url>http://prismanexus.cloud.reply.eu:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-updates-report</report>
+							<report>plugin-updates-report</report>
+							<report>property-updates-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+</project>

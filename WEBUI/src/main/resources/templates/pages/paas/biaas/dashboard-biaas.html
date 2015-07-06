@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<head>
+<title>Business Intelligence</title>
+
+
+<link rel="stylesheet"
+	th:href="@{/static/assets/css/bootstrap-table.css}" />
+<script th:src="@{/static/assets/js/bootstrap-table.js}"
+	type="text/javascript"></script>
+
+
+
+<script type="text/javascript">
+(function ($) {
+    'use strict';
+    $.extend($.fn.bootstrapTable.defaults, {
+        formatLoadingMessage: function () {
+            return 'Caricamento in corso…';
+        },
+        formatRecordsPerPage: function (pageNumber) {
+            return pageNumber + ' records per pagina';
+        },
+        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+            return 'Eventi mostrati da ' + pageFrom + ' a ' + pageTo + ' (Numero totale di eventi: ' + totalRows + ')';
+        },
+        formatSearch: function () {
+            return 'Cerca';
+        },
+        formatNoMatches: function () {
+            return 'Nessun record trovato';
+        },
+        formatRefresh: function () {
+            return 'Rinfrescare';
+        },
+        formatToggle: function () {
+            return 'Alternare';
+        },
+        formatColumns: function () {
+            return 'Colonne';
+        }
+    });
+})(jQuery);
+</script>
+
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+  
+	var serviceId = [[${service.id}]];
+	var workgroupId = [[${service.workgroupId}]];
+	var name = [[${service.name}]];
+	
+	var timerMultiplierStatus = 1;
+	var timeoutStatus;
+
+	
+	$(document).ready(function() {		
+
+		//UPDATE THE GUI
+		var actualStatus = $("#status").text();
+		updateGUI(actualStatus, '#statusIcon');
+		updateConfiguration();
+
+
+		//Quando l'utente preme refresh nella tabella eventi -> aggiorno anche lo stato
+		$('#recentEvents').bootstrapTable({ }).on('load-success.bs.table', function (e, data) {
+			doPollRequest();
+		});
+		
+		//Funcion in order to have dynamic tabs changing
+		$('#myTab a').click(function (e) {
+			  e.preventDefault()
+			  $(this).tab('show')
+		});
+
+		//Mostro o oscuro il div del certificato verificando lo stato del checkbox
+		$('#autoscaling').change(function() {
+			autoscalingShowDiv();
+		});
+
+ 		$("#stopService").click(function() {
+ 			openManageServiceDialog(STATUS_STOPPING);
+		});
+
+		$("#startService").click(function() {
+			openManageServiceDialog(STATUS_STARTING);
+		});
+
+		$("#restartService").click(function() {
+			openManageServiceDialog(STATUS_RESTARTING);
+		});
+
+		$("#deleteService").click(function() {
+			openManageServiceDialog(STATUS_UNDEPLOY_IN_PROGRESS);
+		});	
+		
+		poll();
+	});
+
+	function poll() {
+		timeoutStatus = setTimeout(function(){
+			
+			doPollRequest();
+			poll();
+
+		}, (timerMultiplierStatus*6000));
+	};
+
+
+	var pollRequest;
+	function doPollRequest(){
+		if(pollRequest)
+			pollRequest.abort();
+		pollRequest = $.ajax({
+			type : 'GET',
+			dataType : 'json',
+			url : '/async/paas/biaas/update/' + workgroupId + '/' + serviceId,
+			success : function(data) {
+				timerMultiplierStatus = 5;
+				updateGUI(data["result"]["status"], '#statusIcon');
+			},
+			error : function(){
+				timerMultiplierStatus = 5;
+			}
+		});				
+	}
+
+	function updateConfiguration() {
+		var notificationEmail = [[${service.notificationEmail}]];
+		var flavorSelected = [[${service.iaaSFlavor}]];
+		var profileSelected = [[${service.qoS}]];
+		var domainName = [[${service.domainName}]];
+		
+
+		$("#notificationEmail").val(notificationEmail);
+		$("#url").val(domainName);
+		$("select#qosSelect").val(profileSelected);
+		$("select#flavorSelect").val(flavorSelected);
+		
+	}
+
+
+	function autoscalingShowDiv(){
+		var isChecked = $('#autoscaling').is(":checked");
+		if (isChecked) {
+			$('#autoscalingDiv').removeClass('hide');
+			$('#maxFlavor').prop('required', true);
+			$('#maxVolume').prop('required', true);
+
+		} else {
+			$('#autoscalingDiv').addClass('hide');
+			$('#maxFlavor').prop('required', false);
+			$('#maxVolume').prop('required', false);
+		}
+	}	
+
+	function openManageServiceDialog(action) {
+		$('#loadingManageServiceIcon').addClass("hidden");
+		$('#confirmManageServiceButton').removeClass("hidden");
+		$('#dismissButton').html("Annulla");
+		$("#confirmManageServiceButton").unbind('click');
+		switch (action) {
+		case STATUS_STARTING:
+			$("#confirmManageServiceButton").click(function(){
+					var request = startAndStopService("/service/workgroups/" + workgroupId + "/paas/biaas/" + serviceId + "/start/", STATUS_STARTING);
+					$('#dismissButton').unbind('click');
+					$('#dismissButton').click(function(request){try{request.abort();}catch(err){}});
+				});
+			$('#manageServiceInfo').html(
+					"Sei sicuro di voler avviare il BIaaS <b>" + name + "</b>?");
+			$('#mymodalManageService').html("Avvia");
+			break;
+		case STATUS_RESTARTING:
+			$("#confirmManageServiceButton").click(function(){
+				var request = startAndStopService("/service/workgroups/" + workgroupId + "/paas/biaas/" + serviceId + "/restart/", STATUS_RESTARTING);
+				$('#dismissButton').unbind('click');
+				$('#dismissButton').click(function(request){try{request.abort();}catch(err){}});
+			});
+			$('#manageServiceInfo').html(
+					"Sei sicuro di voler riavviare il BIaaS <b>" + name + "</b>?");
+			$('#mymodalManageService').html("Riavvia");
+			break;
+		case STATUS_STOPPING:
+			$("#confirmManageServiceButton").click(function(){
+				var request = startAndStopService("/service/workgroups/" + workgroupId + "/paas/biaas/" + serviceId + "/stop/", STATUS_STOPPING);
+				$('#dismissButton').unbind('click');
+				$('#dismissButton').click(function(request){try{request.abort();}catch(err){}});
+			});
+			$('#manageServiceInfo').html(
+					"Sei sicuro di voler arrestare il BIaaS <b>" + name + "</b>?");
+			$('#mymodalManageService').html("Arresta");
+			break;
+		case STATUS_UNDEPLOY_IN_PROGRESS:
+			$("#confirmManageServiceButton").click(function(){
+				var request = deleteService("/async/workgroups/" + workgroupId + "/paas/biaas/" + serviceId);
+				$('#dismissButton').unbind('click');
+				$('#dismissButton').click(function(request){try{request.abort();}catch(err){}});
+			});
+			$('#manageServiceInfo').html(
+					"Sei sicuro di voler eliminare il BIaaS <b>" + name + "</b>?");
+			$('#mymodalManageService').html("Elimina");
+			break;
+		}
+	}
+
+	/*]]>*/
+</script>
+
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Dashboard <small> BIaaS</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi PaaS</a></li>
+					<li><a th:href="@{/paas/biaas/}"> BIaaS</a></li>
+					<li class="active">Dashboard</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<div class="col-md-10">
+						<h3>
+							<div th:switch="${service.configurationVariant}">
+								<span
+									th:case="Server_only">Server</span>
+								<span
+									th:case="Console_only">Console</span>
+								<span
+									th:case="Server_w_Console">Server e Console</span>
+								<span th:case="*">Istanza Pentaho</span>
+							</div>
+						</h3>
+					</div>
+					<div class="col-md-2">
+						<h3>
+							<div class="dropdown pull-right">
+								<button class="btn btn-success btn-xs dropdown-toggle"
+									disabled="disabled" type="button" id="dropdownMenu"
+									data-toggle="dropdown">
+									<span id="dropdownMenuText">Avviato</span> <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu pull-right" role="menu"
+									aria-labelledby="dropdownMenu1">
+									<li role="presentation"><a data-toggle="modal"
+										data-target="#modalManageService" id="startService"
+										role="menuitem" tabindex="-1" href="#">Avvia</a></li>
+									<li role="presentation"><a data-toggle="modal"
+										data-target="#modalManageService" id="restartService"
+										role="menuitem" tabindex="-1" href="#">Riavvia</a></li>
+									<li role="presentation"><a data-toggle="modal"
+										data-target="#modalManageService" id="stopService"
+										role="menuitem" tabindex="-1" href="#">Spegni</a></li>
+									<li role="presentation" id="dropdownMenuDivider"
+										class="divider"></li>
+									<li role="presentation"><a data-toggle="modal"
+										data-target="#modalManageService" id="deleteService"
+										role="menuitem" tabindex="-1" href="#">Elimina</a></li>
+								</ul>
+							</div>
+						</h3>
+
+
+					</div>
+				</div>
+				<div class="row" style="margin-top: 30px;">
+					<div class="col-md-2">
+						<ul id="myTab" class="nav nav-pills nav-stacked">
+							<li class="active" role="presentation"><a href="#dashboard"
+								role="tab" data-toggle="tab" aria-controls="dashboard"
+								aria-expanded="true"> Dashboard</a></li>
+							<li><a href="#configuration" role="tab" data-toggle="tab"
+								aria-controls="configuration" aria-expanded="true">Configurazione</a></li>
+							<li><a href="#events" role="tab" data-toggle="tab"
+								aria-controls="events" aria-expanded="true">Eventi</a></li>
+						</ul>
+					</div>
+					<div class="col-md-10">
+
+						<div id="myTabContent" class="tab-content">
+							<div role="tabpanel" class="tab-pane fade active in"
+								id="dashboard" aria-labelledby="dashboard-tab">
+
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="box box-primary">
+											<div class="box-header">
+												<i class="fa fa-calendar"></i>
+												<h3 class="box-title">Overview</h3>
+											</div>
+											<div class="box-body">
+												<div class="row">
+													<div class="col-md-12">
+														<h2>
+															<table style="width: 100%">
+																<tr>
+																	<td align="left"><i id="statusIcon"
+																		class="fa fa-refresh fa-spin"></i> <span id="status"
+																		style="margin-left: 20px;"
+																		th:text="${service.getStatus()}"></span></td>
+																	<td align="right">
+																		<!-- Monitoring metrics Link --> <i
+																		class="fa fa-laptop"></i> <a
+																		th:href="@{~/async/monitoring/metrics-biaas}">Metriche</a>
+																	</td>
+																</tr>
+															</table>
+
+														</h2>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div
+									th:replace="fragments/dashboard/events :: events('recentEvents', 'Eventi Recenti', @{'/service/async/paas/biaas/'} + ${service.getId()} + @{'/events/'}, '5')"></div>
+
+							</div>
+							<div role="tabpanel" class="tab-pane fade" id="configuration"
+								aria-labelledby="configuration-tab">
+
+								<div class="box box-primary">
+									<div class="box-header">
+										<i class="fa fa-cog"></i>
+										<h3 class="box-title">Configurazioni</h3>
+									</div>
+									<div class="box-body">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="row" style="margin-bottom: 15px;">
+													<div class="col-md-12">
+														<!-- Nome dell’ Ambiente -->
+														<label for="serviceName" style="margin-top: 10px;">Nome
+															del Servizio</label>
+														<div class="'wizard-input-section input-group col-md-8">
+															<span class="input-group-addon"><i
+																class="fa fa-file-text-o"></i></span> <input type="text"
+																th:value="${service.name}" class="form-control"
+																readonly="readonly" />
+														</div>
+													</div>
+												</div>
+												<div class="row" style="margin-bottom: 15px;">
+													<div class="col-md-12">
+														<!-- Nome dell’ Ambiente -->
+														<label for="serviceName" style="margin-top: 10px;">Descrizione
+															del Servizio</label>
+														<div class="'wizard-input-section input-group col-md-8">
+															<span class="input-group-addon"><i
+																class="fa fa-file-text-o"></i></span>
+															<textarea class="form-control"
+																th:text="${service.description}" rows="7" cols="6"
+																maxlength="200" style="resize: none"></textarea>
+														</div>
+													</div>
+												</div>
+												<div th:if="${serviceUserPublicKey} !=null" class="row" style="margin-bottom: 15px;">
+													<div class="col-md-12">
+														<!-- SSH Key -->
+														<label for="serviceName" style="margin-top: 10px;">Chiave pubblica SSH utente</label>
+														<div class="'wizard-input-section input-group col-md-8">
+															<span class="input-group-addon"><i
+																class="fa fa-file-text-o"></i></span>
+															<input type="text"
+																th:value="${serviceUserPublicKey}" class="form-control"
+																readonly="readonly" />
+														</div>
+													</div>
+												</div>
+												<!-- 		<div class="row" style="margin-bottom: 15px;">
+													<div class="col-md-12">
+														Nome dell’ Ambiente
+														<label for="serviceName" style="margin-top: 10px;">TIpologia
+															di servizio del Servizio</label>
+														<div class="'wizard-input-section input-group col-md-8">
+															<span class="input-group-addon"><i
+																class="fa fa-file-text-o"></i></span> <input type="text"
+																th:value="${biaas.productType}" class="form-control"
+																readonly="readonly" />
+														</div>
+													</div>
+												</div> -->
+												<div
+													th:replace="fragments/wizard/email-field-current-user :: email-field-current-user('notificationEmail', 'Email per le notifiche', 'fa fa-envelope', 8)"></div>
+	
+												<div
+													th:replace="fragments/wizard/text-field-disabled :: text-field-disabled('url', 'Domain Name (URL del Servizio)', 'fa fa-globe', ${service.domainName}, '200', 8)"></div>
+												
+											</div>
+										</div>
+										<div class="row" style="margin-top: 25px;">
+											<div class="col-md-12 text-right">
+												<button class="btn btn-default">Ripristina</button>
+												<button class="btn btn-primary">salva</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div role="tabpanel" class="tab-pane fade" id="events"
+								aria-labelledby="events-tab">
+
+								<div
+									th:replace="fragments/dashboard/events :: events('eventTable', 'Eventi Recenti', @{'/service/async/paas/biaas/'} + ${service.getId()} + @{'/events/'}, '10')"></div>
+
+							</div>
+						</div>
+					</div>
+					<!-- Inizio dialog conferma -->
+
+					<div class="modal fade" id="modalManageService"
+						data-backdrop="static" tabindex="-1" role="dialog"
+						aria-labelledby="myModalLabel" aria-hidden="true" style="">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">
+										<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+									</button>
+									<h4 class="modal-title" id="mymodalManageService"></h4>
+								</div>
+								<div class="modal-body">
+									<div class="box-body table-responsive no-padding">
+										<div id="manageServiceInfo"></div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<i id="loadingManageServiceIcon"
+										class="fa fa-refresh fa-spin hidden"></i>
+									<button type="button" id="confirmManageServiceButton"
+										class="btn btn-primary">Conferma</button>
+									<button type="button" id="dismissButton"
+										class="btn btn-primary" data-dismiss="modal">Annulla</button>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- fine dialog conferma -->
+				</div>
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/public-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{publicHomePage.prisma}"></title>
+</head>
+
+<!-- Page body -->
+<body>
+
+	<div layout:fragment="content">
+		<div class="box box-primary shadowbox">
+			<div class="box-header">
+				<i class="fa fa-home"></i>
+				<h3 class="box-title" th:text="#{publicHomePage.boxtitle}"></h3>
+
+
+				<span style="float: right"> <a href="?lang=en">en</a> | <a
+					href="?lang=it">it</a> &nbsp;
+				</span>
+
+			</div>
+			<div class="box-body">
+				<div class="jumbotron" style="margin: 0 0 0 0">
+					<h1 th:text="#{publicHomePage.welcome}"></h1>
+					<p style="text-align: justify"
+						th:text="#{publicHomePage.description}"></p>
+					<div class="dropdown pull-right ">
+						<button class="btn btn-primary btn-lg dropdown-toggle"
+							type="button" id="dropdownMenu1" data-toggle="dropdown">
+							<i class="fa fa-sign-in"></i> <span
+								th:text="#{publicHomePage.access}"></span> <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu"
+							aria-labelledby="dropdownMenu1">
+							<li role="presentation"><a role="menuitem" tabindex="-1"
+								href="./accounting/signin.html" th:href="@{/accounting/signin}"
+								th:text="#{publicHomePage.login}"> </a></li>
+							<li role="presentation" class="divider"></li>
+							<li role="presentation"><a role="menuitem" tabindex="-1"
+								href="./accounting/signup.html" th:href="@{/accounting/signup}"
+								th:text="#{publicHomePage.register}"> </a></li>
+						</ul>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

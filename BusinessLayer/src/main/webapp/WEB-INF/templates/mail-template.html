@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+<title th:remove="all">Template for HTML email with inline image</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+	<p>
+		Benvenuto <strong><span th:text="${fullName}"></span></strong>.<br />
+		Grazie per esserti registrato alla piattaforma PRISMA. Per attivare
+		l'account &egrave; necessario confermare l'indirizzo email specificato
+		cliccando sul link sottostante:<br />
+		<br />
+		<a th:href="${confimationLink} + '?username=' + ${username} + '?email' + ${email} + '?code=' + ${confimationCode}">
+			<span th:text="${confimationLink} + '?username=' + ${username} + '?email' + ${email} + '?code=' + ${confimationCode}"></span>
+		</a>
+	</p>
+	<p>
+		Qualora si riscontrassero problemi con il collegamento sopra
+		riportato, &egrave; possibile completare l'operazione manualmente,
+		recandosi alla pagina <a th:href="${confimationLink}"><span
+			th:text="${confimationLink}"></span></a> e specificando:
+	</p>
+	<ul>
+		<li>Username: <strong th:text="${username}"></strong></li>
+		<li>Email: <strong th:text="${email}"></strong></li>
+		<li>Codice di attivazione: <pre th:text="${confimationCode}"></pre>
+		</li>
+	</ul>
+	<p>
+		Assicurati di non aggiungere caratteri aggiuntivi, spazi compresi.
+	</p>
+	<p>
+		Nel caso in cui non si riuscisse a completare l'operazione o si
+		riscontrassero problemi tecnici, si prega di contattare l'assistenza
+		all'indirizzo: <a href="staff@ponsmartcities-prisma.it">staff@ponsmartcities-prisma.it</a>
+	</p>
+	<p>
+		Cordiali saluti e buona navigazione.
+	</p>
+</body>
+</html>

@@ -1,0 +1,30 @@
+Trasferire modifiche async (BPMN + CustomAsyncWIH) in questo progetto
+
+
+RESTCLIENT
+	Implementare passaggio timeout
+	Implementare gestione SSL e mutua autenticazione + autenticazione 	
+
+jBPM
+	Gestione task async/sync in modo trasparente (tutti con command, WIH per esecuzione sync - risolvere problemi classloading e CDI)
+
+
+Timeout e strategie di rollback
+Timeout RestClient, default e impostazione
+
+Aggiungere attributes da passare alle ricette
+Aggiungere log (deployments events)
+Migliorare risposte e log eventi
+
+CONFIGURAZIONE ENDPOINTs CON FILE DI PROPRIETA !
+
+Tabella logs
+Stampe e log
+
+
+DONE:
+x - Add cfyUrl to WF params
+x - Context-root
+x - Restful path
+x - WIHMonitoring add ProcInstance (R58)
+x - Custom logger and tag

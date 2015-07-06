@@ -1,0 +1,85 @@
+CREATE WORKGROUP:
+-------------------
+
+{
+        "label": "Test_WG",
+        "description": "This is just a test!",
+        "createdByUserAccountId" : 2
+}
+
+
+WorkgroupMembershipRequest:
+----------------------------
+
+{
+        "workgroupId" : 123,
+        "applicantUserAccountId" : 123,
+        "approvedByUserAccountId" : 123,
+        "workgroupPrivilegeName" : "abc"
+}
+
+WorkgroupApprovationRequest:
+----------------------------
+
+{
+        "workgroupId" : 123,
+        "approvedByUserAccountId": 123
+}
+
+-------------------------------------------------
+-------------------------------------------------
+
+WorkgroupMembershipRepresentation:
+----------------------------------
+
+{
+        "workgroupId" : 123,
+        "memberUserAccountId" : 123,
+        "workgroupPrivilege" : {
+                "workgroupPrivilegeId" : 123,
+                "workgroupPrivilegeName" : "abc",
+                "workgroupPrivilegeDescription" : "abc"
+        },
+        "approved" : false,
+        "approvedByUserAccountId" : 123
+}
+
+WorkgroupRepresentation:
+-------------------------
+
+{
+        "workgroupId" : 123,
+        "label" : "abc",
+        "description" : "abc",
+        "approved" : false,
+        "approvedByUserAccount" : 123,
+        "applicantsNumber" : 123,
+        "approvedMembersNumber" : 123,
+        "totalMembersNumber" : 123
+}
+
+
+----------------------------
+
+
+{
+  "count" : 123,
+  "workgroupMemberships": 
+    [
+    
+        "workgroupId" : 123,
+        "memberUserAccountId" : 123,
+        "workgroupPrivilege" : {
+                "workgroupPrivilegeId" : 123,
+                "workgroupPrivilegeName" : "abc",
+                "workgroupPrivilegeDescription" : "abc"
+        },
+        "approved" : false,
+        "approvedByUserAccountId" : 123
+
+
+    }
+   ]
+  
+  
+}

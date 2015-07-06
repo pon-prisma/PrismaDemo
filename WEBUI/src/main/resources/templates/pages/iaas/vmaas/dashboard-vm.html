@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<head>
+<title th:text="#{title.vm}"></title>
+
+
+<link rel="stylesheet"
+	th:href="@{/static/assets/css/bootstrap-table.css}" />
+<script th:src="@{/static/assets/js/bootstrap-table.js}"
+	type="text/javascript"></script>
+
+
+
+<script type="text/javascript">
+(function ($) {
+    'use strict';
+    $.extend($.fn.bootstrapTable.defaults, {
+        formatLoadingMessage: function () {
+            return 'Caricamento in corso…';
+        },
+        formatRecordsPerPage: function (pageNumber) {
+            return pageNumber + ' records per pagina';
+        },
+        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+            return 'Pagina ' + pageFrom + ' di ' + pageTo + ' (' + totalRows + ' records)';
+        },
+        formatSearch: function () {
+            return 'Cerca';
+        },
+        formatNoMatches: function () {
+            return 'Nessun record trovato';
+        },
+        formatRefresh: function () {
+            return 'Rinfrescare';
+        },
+        formatToggle: function () {
+            return 'Alternare';
+        },
+        formatColumns: function () {
+            return 'Colonne';
+        }
+    });
+})(jQuery);
+</script>
+
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+
+	var id = [[${id}]];
+	var workgroupId = [[${workgroupId}]];
+	var name = [[${name}]];
+
+	var domainName = [[${domainName}]];
+
+	var timerMultiplierStatus = 1;
+	var timeoutStatus;
+	var path;
+
+	
+	$(document).ready(function() {
+
+		//UPDATE THE GUI
+		//Aggiorno l'interfaccia
+		var actualStatus = $("#status").text();
+		updateGUI(actualStatus, '#statusIcon');
+		updateConfiguration();
+
+		//Quando l'utente preme refresh nella tabella eventi -> aggiorno anche lo stato
+		$('#recentEvents').bootstrapTable({ }).on('load-success.bs.table', function (e, data) {
+			doPollRequest();
+		});
+		
+		//Funcion in order to have dynamic tabs changing
+		$('#myTab a').click(function(e){
+			  e.preventDefault()
+			  $(this).tab('show')
+		});
+
+		//Mostro o oscuro il div del certificato verificando lo stato del checkbox
+		$('#autoscaling').change(function(){
+			autoscalingShowDiv();
+		});
+		
+ 		$("#stopService").click(function() {
+ 			openManageServiceDialog(STATUS_STOPPING);
+		});
+
+		$("#startService").click(function() {
+			openManageServiceDialog(STATUS_STARTING);
+		});
+
+		$("#restartService").click(function() {
+			openManageServiceDialog(STATUS_RESTARTING);
+		});
+
+		$("#deleteService").click(function() {
+			openManageServiceDialog(STATUS_UNDEPLOY_IN_PROGRESS);
+		});		
+		
+		poll();
+	});
+
+	function poll() {
+		timeoutStatus = setTimeout(function(){
+			
+			doPollRequest();
+			poll();
+
+		}, (timerMultiplierStatus*6000));
+	};
+
+	var pollRequest;
+	function doPollRequest(){
+		if(pollRequest)
+			pollRequest.abort();
+		pollRequest = $.ajax({
+			type : 'GET',
+			dataType : 'json',
+			url : '/async/iaas/vmaas/update/' + workgroupId + '/' + id,
+			success : function(data) {
+				timerMultiplierStatus = 5;
+				updateGUI(data["result"]["status"], '#statusIcon');
+			},
+			error : function(){
+				timerMultiplierStatus = 5;
+			}
+		});				
+	}
+
+	function updateConfiguration() {
+		var notificationEmail = [[${notificationEmail}]];
+		var flavorSelected = [[${flavorSelected}]];
+		var profileSelected = [[${profileSelected}]];
+		var verticalScaling = [[${verticalScaling}]];
+		var domainName = [[${domainName}]];
+
+
+		$("#notificationEmail").val(notificationEmail);
+		$("#url").val(domainName);
+		$("select#qosSelect").val(profileSelected);
+		$("select#flavorSelect").val(flavorSelected);
+		
+		if(verticalScaling == "true"){
+			var maxFlavor = [[${maxFlavor}]];
+			var maxDisk = [[${maxDisk}]];
+			$('#autoscaling').prop('checked', true);
+			autoscalingShowDiv();
+			$("select#maxFlavor").val(maxFlavor);
+			$("select#maxVolume").val(maxDisk);
+		}
+	}
+	
+
+	function autoscalingShowDiv(){
+		var isChecked = $('#autoscaling').is(":checked");
+		if (isChecked) {
+			$('#autoscalingDiv').removeClass('hide');
+			$('#maxFlavor').prop('required', true);
+			$('#maxVolume').prop('required', true);
+
+		} else {
+			$('#autoscalingDiv').addClass('hide');
+			$('#maxFlavor').prop('required', false);
+			$('#maxVolume').prop('required', false);
+		}
+	}
+
+	function openManageServiceDialog(action) {
+		$('#loadingManageServiceIcon').addClass("hidden");
+		$('#confirmManageServiceButton').removeClass("hidden");
+		$('#dismissButton').html("Annulla");
+		$("#confirmManageServiceButton").unbind('click');
+		switch (action) {
+		case STATUS_STARTING:
+			$("#confirmManageServiceButton").click(function(){
+					var request = startAndStopService("/service/workgroups/" + workgroupId + "/iaas/vmaas/" + id + "/start/", STATUS_STARTING);
+					$('#dismissButton').unbind('click');
+					$('#dismissButton').click(function(request){try{request.abort();}catch(err){}});
+				});
+			$('#manageServiceInfo').html(
+					"Sei sicuro di voler avviare la macchina virtuale <b>" + name + "</b>?");
+			$('#mymodalManageService').html("Avvia");
+			break;
+		case STATUS_RESTARTING:
+			$("#confirmManageServiceButton").click(function(){
+				var request = startAndStopService("/service/workgroups/" + workgroupId + "/iaas/vmaas/" + id + "/restart/", STATUS_RESTARTING);
+				$('#dismissButton').unbind('click');
+				$('#dismissButton').click(function(request){try{request.abort();}catch(err){}});
+			});
+			$('#manageServiceInfo').html(
+					"Sei sicuro di voler riavviare la macchina virtuale <b>" + name + "</b>?");
+			$('#mymodalManageService').html("Riavvia");
+			break;
+		case STATUS_STOPPING:
+			$("#confirmManageServiceButton").click(function(){
+				var request = startAndStopService("/service/workgroups/" + workgroupId + "/iaas/vmaas/" + id + "/stop/", STATUS_STOPPING);
+				$('#dismissButton').unbind('click');
+				$('#dismissButton').click(function(request){try{request.abort();}catch(err){}});
+			});
+			$('#manageServiceInfo').html(
+					"Sei sicuro di voler arrestare la macchina virtuale <b>" + name + "</b>?");
+			$('#mymodalManageService').html("Arresta");
+			break;
+		case STATUS_UNDEPLOY_IN_PROGRESS:
+			$("#confirmManageServiceButton").click(function(){
+				var request = deleteService("/async/workgroups/" + workgroupId + "/iaas/vmaas/" + id);
+				$('#dismissButton').unbind('click');
+				$('#dismissButton').click(function(request){try{request.abort();}catch(err){}});
+			});
+			$('#manageServiceInfo').html(
+					"Sei sicuro di voler eliminare la macchina virtuale <b>" + name + "</b>?");
+			$('#mymodalManageService').html("Elimina");
+			break;
+		}
+	}
+
+	/*]]>*/
+</script>
+
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Dashboard <small> Macchina Virtuale</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi IaaS</a></li>
+					<li><a th:href="@{/iaas/vmaas/}"> Macchina Virtuale</a></li>
+					<li class="active">Dashboard</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<div class="col-md-10">
+						<h3>
+							<span id="id" th:text="${vm.getId()}" class="hidden"></span> <b><span
+								id="dashboardTitle" th:text="${vm.getName()}"></span></b>
+							<!--  <i
+								class="fa fa-caret-right"></i> <span><a
+								href="#" th:text="${vm.getDomainName()} "
+								target="_blank"></a></span> -->
+						</h3>
+					</div>
+					<div class="col-md-2">
+						<h3>
+							<div class="dropdown pull-right">
+								<button class="btn btn-success btn-xs dropdown-toggle"
+									disabled="disabled" type="button" id="dropdownMenu"
+									data-toggle="dropdown">
+									<span id="dropdownMenuText">Avviato</span> <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu"
+									aria-labelledby="dropdownMenu1">
+									<li role="presentation"><a data-toggle="modal"
+										data-target="#modalManageService" id="startService"
+										role="menuitem" tabindex="-1" href="#">Avvia</a></li>
+									<li role="presentation"><a data-toggle="modal"
+										data-target="#modalManageService" id="restartService"
+										role="menuitem" tabindex="-1" href="#">Riavvia</a></li>
+									<li role="presentation"><a data-toggle="modal"
+										data-target="#modalManageService" id="stopService"
+										role="menuitem" tabindex="-1" href="#">Spegni</a></li>
+									<li role="presentation" id="dropdownMenuDivider"
+										class="divider"></li>
+									<li role="presentation"><a data-toggle="modal"
+										data-target="#modalManageService" id="deleteService"
+										role="menuitem" tabindex="-1" href="#">Elimina</a></li>
+								</ul>
+							</div>
+						</h3>
+
+
+					</div>
+				</div>
+				<div class="row" style="margin-top: 30px;">
+					<div class="col-md-2">
+						<ul id="myTab" class="nav nav-pills nav-stacked">
+							<li class="active" role="presentation"><a href="#dashboard"
+								role="tab" data-toggle="tab" aria-controls="dashboard"
+								aria-expanded="true"> Dashboard</a></li>
+							<li><a href="#configuration" role="tab" data-toggle="tab"
+								aria-controls="configuration" aria-expanded="true">Configurazione</a></li>
+							<li><a href="#events" role="tab" data-toggle="tab"
+								aria-controls="events" aria-expanded="true">Eventi</a></li>
+						</ul>
+					</div>
+					<div class="col-md-10">
+
+						<div id="myTabContent" class="tab-content">
+							<div role="tabpanel" class="tab-pane fade active in"
+								id="dashboard" aria-labelledby="dashboard-tab">
+
+
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="box box-primary">
+											<div class="box-header">
+												<i class="fa fa-calendar"></i>
+												<h3 class="box-title">Overview</h3>
+											</div>
+											<div class="box-body">
+												<div class="row">
+													<div class="col-md-12">
+														<h2>
+
+
+															<table style="width: 100%">
+																<tr>
+																	<td align="left"><i id="statusIcon"
+																		class="fa fa-refresh fa-spin"> </i> <span id="status"
+																		style="margin-left: 20px;" th:text="${vm.getStatus()}">
+																	</span></td>
+
+																	<td align="right">
+																		<!-- Monitoring metrics Link --> <i
+																		class="fa fa-laptop"> </i> <a
+																		th:href="@{~/async/monitoring/metrics-vm}">
+																			Metriche </a>
+																	</td>
+																</tr>
+															</table>
+
+														</h2>
+
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div
+									th:replace="fragments/dashboard/events :: events('recentEvents', 'Eventi Recenti', @{'/service/async/iaas/vmaas/'} + ${vm.getId()} + @{'/events/'}, '5')"></div>
+
+							</div>
+							<div role="tabpanel" class="tab-pane fade" id="configuration"
+								aria-labelledby="configuration-tab">
+
+
+								<div class="box box-primary">
+									<div class="box-header">
+										<i class="fa fa-cog"></i>
+										<h3 class="box-title">Configurazioni</h3>
+									</div>
+									<div class="box-body">
+										<div class="row">
+											<div class="col-md-12">
+
+												<div
+													th:replace="fragments/wizard/email-field :: email-field('notificationEmail', 'Email per le notifiche', 'fa fa-envelope', ${vm.notificationEmail},8)"></div>
+
+												<div
+													th:replace="fragments/wizard/text-field-disabled :: text-field-disabled('url', 'Domain Name (URL del Servizio)', 'fa fa-globe', ${vm.domainName}, '200', 8)"></div>
+
+												<div
+													th:replace="fragments/wizard/text-field-disabled :: text-field-disabled('key', 'Chiave', 'fa fa-key', ${vm.key}, '200', 8)"></div>
+
+												<div
+													th:replace="fragments/wizard/text-field-disabled :: text-field-disabled('operativeSystem', 'Sistema Operativo', 'fa fa-key', ${os}, '200', 8)"></div>
+												
+												<div
+													th:replace="fragments/wizard/text-field-disabled :: text-field-disabled('network', 'Rete', 'fa fa-desktop', ${vm.networks[0]}, '200', 8)"></div>
+
+												<div
+													th:replace="fragments/wizard/select-field :: select-field('qosSelect', 'Profilo (Determina la QoS del servizio)', 'fa fa-bolt', 'Scegli il profilo', ${iaasProfile}, 8)"></div>
+
+												<div
+													th:replace="fragments/wizard/select-field :: select-field('flavorSelect', 'Flavor (determina la potenza di
+														calcolo del servizio)', 'fa fa-desktop', 'Scegli un Flavor', ${iaasFlavor}, 8)"></div>
+
+											</div>
+										</div>
+										<div class="row" style="margin-top: 25px;">
+											<div class="col-md-12 text-right">
+												<button class="btn btn-default">Ripristina</button>
+												<button class="btn btn-primary">Salva</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div role="tabpanel" class="tab-pane fade" id="events"
+								aria-labelledby="events-tab">
+
+								<div
+									th:replace="fragments/dashboard/events :: events('eventTable', 'Eventi', @{'/service/async/iaas/vmaas/'} + ${vm.getId()} + @{'/events/'}, '10')"></div>
+
+							</div>
+						</div>
+					</div>
+					<!-- Inizio dialog conferma -->
+
+					<div class="modal fade" id="modalManageService"
+						data-backdrop="static" tabindex="-1" role="dialog"
+						aria-labelledby="myModalLabel" aria-hidden="true" style="">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">
+										<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+									</button>
+									<h4 class="modal-title" id="mymodalManageService"></h4>
+								</div>
+								<div class="modal-body">
+									<div class="box-body table-responsive no-padding">
+										<div id="manageServiceInfo"></div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<i id="loadingManageServiceIcon" class="fa fa-refresh fa-spin hidden"></i>
+									<button type="button" id="confirmManageServiceButton"
+										class="btn btn-primary">Conferma</button>
+									<button type="button" id="dismissButton"
+										class="btn btn-primary" data-dismiss="modal">Annulla</button>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- fine dialog conferma -->
+				</div>
+			</section>
+
+
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

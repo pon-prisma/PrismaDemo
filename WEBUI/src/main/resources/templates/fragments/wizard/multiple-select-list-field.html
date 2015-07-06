@@ -1,0 +1,35 @@
+<!-- 
+
+	Parametri: 
+				@param id: 				id and name of the input
+				@param label:			label above the input
+				@param iconClass:		class of the icon
+				@param texts:     		select texts
+				@param colSize:			column size of the div. Use 8 ad default, use 12 for inner input
+
+
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div
+		th:fragment="multiple-select-list-field (id, label, iconClass, texts, colSize)"
+		class="inputs">
+		<label th:for="${id}" th:text="${label}">Seleziona</label>
+		<div
+			th:class="'wizard-input-section input-group col-md-' + ${colSize}">
+			<span class="input-group-addon"><i th:class="${iconClass}"></i></span>
+			<select th:id="${id}" th:name="${id}" class="form-control"
+				required="required" multiple="true">
+				<option th:each="text : ${texts}" th:value="${text.getKey()}"
+					th:text="${text.getValue()}"></option>
+			</select>
+
+		</div>
+	</div>
+</body>
+</html>

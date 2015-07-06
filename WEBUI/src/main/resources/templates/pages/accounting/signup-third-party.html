@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/public-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{signupPage.title}"></title>
+</head>
+
+<!-- Page body -->
+<body>
+	<!-- Content -->
+	<div layout:fragment="content">
+		<div class="box box-primary shadowbox">
+			<div class="box-header">
+				<i class="fa fa-user"></i>
+				<h3 class="box-title">Completa il tuo profilo</h3>     
+			</div>
+			<!-- ./box-header -->
+			<div class="box-body">
+				<div class="row">
+					<aside class="col-md-4">
+						<div class="list-group" style="margin-bottom: 0;">
+							<a th:href="@{/accounting/signup}"
+								th:title="#{signupPage.newaccountRequest}" class="list-group-item active">
+								<h4 class="list-group-item-heading" th:text="#{signupPage.accountRequest}"></h4>
+								<p id="signup" class="list-group-item-text" th:text="#{signupPage.createAccount}"></p>
+							</a> <a href="./signin.html" th:href="@{/accounting/signin}"
+								th:title="#{signupPage.login}" class="list-group-item">
+								<h4 class="list-group-item-heading" th:text="#{signupPage.login}"></h4>
+								<p class="list-group-item-text" th:text="#{signupPage.sso}"></p>
+							</a> <a href="./accounting-support.html"
+								th:href="@{/accounting/support}" th:title="#{signupPage.assistance}"
+								class="list-group-item">
+								<h4 class="list-group-item-heading" th:text="#{signupPage.assistance}"></h4>
+								<p class="list-group-item-text" th:text="#{signupPage.problemAccess}"></p>
+							</a>
+						</div>
+					</aside>
+					<div class="col-md-8">
+						<hr class="hidden-md hidden-lg" />
+						<div class="well" style="margin-bottom: 0">
+							<form class="form-horizontal" th:action="@{/accounting/signup-third-party}"
+								th:object="${signUpThirdPartyForm}" method="post">
+								
+								<div class="alert alert-dismissable prisma-green-alert">
+									<button type="button" class="close" data-dismiss="alert">×</button>
+									<p>Il processo di registrazione utilizzerà le credenziali di accesso 
+									fornite da <span th:text="${identityProviderLabel}"></span></p>
+								</div>
+
+								<!-- Professional profile -->
+								<fieldset class="margin-top-50px">
+									<legend th:text="#{signupPage.skillProfile}"></legend>
+									<!-- Empoyer -->
+									<div class="form-group">
+										<label for="employer" class="col-lg-2 control-label" th:text="#{signupPage.organization}"></label>
+										<div class="col-lg-10">
+											<input type="text" class="form-control" id="employer"
+												name="employer" th:field="*{employer}"
+												th:placeholder="#{signupPage.OrgCompany}" maxlength="40"
+												required="required" />
+										</div>
+									</div>
+									<div class="alert alert-dismissable alert-danger"
+										th:if="${#fields.hasErrors('employer')}">
+										<button type="button" class="close" data-dismiss="alert">×</button>
+										<p>
+											<strong th:text="#{signupPage.error}"></strong> <span th:text="#{signupPage.valueInvalid}"></span>
+										</p>
+									</div>
+									<!-- Representative email -->
+									<div class="form-group">
+										<label for="emailRef" class="col-lg-2 control-label" th:text="#{signupPage.emailRef}"></label>
+										<div class="col-lg-10">
+											<input type="email" class="form-control" id="emailRef"
+												name="emailRef" th:field="*{emailRef}"
+												th:placeholder="#{signupPage.emailRef2}" maxlength="40"
+												required="required" />
+										</div>
+									</div>
+									<div class="alert alert-dismissable alert-danger"
+										th:if="${#fields.hasErrors('emailRef')}">
+										<button type="button" class="close" data-dismiss="alert">×</button>
+										<p>
+											<strong th:text="#{signupPage.error}"></strong> <span th:text="#{signupPage.emailRefInvalid}"></span>
+										</p>
+									</div>
+									<!-- Work telephone number -->
+									<div class="form-group">
+										<label for="workTelephone" class="col-lg-2 control-label" th:text="#{signupPage.phoneOrg}"></label>
+										<div class="col-lg-10">
+											<input type="tel" class="form-control" id="workTelephone"
+												name="workTelephone" th:field="*{workTelephone}"
+												th:placeholder="#{signupPage.phoneOrg2}" maxlength="20" />
+										</div>
+									</div>
+									<div class="alert alert-dismissable alert-danger"
+										th:if="${#fields.hasErrors('workTelephone')}">
+										<button type="button" class="close" data-dismiss="alert">×</button>
+										<p>
+											<strong th:text="#{signupPage.error}"></strong> <span th:text="#{signupPage.phoneInvalid}"></span>
+										</p>
+									</div>
+									<!-- Personal telephone number -->
+									<div class="form-group">
+										<label for="personalTelephone" class="col-lg-2 control-label" th:text="#{signupPage.phonePers}"></label>
+										<div class="col-lg-10">
+											<input type="tel" class="form-control" id="personalTelephone"
+												name="personalTelephone" th:field="*{personalTelephone}"
+												th:placeholder="#{signupPage.phonePers2}" maxlength="20" />
+										</div>
+									</div>
+									<div class="alert alert-dismissable alert-danger"
+										th:if="${#fields.hasErrors('personalTelephone')}">
+										<button type="button" class="close" data-dismiss="alert">×</button>
+										<p>
+											<strong th:text="#{signupPage.error}"></strong> <span th:text="#{signupPage.phoneInvalid}"></span> 
+										</p>
+									</div>
+								</fieldset>
+								<!-- Note -->
+								<div class="alert alert-dismissable prisma-green-alert">
+									<button type="button" class="close" data-dismiss="alert">×</button>
+									<p th:text="#{signupPage.attention}"></p>
+								</div>
+								<!-- Personal info -->
+								<fieldset>
+									<legend th:text="#{signupPage.infoUser}"></legend>
+									<!-- First name -->
+									<div class="form-group">
+										<label for="firstName" class="col-lg-2 control-label" th:text="#{signupPage.firstName}"></label>
+										<div class="col-lg-10">
+											<input type="text" class="form-control" id="firstName"
+												name="firstName" th:field="*{firstName}" th:placeholder="#{signupPage.firstName}"
+												maxlength="20" required="required" />
+										</div>
+									</div>
+									<div class="alert alert-dismissable alert-danger"
+										th:if="${#fields.hasErrors('firstName')}">
+										<button type="button" class="close" data-dismiss="alert">×</button>
+										<p>
+											<strong th:text="#{signupPage.error}"></strong> <span th:text="#{signupPage.valueInvalid}"></span> 
+										</p>
+									</div>
+									<!-- Last name -->
+									<div class="form-group">
+										<label for="lastName" class="col-lg-2 control-label" th:text="#{signupPage.lastName}"></label>
+										<div class="col-lg-10">
+											<input type="text" class="form-control" id="lastName"
+												name="lastName" th:field="*{lastName}" th:placeholder="#{signupPage.lastName}"
+												maxlength="20" required="required" />
+										</div>
+									</div>
+									<div class="alert alert-dismissable alert-danger"
+										th:if="${#fields.hasErrors('lastName')}">
+										<button type="button" class="close" data-dismiss="alert">×</button>
+										<p>
+											<strong th:text="#{signupPage.error}"></strong> <span th:text="#{signupPage.valueInvalid}"></span> 
+										</p>
+									</div>
+									<!-- Nationality -->
+									<div class="form-group">
+										<label for="inputBirthdate" class="col-lg-2 control-label" th:text="#{signupPage.birthCity}"></label>
+										<div class="col-lg-10">
+											<select class="form-control" id="inputBirthdate" th:field="*{nationality}"
+												required="required">
+												<option value="" disabled="disabled" selected="selected" th:text="#{signupPage.selectbirthCity}">
+													</option>
+												<option value="it" th:text="#{signupPage.italy}"></option>
+											</select>
+										</div>
+									</div>
+									<div class="alert alert-dismissable alert-danger"
+										th:if="${#fields.hasErrors('nationality')}">
+										<button type="button" class="close" data-dismiss="alert">×</button>
+										<p>
+											<strong th:text="#{signupPage.error}"></strong> <span th:text="#{signupPage.birthCountry}"></span> 
+										</p>
+									</div>
+									<!-- Fiscal code -->
+									<div class="form-group">
+										<label for="fiscalCode" class="col-lg-2 control-label" th:text="#{signupPage.cf}"></label>
+										<div class="col-lg-10">
+											<input type="text" class="form-control" id="fiscalCode"
+												name="fiscalCode" th:field="*{fiscalCode}"
+												th:placeholder="#{signupPage.cf}" pattern=".{16,16}"
+												required="required" />
+										</div>
+									</div>
+									<div class="alert alert-dismissable alert-danger"
+										th:if="${#fields.hasErrors('fiscalCode')}">
+										<button type="button" class="close" data-dismiss="alert">×</button>
+										<p>
+											<strong th:text="#{signupPage.error}"></strong> <span th:text="#{signupPage.cfInvalid}"></span>
+										</p>
+									</div>
+								</fieldset>
+								<!-- Submit button -->
+								<button type="submit" class="btn btn-primary pull-right">
+									<i class="fa fa-user"></i><span th:text="#{signupPage.access}"></span>
+								</button>
+								<div class="clearfix"></div>
+							</form>
+						</div>
+					</div>
+					<!-- ./col -->
+				</div>
+				<!-- ./row -->
+			</div>
+			<!-- ./box-body -->
+		</div>
+		<!-- ./box -->
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

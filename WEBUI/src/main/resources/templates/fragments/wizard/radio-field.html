@@ -1,0 +1,19 @@
+<!-- 
+
+	Parametri: 
+				
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="radio-field (id, name, value, label, onClickFunction)"
+		class="radio">
+		<label><input type="radio" th:id="${id}" th:name="${name}" class="required"
+			th:value="${value}" th:onclick="${onClickFunction}" th:text="${label}"/></label>
+	</div>
+</body>
+</html>

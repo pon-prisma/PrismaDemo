@@ -1,0 +1,14 @@
+Context-root: orchestrator
+	REST suffix: /REST
+
+		Deployment suffix: /deployments
+			DBaaS-mysql: /dbaas-mysql
+
+		Info suffix: /info
+			LRT suffix: /lrtinfo
+
+
+Current available endpoint:
+	
+	- MySql DBaaS deployment: 		<host>:8080/orchestrator/REST/deployments/dbaas-mysql
+	- LRT Info: 					<host>:8080/orchestrator/REST/info/lrtinfo/{lrtid}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" monitorInterval="30">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<JDBC name="databaseAppender" tableName="logs_bizlayer">
+			<DataSource jndiName="java:jboss/datasources/PRISMA/BIZ/LOG-DS" />
+			<!-- <Column name="id" literal="LOGGING.APPLICATION_LOG_SEQUENCE.NEXTVAL" 
+				/> -->
+			<Column name="date" isEventTimestamp="true" />
+			<Column name="level" pattern="%level" />
+			<Column name="message" pattern="%message" />
+			<Column name="class" pattern="%class" />
+			<Column name="component" pattern="BizLayer" />
+		</JDBC>
+	</Appenders>
+	<Loggers>		
+<!-- 		<Logger name="DBlogger" level="ERROR"> -->
+<!-- 			<AppenderRef ref="databaseAppender" /> -->
+<!-- 		</Logger> -->
+		
+		<Root level="DEBUG">
+			<AppenderRef ref="Console" />
+<!-- 			<AppenderRef ref="databaseAppender" /> -->
+		</Root>
+	</Loggers>
+</Configuration>

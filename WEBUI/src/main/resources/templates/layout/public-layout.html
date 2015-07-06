@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	lang="it">
+<!-- Page head -->
+<head>
+<title th:text="#{text.prjExt}"></title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- <meta http-equiv="X-UA-Compatible" content="IE=edge" /> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description"
+	content="OCP - Open City Platform" />
+<meta name="author"
+	content="Ministero dell'Istruzione, dell'Università e della Ricerca (MIUR)" />
+<meta name='viewport'
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<!-- <meta name="bc-manifest" content="../../../webapp/static/meta/manifest.json" th:content="@{/static/meta/manifest.json}" /> -->
+<!-- Stylesheets -->
+<!-- Bootstrap 3.2.0 -->
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"
+	rel="stylesheet" type="text/css" />
+<!-- Font Awesome 4.1.0 -->
+<link
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
+	rel="stylesheet" type="text/css" />
+<!-- Base theme style -->
+<link href="../../../webapp/static/assets/css/admin-lte.css"
+	th:href="@{/static/assets/css/admin-lte.css}" rel="stylesheet"
+	type="text/css" />
+<link href="../../../webapp/static/assets/css/yeti-elements.css"
+	th:href="@{/static/assets/css/yeti-elements.css}" rel="stylesheet"
+	type="text/css" />
+<!-- Custom theme style -->
+<link href="../../../webapp/static/assets/css/prisma.css"
+	th:href="@{/static/assets/css/prisma.css}" rel="stylesheet"
+	type="text/css" />
+
+<!-- Just for debugging purposes. Don't actually copy this line! -->
+<!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+    	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+
+
+<!-- JavaScripts -->
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery.js"></script>
+<!-- Boostrap 3.2.0 scripts -->
+<script
+	src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<!-- Modernizr 2.7.2 library -->
+<script
+	src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
+<!-- Prisma Custom Scripts -->
+<script src="../../../webapp/static/assets/js/prisma.js"
+	th:src="@{/static/assets/js/prisma.js}"></script>
+
+</head>
+
+<!-- Page body -->
+<body class="skin-blue outoflayout-background">
+	<div class="wrapper-outoflayout">
+		<section>
+			<div class="row">
+				<div class="col-xs-12">
+
+					<!-- Header -->
+					<header class="header-outoflayout">
+						<a href="#" th:href="@{/}" title="Layout pubblico">
+							<h1>
+								<img 
+									th:src="#{logo.path}" alt="Prisma"
+									class="img-logo" th:text="#{text.prj}" /> <span class="label label-title">Alpha</span>
+							</h1>
+						</a>
+					</header>
+
+					<!-- Content -->
+					<div layout:fragment="content">
+						<!-- ============================================================================ -->
+						<!-- This content is only used for public prototyping purposes (natural templates)-->
+						<!-- and is therefore entirely optional.			                              -->
+						<!-- ============================================================================ -->
+						<div class="box box-primary shadowbox">
+							<div class="box-header">
+								<i class="fa fa-anchor"></i>
+								<h3 class="box-title">Lorem Ipsum</h3>
+							</div>
+							<div class="box-body">
+								<p id="p1" class="text-justify">Lorem ipsum dolor sit amet,
+									consectetur adipiscing elit. Fusce ac pellentesque ante. Proin
+									vehicula felis a eleifend egestas. Cras ultricies purus ut
+									bibendum fermentum. In et arcu a augue volutpat pellentesque.
+									Nam accumsan arcu a orci ornare bibendum. Aenean molestie ante
+									sit amet lacus tincidunt, ut posuere est iaculis. Donec aliquam
+									dui eu felis porta, id vestibulum lorem semper.</p>
+								<p id="p2" class="text-justify">Sed sapien urna, interdum
+									vel nisi nec, tristique rutrum diam. Pellentesque a neque
+									pulvinar, aliquam ipsum ut, vehicula dolor. Mauris sed diam
+									dignissim, viverra lectus et, bibendum quam. Sed sed diam diam.
+									Fusce eu adipiscing sem. In viverra pharetra nibh, in suscipit
+									massa porttitor et. Donec aliquet at lectus lobortis feugiat.
+									Quisque sollicitudin odio eget dolor tempus porta. Ut elit dui,
+									vestibulum et ante id, rhoncus consectetur nunc. Cras posuere
+									scelerisque ante in luctus. Interdum et malesuada fames ac ante
+									ipsum primis in faucibus. Duis dignissim quam magna, et
+									porttitor tortor fringilla ut. Nunc adipiscing ipsum felis, in
+									malesuada justo accumsan a. Phasellus massa sapien, commodo vel
+									vulputate in, viverra id leo.</p>
+								<p id="p3" class="text-justify">Pellentesque habitant morbi
+									tristique senectus et netus et malesuada fames ac turpis
+									egestas. Nulla vel ultricies risus, eu adipiscing neque. Nam id
+									mauris in lectus porta hendrerit. Quisque scelerisque sem non
+									mollis mattis. Maecenas eget enim vitae mauris faucibus
+									facilisis. Suspendisse facilisis ornare facilisis. Nam volutpat
+									massa eu convallis feugiat. Pellentesque habitant morbi
+									tristique senectus et netus et malesuada fames ac turpis
+									egestas. Donec ac lacus sed urna imperdiet volutpat ac sit amet
+									libero. Proin tincidunt ullamcorper purus, sit amet tincidunt
+									nisl sagittis ut. Sed sagittis, nisi quis ultrices auctor,
+									lectus nunc cursus enim, ac interdum leo lacus quis nulla. Nam
+									vel luctus nunc, quis accumsan ante. Donec cursus aliquam
+									sodales. Proin consectetur, risus vitae adipiscing pulvinar,
+									sem libero ultricies velit, a ultricies neque lectus eu ipsum.
+								</p>
+								<p id="p4" class="text-justify">Sed eu nisl sit amet est
+									ultricies scelerisque. Maecenas suscipit pharetra lectus, a
+									luctus turpis porta ac. Donec libero arcu, pellentesque tempor
+									luctus non, auctor vel diam. Fusce viverra, arcu at rutrum
+									consequat, arcu eros tristique ante, ut hendrerit libero nisi
+									in ante. Cras at suscipit lorem. Pellentesque sed faucibus
+									arcu, id consequat sem. Fusce bibendum odio ante, eu molestie
+									magna fringilla ac. Donec nec nisl in risus convallis
+									sollicitudin in sit amet nulla. Praesent et congue purus, nec
+									tempor magna. Vivamus vehicula semper felis, id ullamcorper
+									nisi malesuada eu. Ut imperdiet pharetra mattis.</p>
+								<p id="p5" class="text-justify">Praesent nec pharetra orci.
+									Nulla facilisi. Aliquam feugiat, tellus id facilisis
+									consectetur, lorem quam consectetur lacus, eu sodales tortor
+									est ac felis. Quisque ullamcorper erat tristique ipsum laoreet,
+									ac tristique leo placerat. Donec a laoreet elit. Cum sociis
+									natoque penatibus et magnis dis parturient montes, nascetur
+									ridiculus mus. Quisque eu condimentum odio. Nulla at feugiat
+									tellus, vel tincidunt justo. Nullam sit amet lacus quis augue
+									pellentesque faucibus eu eu mi.</p>
+							</div>
+							<!-- ./box-body -->
+						</div>
+						<!-- ./box -->
+					</div>
+					<!-- End content -->
+				</div>
+				<!-- ./col -->
+			</div>
+			<!-- ./row -->
+		</section>
+		<!-- Footer -->
+		<footer th:replace="fragments/footer :: footer"
+			class="cols-xs-12 page-footer text-center">
+			<h5>
+				<strong th:text="#{title.copyright}"><br class="visible-xs" th:text="#{text.prjExt}"/> 
+				</strong>
+			</h5>
+			<p>
+				<strong>Project funding:</strong> MIUR — Ministero dell'Istruzione,
+				dell'Università e della Ricerca<br /> <strong>Project ID:</strong>
+				D.D. n. 84/Ric del 2/03/2012, D.D. n. 255/Ric del 30/05/2012, D.D.
+				n. 370/Ric del 26/06/2012
+			</p>
+		</footer>
+	</div>
+	<!-- ./wrapper-outoflayout -->
+
+
+</body>
+
+</html>

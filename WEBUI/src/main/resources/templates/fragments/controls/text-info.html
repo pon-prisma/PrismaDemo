@@ -1,0 +1,27 @@
+<!-- 
+
+	Parametri: 
+				@param label:			label above the text info
+				@param content:     	content of the text info
+
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="text-info (label, content)">
+		<div>
+			<label 	class="col-sm-6 control-label" 
+					th:text="${label}"></label>
+			<div class="col-sm-6">
+		    	<p th:if="${content != null}" class="form-control-static" th:text="${content}"></p>
+		    </div>
+		    <div class="clearfix"></div>
+		</div>
+	</div>
+</body>
+
+</html>

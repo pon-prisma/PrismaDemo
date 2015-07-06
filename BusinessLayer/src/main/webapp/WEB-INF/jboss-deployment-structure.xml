@@ -1,0 +1,20 @@
+<jboss-deployment-structure>
+	<deployment>
+		<exclusions>
+			<!-- Exclusions to prevent JBoss to use its default logger, ignoring custom 
+				log4j configuration -->
+			<module name="org.apache.log4j" />
+			<module name="javax.validation" />
+
+			<!-- To force JBoss's RestEasy to use the newer version of Jackson -->
+			<module name="org.jboss.resteasy.resteasy-jackson-provider" />
+			<module name="org.jboss.resteasy.resteasy-jettison-provider" />
+		</exclusions>
+
+		<dependencies>
+			<!-- To force JBoss's RestEasy to use the newer version of Jackson -->
+			<module name="org.jboss.resteasy.resteasy-jackson2-provider" />
+		</dependencies>
+
+	</deployment>
+</jboss-deployment-structure>

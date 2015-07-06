@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<!-- Left side column. contains the dashoboard sidebar -->
+	<aside th:fragment="dashboard-menu" class="left-side sidebar-offcanvas">
+		<!-- sidebar: style can be found in sidebar.less -->
+
+
+		<div class="row" style="margin: 10px 0px;">
+			<div class="col-md-12">
+
+				<form action="#" method="get">
+					<div class="inputs">
+						<label>Testbed</label>
+						<div class="wizard-input-section input-group col-md-12"
+							style="margin-top: -5px;">
+							<select name="testbed" id="testbed" class="form-control"
+								required="required">
+								<option value="infn">INFN - Bari</option>
+								<option value="sielte">Sielte - Catania</option>
+							</select>
+
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="row" style="margin: 10px 0px;">
+			<div class="col-md-12">
+				<ul class="list-group">
+					<li class="list-group-item"><i id="iaasComputeStatus"
+						class="fa fa-refresh fa-spin"
+						style="color: #000000; margin-right: 10px;"></i> Compute</li>
+					<li class="list-group-item"><i id="iaasStorageStatus"
+						class="fa fa-refresh fa-spin"
+						style="color: #000000; margin-right: 10px;"></i> Storage</li>
+					<li class="list-group-item"><i id="iaasNetworkStatus"
+						class="fa fa-refresh fa-spin"
+						style="color: #000000; margin-right: 10px;"></i> Network</li>
+				</ul>
+			</div>
+		</div>
+		<section class="sidebar">
+
+			<ul class="sidebar-menu">
+				<li><a th:href="@{/dashboard}"> <i class="fa fa-dashboard"></i>
+						<span>Dashboard</span>
+				</a></li>
+				<li class="treeview"><a href="#"> <i class="fa fa-laptop"></i><span>Servizi IaaS</span> <i class="fa fa-angle-left pull-right"></i></a>
+					<ul class="treeview-menu">
+						<li><a href="#"><i class="fa fa-cog"></i> <b>Gestione Servizi</b></a></li>
+						<li><a th:href="@{/iaas/keyaas/}"><i class="fa fa-key"></i>Chiavi Pubbliche</a></li>
+						<li><a th:href="@{/iaas/vmaas/}"><i class="fa fa-desktop"></i>Macchine Virtuali</a></li>
+						<li><a th:href="@{/iaas/networkaas/}"><i class="fa fa-wifi"></i>Reti Virtuali</a></li>
+						<li><a th:href="@{/under-costruction}"><i class="fa fa-folder-open-o"></i>Storage ad Oggetti</a></li>
+					</ul>
+				</li>
+				<li class="treeview"><a href="#"> <i class="fa fa-gear"></i><span>Servizi PaaS</span> <i class="fa fa-angle-left pull-right"></i></a>
+					<ul class="treeview-menu">
+						<li><a th:href="@{/paas/}"><i class="fa fa-cog"></i><b>Gestione Servizi</b></a></li>
+						<li><a th:href="@{/paas/appaas/}"><i class="fa fa-coffee"></i>Application as a Service</a></li>
+						<li><a th:href="@{/paas/biaas/}"><i class="fa fa-lightbulb-o"></i>Business Intelligence</a></li>
+						<li><a th:href="@{/paas/bpmaas/}"><i class="fa fa-cubes"></i>Business Process</a></li>
+						<li><a th:href="@{/paas/caaas/}"><i class="fa fa-lock"></i>Certificati PKI</a></li>
+						<li><a th:href="@{/paas/cmsaas/}"><i class="fa fa-wordpress"></i>CMS</a></li>
+						<li><a th:href="@{/paas/dbaas/}"><i class="fa fa-database"></i>Database</a></li>
+						<li><a th:href="@{/paas/emailaas/}"><i class="fa fa-envelope-o"></i>Email</a></li>
+						<li><a th:href="@{/paas/mqaas/}"><i class="fa fa-random"></i>Message Queue</a></li>
+						<li><a th:href="@{/paas/odaas/}"><i class="fa fa-share-alt"></i>Open Data</a></li>
+						<li><a th:href="@{/paas/smsaas/}"><i class="fa fa-comments-o"></i>SMS</a></li>
+					</ul>
+				</li>
+<!-- 				<li><a th:href="@{/workgroups}"> <i class="fa fa-group"></i><span>Gestione Workgroup</span></a></li> -->
+				<li><a th:href="@{/under-costruction}"> <i class="fa fa-group"></i><span>Gestione Workgroup</span></a></li>
+				<li><a th:href="@{/token}"> <i class="fa fa-wrench"></i><span>Gestione Token</span></a></li>
+				<li class="treeview"><a href="#"> <i class="fa fa-money"></i><span>Costi &amp; Consumi</span><i class="fa fa-angle-left pull-right"></i></a>
+					<ul class="treeview-menu">
+						<li><a th:href="@{/under-costruction}"><i class="fa fa-chevron-right"></i>Consumi</a></li>
+						<li><a th:href="@{/under-costruction}"><i class="fa fa-chevron-right"></i>Costi Sostenuti</a></li>
+						<li><a th:href="@{/under-costruction}"><i class="fa fa-chevron-right"></i>Listino</a></li>
+					</ul>
+				</li>
+				<li class="treeview"><a href="#"> <i class="fa fa-support"></i><span>Assistenza</span><i class="fa fa-angle-left pull-right"></i></a>
+					<ul class="treeview-menu">
+						<li><a th:href="@{/support/faq}"><i class="fa fa-chevron-right"></i>F.A.Q.</a></li>
+						<li><a th:href="@{/under-costruction}"><i class="fa fa-chevron-right"></i>Segnalazioni</a></li>
+					</ul>
+				</li>
+				<li><a th:href="@{/terms}"> <i class="fa fa-legal"></i><span>Termini &amp; Condizioni</span></a></li>
+			</ul>
+		</section>
+		<!-- /.sidebar -->
+	</aside>
+
+</body>
+
+</html>

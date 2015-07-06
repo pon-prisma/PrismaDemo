@@ -1,0 +1,50 @@
+<!-- 
+
+	Parameters: 
+				@param id: 				id and name of the input
+				@param label:			label above the input
+				@param iconClass:		class of the icon
+				@param placeholder:     input placeholder
+				@param maxlenght:     	input maxlength
+				@param colSize:			column size of the div. Use 8 ad default, use 12 for inner input
+
+
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="events (id, title, url, paginationSize)" class="inputs">
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header">
+						<i class="fa fa-calendar"></i>
+						<h3 class="box-title">Eventi</h3>
+					</div>
+					<div class="box-body">
+						<table th:id="${id}" data-toggle="table"
+							th:attr="data-url=${url} , data-page-size=${paginationSize} , data-page-list=@{'['} + ${paginationSize} + @{']'}"
+							data-cache="false" data-show-refresh="true"
+							data-side-pagination="server" data-pagination="true" >
+							<thead>
+								<th class="col-md-3" data-field="date" data-sortable="true" data-formatter="dateFormatter">Data</th>
+								<th class="col-md-2" data-field="level" data-sortable="true"
+									data-formatter="levelFormatter">Livello</th>
+								<th class="col-md-7" data-field="description">Dettagli</th>
+							</thead>
+						</table>
+						<div class="pull-right pagination"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</body>
+
+</html>

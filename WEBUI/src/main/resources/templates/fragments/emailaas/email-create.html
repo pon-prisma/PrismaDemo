@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="email-create">
+		<form id="emailCreateForm" name="emailCreateForm"
+			th:object="${emailForm}" th:action="@{/async/paas/emailaas}"
+			action="#" method="post">
+
+			<div class="row">
+				<div class="col-md-12">
+					<label>Indirizzo di posta</label>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+								<input type="text" class="form-control" id="accountName"
+									name="accountName" th:field="*{accountName}" />
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-at"></i></span>
+								<select name="domain" class="form-control" required="required">
+									<div th:each="domain : ${domains}">
+										<option th:value="${domain.domain}" th:text="${domain.domain}"></option>
+									</div>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<span th:if="${#fields.hasErrors('accountName')}"
+								th:errors="*{accountName}"> </span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<label>Password</label>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa fa-key"></i></span>
+						<input type="password" class="form-control" id="emailPassword"
+							name="emailPassword" placeholder="Inserisci la password"
+							required="required" th:field="*{emailPassword}" />
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<span th:if="${#fields.hasErrors('emailPassword')}"
+						th:errors="*{emailPassword}"> </span>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<label>Conferma password</label>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa fa-key"></i></span>
+						<input type="password" class="form-control"
+							id="emailConfirmPassword" name="emailConfirmPassword"
+							placeholder="Conferma la password"
+							th:field="*{emailConfirmPassword}" />
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<span th:if="${#fields.hasErrors('emailConfirmPassword')}"
+						th:errors="*{emailConfirmPassword}"> </span>
+				</div>
+			</div>
+			<br/>
+			<div class="row">
+				<div class="col-md-12">
+					<div id="createAccountInfo">
+						<p></p>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>

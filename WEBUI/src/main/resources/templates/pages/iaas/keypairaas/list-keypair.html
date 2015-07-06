@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.keypair}"></title>
+
+<script th:src="@{/static/assets/js/jquery.blockUI.js}"
+	type="text/javascript"></script>
+
+<script th:src="@{/static/assets/js/jquery.ui.widget.js}"
+	type="text/javascript"></script>
+
+<script th:src="@{/static/assets/js/jquery.fileDownload.js}"
+	type="text/javascript"></script>
+
+<link rel="stylesheet"
+	th:href="@{/static/assets/css/bootstrap-table.css}" />
+<script th:src="@{/static/assets/js/bootstrap-table.js}"
+	type="text/javascript"></script>
+	
+<script type="text/javascript">
+(function ($) {
+    'use strict';
+    $.extend($.fn.bootstrapTable.defaults, {
+        formatLoadingMessage: function () {
+            return 'Caricamento in corso…';
+        },
+        formatRecordsPerPage: function (pageNumber) {
+            return pageNumber + ' records per pagina';
+        },
+        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+            return 'Chiavi mostrate da ' + pageFrom + ' a ' + pageTo + ' (Numero totale di chiavi: ' + totalRows + ')';
+        },
+        formatSearch: function () {
+            return 'Cerca';
+        },
+        formatNoMatches: function () {
+            return 'Nessuna chiave trovata';
+        },
+        formatRefresh: function () {
+            return 'Rinfrescare';
+        },
+        formatToggle: function () {
+            return 'Alternare';
+        },
+        formatColumns: function () {
+            return 'Colonne';
+        }
+    });
+})(jQuery);
+</script>
+	
+	
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	
+	/* 
+	$("#fileDownload", function () {
+    	$.fileDownload($(this).prop('href'))
+        .done(function () { alert('File download a success!'); })
+        .fail(function () { alert('File download failed!'); });
+ 
+    return false; //this is critical to stop the click event which will trigger a normal file download
+}); */
+
+		var keyPair= "";
+		function selectKeypair(name){
+			keyPair = name;
+			$("#modalKeyName").text(name);
+		}
+
+
+		function cleanCreateModal(){
+			$('#createKeyName').val("");
+			$('#modalCreateFooterError').text("");
+			$("#createKey").removeClass("hidden");
+			$('#modalCreate').removeClass("hidden");
+			$('#modalCreateDownload').addClass("hidden");
+		}
+
+		function dowload(){
+			$('#modalCreateKeypair').modal('hide');
+			//Il download con IE non funziona quindi si è deciso di aprire una nuova finestra per il 
+			//download del file 
+			var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+
+            if (msie > 0){
+            	window.open('/async/iaas/keyaas/download');           	
+			}
+            else{
+				$.fileDownload("/async/iaas/keyaas/download", {
+					successCallback: function (url) {
+						console.log("SUCCESS");
+						console.log(url);
+					},
+					failCallback: function (HttpServletResponse, url) {
+						console.log("FAILED");
+						console.log(url);
+					}
+				});
+				return false;  
+			}		
+		}
+		
+		function createKeypair(){
+			var response;
+			$.ajax({
+				url : "/async/iaas/keyaas/" + $('#createKeyName').val(),
+				type: 'POST', 
+				statusCode : {
+					404 : function() {
+						console.log("404");
+						window.location.href = path + '404';
+					},
+					500 : function() {
+						console.log("500");
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				beforeSend : function() {
+					$.blockUI({
+						css : {
+							border : 'none',
+							padding : '15px',
+							backgroundColor : '#000',
+							'-webkit-border-radius' : '10px',
+							'-moz-border-radius' : '10px',
+							opacity : .5,
+							color : '#fff'
+						}
+					});
+					
+				},
+				success : function(data) {
+					response = data;
+					if (data.status) {
+						if(data.success){
+							console.log(data.result)
+					  		$("#keyNameCreated").val($('#createKeyName').val());
+							$("#publicKeyCreated").val(data.result);
+							$("#modalCreate").addClass("hidden");
+							$("#modalCreateDownload").removeClass("hidden");
+							$("#createKey").addClass("hidden");
+							$('#modalCreateFooterError').text("");
+							$('#table').bootstrapTable('refresh');
+							//$('table > tbody > tr:first').before('<tr><td class="col-md-6"><span>' + data.result.name + '</span></td><td class="col-md-4"><span>' + data.result.fingerprint + '</span></td><td class="col-md-2"><button type="button" data-toggle="modal" data-target="#modalDeleteKeypair" class="btn btn-sm btn-danger" id="button' + data.result.name + '" onclick="javascript:selectKeypair(\'' + data.result.name +'\');">Elimina</button></td></tr>');
+						} else {							
+							console.log(data.error.errorCode);
+							console.log(data.error.message);
+						}
+						
+					} else {
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				complete : function(){
+					
+					keyPair = "";
+					$('#modalCreateKeypair').modal('show');
+					if(response){ 
+						if(!response.success){
+							switch(response.error.errorCode){
+							case "CONFLICT":
+								$('#modalCreateFooterError').text("Chiave duplicata");
+								break;
+							default:
+								$('#modalCreateFooterError').text("Errore durante la creazione");
+								break;
+							}
+						}
+					} else {
+						$('#modalCreateFooterError').text("Inserisci un nome corretto");
+					}
+					$.unblockUI();
+				}
+			});
+		}
+
+
+
+		
+		function cleanImportModal(){
+			$('#importKeyName').val("");
+			$('#importPublicKey').val("");
+			$('#modalImportFooterError').text("");
+		}
+		
+		function importKeypair(){
+
+			var data = { "name" : $("#importKeyName").val(),  "publicKey": $("#importPublicKey").val()};
+			var response;
+			$.ajax({
+				url : "/async/iaas/keyaas",
+				type: 'POST', 
+				contentType: 'application/json',
+			    data: JSON.stringify(data),
+				statusCode : {
+					404 : function() {
+						console.log("404");
+						window.location.href = path + '404';
+					},
+					500 : function() {
+						console.log("500");
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				beforeSend : function() {
+					$.blockUI({
+						css : {
+							border : 'none',
+							padding : '15px',
+							backgroundColor : '#000',
+							'-webkit-border-radius' : '10px',
+							'-moz-border-radius' : '10px',
+							opacity : .5,
+							color : '#fff'
+						}
+					});
+					
+				},
+				success : function(data) {
+					response = data;
+					if (data.status) {
+						if(data.success){
+							console.log(data.result)
+							$('#table').bootstrapTable('refresh');
+							//$('table > tbody > tr:first').before('<tr><td class="col-md-6"><span>' + data.result.name + '</span></td><td class="col-md-4"><span>' + data.result.fingerprint + '</span></td><td class="col-md-2"><button type="button" data-toggle="modal" data-target="#modalDeleteKeypair" class="btn btn-sm btn-danger" id="button' + data.result.name + '" onclick="javascript:selectKeypair(\'' + data.result.name +'\');">Elimina</button></td></tr>');
+						} else {							
+							console.log(data.error.errorCode);
+							console.log(data.error.message);
+						}
+						
+					} else {
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				complete : function(){
+					keyPair = "";
+					if(!response.success){
+						$('#dialogImportKeypair').modal('show');
+						switch(response.error.errorCode){
+						case "BAD_REQUEST":
+							$('#modalImportFooterError').text("La chiave inserita non è valida");
+							break;
+						case "CONFLICT":
+							$('#modalImportFooterError').text("Chiave duplicata");
+							break;
+						default:
+							$('#modalImportFooterError').text("Errore durante l'import");
+							break;
+						}
+					}
+					$.unblockUI();
+				}
+			});
+		}
+
+
+		
+		
+	    
+		function deleteKeypair(){
+			if(keyPair == ""){
+				return;
+			}
+			$.ajax({
+				url : "/async/iaas/keyaas/" + keyPair,
+				type : "DELETE",
+				statusCode : {
+					404 : function() {
+						console.log("404");
+						window.location.href = path + '404';
+					},
+					500 : function() {
+						console.log("500");
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				beforeSend : function() {
+					$.blockUI({
+						css : {
+							border : 'none',
+							padding : '15px',
+							backgroundColor : '#000',
+							'-webkit-border-radius' : '10px',
+							'-moz-border-radius' : '10px',
+							opacity : .5,
+							color : '#fff'
+						}
+					});
+					$('#modalDeleteKeypair').modal('hide');
+				},
+				success : function(data) {
+					if (data) {
+						$('#table').bootstrapTable('refresh');
+						//remove from DOM
+						console.log(data);
+						//var id = "#button" + keyPair;
+						//$(id).parent().parent().remove();
+					} else {
+						console.log("Errore durante la cancellazione");
+					}
+				},
+				complete : function(){
+					keyPair = "";
+					$.unblockUI();
+				}
+			});
+			
+		}
+   		
+	/*]]>*/		
+</script>
+
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>Key pair</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi IaaS</a></li>
+					<li><a th:href="@{/iaas/keyaas}"> KeyPair</a></li>
+					<li class="active">Dashboard</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<div class="col-md-offset-8 col-md-4">
+						<h3>
+							<div class="row">
+								<div class="col-xs-6">
+									<button class="btn btn-primary navbar-btn pull-right"
+										data-toggle="modal" data-target="#modalCreateKeypair"
+										onClick="cleanCreateModal();">Crea Keypair</button>
+								</div>
+								<div class="col-xs-6">
+									<button class="btn btn-primary navbar-btn pull-right"
+										data-toggle="modal" data-target="#dialogImportKeypair"
+										onClick="cleanImportModal();">Importa Keypair</button>
+								</div>
+							</div>
+						</h3>
+					</div>
+				</div>
+
+				<div class="modal" id="modalCreateKeypair" tabindex="-1"
+					role="dialog" aria-labelledby="modalCreateKeypairLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="myModalLabel">Crea Keypair</h4>
+							</div>
+							<div class="modal-body">
+								<div id="modalCreate">
+									<div class="row">
+										<div class="col-md-6 col-xs-12">
+											<div class="inputs">
+												<label for="virtualMachineName">Nome della Chiave</label>
+												<div style="margin-top: 0"
+													class="wizard-input-section input-group">
+													<span class="input-group-addon"><i class="fa fa-cog"></i></span>
+													<input type="text" class="form-control" data-serialize="1"
+														required="required" id="createKeyName"
+														name="createKeyName" placeholder="Chiave" maxlength="30"
+														aria-required="true" />
+												</div>
+											</div>
+
+										</div>
+										<div class="col-md-6 col-xs-12">
+											<p>
+												<strong>Descrizione</strong>
+											</p>
+											<p>I Keypairs sono coppie di chiavi pubbliche e private.
+												Queste credenziali saranno inserite nelle immagini dalle
+												quali vengono generate le macchine virtuali.</p>
+											<p>Creando un nuovo keypair sarà possibile scaricare la
+												chiave privata da utilizzare per accedere alle macchine.</p>
+										</div>
+									</div>
+								</div>
+								<div id="modalCreateDownload" class="hidden">
+									<a id="fileDownload" href="#" 
+										target="_top" onClick="dowload();" style="color:blue;">Scarica la tua chiave</a>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<div class="row">
+									<div class="col-md-4">
+										<b><span id="modalCreateFooterError" class="pull-left" style="color: red;"></span></b>
+									</div>
+									<div class="col-md-offset-4 col-md-4">
+										<button type="button" class="btn btn-default"
+											data-dismiss="modal">Chiudi</button>
+										<button id="createKey" type="button" data-dismiss="modal"
+											class="btn btn-primary" onclick="createKeypair();">Crea</button>
+									</div>
+								</div>							
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal fade" id="dialogImportKeypair" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+					style="">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<span aria-hidden="true">&times;</span><span class="sr-only">Chiudi</span>
+								</button>
+								<h4 class="modal-title">Importa chiave pubblica</h4>
+							</div>
+
+							<div class="modal-body">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="inputs">
+											<label for="keyName">Nome Chiave</label>
+											<div class="wizard-input-section input-group"
+												style="margin-top: 0">
+												<span class="input-group-addon"><i
+													class="fa fa-file-text-o"></i></span> <input type="text"
+													class="form-control" id="importKeyName"
+													name="importKeyName" placeholder="Es: chiave-Ubuntu"
+													data-serialize="1" maxlength="40" required="required" />
+											</div>
+										</div>
+										<div class="inputs">
+											<label for="publicKey">Chiave pubblica</label>
+											<div class="wizard-input-section input-group"
+												style="margin-top: 0">
+												<span class="input-group-addon"><i class="fa fa-key"></i></span>
+												<textarea class="form-control" id="importPublicKey"
+													name="importPublicKey" placeholder="" data-serialize="1"
+													required="required" rows="20" cols="50" maxlength="4000"
+													style="resize: none"></textarea>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<h3>Descrizione:</h3>
+										<p>Carica la chiave pubblica e conserva la chiave privata
+											per accedere alla macchina virtuale.</p>
+										<p>Scegli un nome per la chiave e incolla il contenuto della chiave
+											pubblica nella apposita area.</p>
+										<p>Per generare una coppia di chiavi usa il comando:</p>
+										<p></p>
+										<pre>ssh-keygen -t rsa -f cloud.key</pre>
+										<p></p>
+										<p>L'output del comando è una coppia di chiavi: una chiave
+											privata (cloud.key) e una pubblica (cloud.key.pub).</p>
+										<p>Per effettuare il login alla macchina utilizza il
+											comando:</p>
+										<p></p>
+										<pre>ssh -i cloud.key ubuntu@&lt;instance_ip&gt;</pre>
+										<p></p>
+										<p>oppure:</p>
+										<p></p>
+										<pre>ssh -i cloud.key ec2-user@&lt;instance_ip&gt;</pre>
+										<p></p>
+									</div>
+
+								</div>
+							</div>
+							<div class="modal-footer">
+								<div class="row">
+									<div class="col-md-8">
+										<b> <span class="pull-left" id="modalImportFooterError"
+											style="color: red;"></span></b>
+									</div>
+									<div class="col-md-4">
+										<button type="button" class="btn btn-default"
+											data-dismiss="modal">Chiudi</button>
+										<button id="importKey" type="button" data-dismiss="modal"
+											class="btn btn-primary" onclick="importKeypair();">Importa</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row" style="margin-top: 10px;">
+					<div class="col-xs-12">
+						<div class="box box-primary" style="margin-bottom: 0;">
+							<div class="box-header">
+								<i class="fa fa-user"></i>
+								<h3 class="box-title">Keypair create nel workgroup</h3>
+							</div>
+							<div class="box-body">
+							
+								<table id="table" data-toggle="table"
+									data-url="/async/iaas/keyaas"
+									data-cache="false" data-pagination="true"
+									data-side-pagination="server" data-page-size="10"
+									data-page-list="[10]">
+									<thead>
+										<th class="col-md-5" data-field="name">Nome</th>
+										<th class="col-md-5" data-field="fingerprint">Fingerprint</th>
+										<th class="col-md-2" data-field="name" data-formatter="deleteKeyFormatter">Elimina</th>
+									</thead>
+								</table>
+								<div class="pull-right pagination"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="modal" id="modalDeleteKeypair" tabindex="-1"
+									role="dialog" aria-labelledby="modalDeleteKeypairLabel"
+									aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h4 class="modal-title" id="myModalLabel">Elimina
+													Keypair</h4>
+											</div>
+											<div class="modal-body">
+												Sei sicuro di voler eliminare la chiave <strong><span
+													id="modalKeyName"></span></strong>?
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-default"
+													data-dismiss="modal">Chiudi</button>
+												<button type="button" class="btn btn-danger"
+													onclick="deleteKeypair();">Elimina</button>
+											</div>
+										</div>
+									</div>
+								</div>
+				
+				
+			</section>
+
+
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+</body>
+</html>

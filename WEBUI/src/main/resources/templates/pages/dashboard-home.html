@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.dashboard}"></title>
+
+
+<!-- These are useful to create LINE charts -->
+<link rel="stylesheet"
+	th:href="@{/static/assets/css/morris-0.5.1.min.css}" />
+<script th:src="@{/static/assets/js/raphael-2.1.0.min.js}"></script>
+<script th:src="@{/static/assets/js/morris-0.5.1.min.js}"></script>
+
+
+
+<!-- These are useful to create DONUT charts -->
+<script th:src="@{/static/assets/js/jquery.knob.min.js}"></script>
+<script th:src="@{/static/assets/js/chart.min.js}"></script>
+
+<!-- Line Chart -->
+<script type="text/javascript">
+	$(function() {
+		"use strict";
+		// LINE CHART
+		var line = new Morris.Line({
+			element : 'line-chart',
+			resize : true,
+			data : [ {
+				y : '2011 Q1',
+				item1 : 2666
+			}, {
+				y : '2011 Q2',
+				item1 : 2778
+			}, {
+				y : '2011 Q3',
+				item1 : 4912
+			}, {
+				y : '2011 Q4',
+				item1 : 3767
+			}, {
+				y : '2012 Q1',
+				item1 : 6810
+			}, {
+				y : '2012 Q2',
+				item1 : 5670
+			}, {
+				y : '2012 Q3',
+				item1 : 4820
+			}, {
+				y : '2012 Q4',
+				item1 : 15073
+			}, {
+				y : '2013 Q1',
+				item1 : 10687
+			}, {
+				y : '2013 Q2',
+				item1 : 8432
+			} ],
+			xkey : 'y',
+			ykeys : [ 'item1' ],
+			labels : [ 'Item 1' ],
+			lineColors : [ '#3c8dbc' ],
+			hideHover : 'auto'
+		});
+	});
+</script>
+
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	/*]]>*/
+</script>
+
+
+<script type="text/javascript">
+	$(function() {
+
+		$(".knob").knob({});
+		updateLabel();
+	});
+
+	function updateLabel() {
+		$("#cpu-label").html(
+				"VCPU utilizzate: " + $("#cpu").attr('value') + " di "
+						+ $("#cpu").attr('data-max'));
+		$("#ram-label").html(
+				"RAM (GB) utilizzata: " + $("#ram").attr('value') + " di "
+						+ $("#ram").attr('data-max') + " GB");
+		$("#disk-label").html(
+				"Dico (GB) utilizzato: " + $("#disk").attr('value') + " di "
+						+ $("#disk").attr('data-max'));
+		$("#ip-label").html(
+				"IP utilizzati: " + $("#ip").attr('value') + " di "
+						+ $("#ip").attr('data-max'));
+	}
+</script>
+
+
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Dashboard <small>Pannello di Controllo</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+					<li class="active">Dashboard</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+
+				<span th:text="${infrastructure}"></span>
+
+
+				<!-- START DONUTS CHART -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-pie-chart"></i>
+								<h3 class="box-title">Risorse Workgroup</h3>
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-3 col-sm-6 col-xs-6"
+										style="text-align: center;">
+										<div style="display: inline; width: 90px; height: 90px;">
+											<canvas style="width: 0px; height: 90px"></canvas>
+											<input id="cpu" type="text" class="knob" value="10"
+												data-step="1" data-min="0" data-max="50" data-width="90"
+												data-height="90" data-fgcolor="#3c8dbc" data-readonly="true"
+												readonly="readonly"
+												style="width: 49px; height: 30px; position: absolute; vertical-align: middle; margin-top: 30px; margin-left: -69px; border: 0px; font-weight: bold; font-style: normal; font-variant: normal; font-size: 18px; line-height: normal; font-family: Arial; text-align: center; color: rgb(60, 141, 188); padding: 0px; -webkit-appearance: none; background: none;" />
+										</div>
+										<div class="knob-label" id="cpu-label"></div>
+									</div>
+									<div class="col-md-3 col-sm-6 col-xs-6"
+										style="text-align: center;">
+										<div style="display: inline; width: 90px; height: 90px;">
+											<canvas width="112" height="112"
+												style="width: 0px; height: 90px;"></canvas>
+											<input type="text" id="ram" class="knob" value="64"
+												ata-step="1" data-min="0" data-max="128" data-width="90"
+												data-height="90" data-fgcolor="#3c8dbc" data-readonly="true"
+												readonly="readonly"
+												style="width: 49px; height: 30px; position: absolute; vertical-align: middle; margin-top: 30px; margin-left: -69px; border: 0px; font-weight: bold; font-style: normal; font-variant: normal; font-size: 18px; line-height: normal; font-family: Arial; text-align: center; color: rgb(60, 141, 188); padding: 0px; -webkit-appearance: none; background: none;" />
+										</div>
+										<div class="knob-label" id="ram-label"></div>
+									</div>
+									<div class="col-md-3 col-sm-6 col-xs-6"
+										style="text-align: center;">
+										<div style="display: inline; width: 90px; height: 90px;">
+											<canvas width="112" height="112"
+												style="width: 0px; height: 90px;"></canvas>
+											<input type="text" id="disk" class="knob" value="180"
+												ata-step="1" data-min="0" data-max="2048" data-width="90"
+												data-height="90" data-fgcolor="#3c8dbc" data-readonly="true"
+												readonly="readonly"
+												style="width: 49px; height: 30px; position: absolute; vertical-align: middle; margin-top: 30px; margin-left: -69px; border: 0px; font-weight: bold; font-style: normal; font-variant: normal; font-size: 18px; line-height: normal; font-family: Arial; text-align: center; color: rgb(60, 141, 188); padding: 0px; -webkit-appearance: none; background: none;" />
+										</div>
+										<div class="knob-label" id="disk-label"></div>
+									</div>
+									<div class="col-md-3 col-sm-6 col-xs-6"
+										style="text-align: center;">
+										<div style="display: inline; width: 90px; height: 90px;">
+											<canvas width="112" height="112"
+												style="width: 0px; height: 90px;"></canvas>
+											<input type="text" id="ip" class="knob" value="4"
+												ata-step="1" data-min="0" data-max="20" data-width="90"
+												data-height="90" data-fgcolor="#3c8dbc" data-readonly="true"
+												readonly="readonly"
+												style="width: 49px; height: 30px; position: absolute; vertical-align: middle; margin-top: 30px; margin-left: -69px; border: 0px; font-weight: bold; font-style: normal; font-variant: normal; font-size: 18px; line-height: normal; font-family: Arial; text-align: center; color: rgb(60, 141, 188); padding: 0px; -webkit-appearance: none; background: none;" />
+										</div>
+										<div class="knob-label" id="ip-label">data-width="90"</div>
+									</div>
+
+								</div>
+								<!-- /.row -->
+							</div>
+							<!-- /.box-body -->
+						</div>
+						<!-- /.box -->
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- END DONUTS CHART -->
+
+
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-plus-square"></i>
+								<h3 class="box-title">Stato Infrastruttura</h3>
+							</div>
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-12">
+										<!-- Nav tabs -->
+										<ul class="nav nav-tabs" role="tablist">
+											<li class="active"><a href="#home" role="tab"
+												data-toggle="tab">IaaS</a></li>
+											<li><a href="#profile" role="tab" data-toggle="tab">PaaS</a></li>
+										</ul>
+
+										<!-- Tab panes -->
+										<div class="tab-content">
+											<div class="tab-pane active" id="home">
+
+												<div class="box-body table-responsive no-padding">
+													<table
+														class="table table-striped table-hover table-bordered">
+														<thead>
+															<tr>
+																<th>Stato</th>
+																<th>Nome</th>
+																<th>Dettagli</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td><i class="fa fa-check" style="color: #00FF00"></i></td>
+																<td>Compute node 01</td>
+																<td>Il servizio funziona correttamente</td>
+															</tr>
+															<tr>
+																<td><i class="fa fa-check" style="color: #00FF00"></i></td>
+																<td>Compute node 02</td>
+																<td>Il servizio funziona correttamente</td>
+															</tr>
+															<tr>
+																<td><i class="fa fa-check" style="color: #00FF00"></i></td>
+																<td>Rete</td>
+																<td>Il servizio funziona correttamente</td>
+															</tr>
+															<tr>
+																<td><i class="fa fa-check" style="color: #00FF00"></i></td>
+																<td>Disco di Storage 01</td>
+																<td>Il servizio funziona correttamente</td>
+															</tr>
+															<tr>
+																<td><i class="fa fa-check" style="color: #00FF00"></i></td>
+																<td>Disco di Storage 01</td>
+																<td>Il servizio funziona correttamente</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<div class="tab-pane" id="profile">
+
+												<div class="box-body table-responsive no-padding">
+													<table
+														class="table table-striped table-hover table-bordered">
+														<thead>
+															<tr>
+																<th>Stato</th>
+																<th>Nome</th>
+																<th>Dettagli</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td><i class="fa fa-check" style="color: #00FF00"></i></td>
+																<td>DBaaS</td>
+																<td>Il servizio funziona correttamente</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
+				<div class="row">
+					<div class="col-xs-12 col-md-6">
+						<div class="row">
+							<div class="col-xs-12">
+								<!-- Chart -->
+								<div class="box box-primary">
+									<div class="box-header">
+										<i class="fa fa-bar-chart-o"></i>
+										<h3 class="box-title">Andamento consumi</h3>
+									</div>
+
+									<div class="box-body chart-responsive">
+										<div class="chart" id="line-chart" style="height: 300px;"></div>
+									</div>
+									<!-- /.box-body -->
+								</div>
+								<!-- /.box -->
+							</div>
+
+							<!-- 
+							<div class="col-xs-12">
+								<div class="box box-primary">
+									<div class="box-header">
+										<i class="fa fa-info"></i>
+										<h3 class="box-title">Servizi &amp; Tenants attivi</h3>
+									</div>
+									<div class="box-body">
+										<ul class="list-group" style="margin-bottom: 0;">
+											<li class="list-group-item"><span class="badge">2</span>
+												Macchina virtuali create</li>
+											<li class="list-group-item"><span class="badge">7</span>
+												Servizi PaaS attivi</li>
+											<li class="list-group-item"><span class="badge">1</span>
+												Tenants di appartenenza</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							 -->
+						</div>
+						<!-- /.row (inner) -->
+					</div>
+					<!-- /.col -->
+
+					<div class="col-xs-12 col-md-6">
+
+						<div class="row">
+							<div class="col-xs-12">
+								<!-- interactive chart -->
+								<div class="box box-primary">
+									<div class="box-header">
+										<i class="fa fa-bullhorn"></i>
+										<h3 class="box-title">Area notifiche</h3>
+									</div>
+									<div class="box-body">
+										<h4 style="margin-top: 0">Martedì 21 Ottobre 2014</h4>
+										<p class="text-muted">
+											<i class="fa fa-clock-o"></i> Ore 13:45 &mdash; <strong>Scalamento
+												Automatico</strong>
+										</p>
+										<div class="alert alert-dismissable alert-success">
+											<button type="button" class="close" data-dismiss="alert">×</button>
+											La macchina virtuale <strong>tomcat-asl</strong> ha scalato
+											da flavor <strong>small</strong> a <strong>medium</strong>
+										</div>
+
+										<p class="text-muted">
+											<i class="fa fa-clock-o"></i> Ore 13:10 &mdash; <strong>Inizio
+												Manutenzione Programmata</strong>
+										</p>
+										<div class="alert alert-dismissable alert-warning">
+											<button type="button" class="close" data-dismiss="alert">×</button>
+											<p>
+												La macchina virtuale <strong>tomcat-asl</strong> &eacute;
+												stata spenta per manutenzione
+											</p>
+										</div>
+
+										<div class="pull-right" style="margin: 10px 0 20px 0;">
+											<ul class="nav nav-pills">
+												<li class="active">Ci sono altre <span class="badge">2</span>
+													notifiche non lette
+												</li>
+											</ul>
+										</div>
+										<div class="clearfix"></div>
+
+										<div class="form-group">
+											<div class="pull-right">
+												<button class="btn btn-default">Segna come lette</button>
+												<button type="submit" class="btn btn-primary">Leggi
+													altre</button>
+											</div>
+										</div>
+										<div class="clearfix"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- Macchine Virtuali -->
+				<!-- 
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-laptop"></i>
+								<h3 class="box-title">Macchine Virtuali</h3>
+							</div>
+							<div class="box-body table-responsive no-padding">
+
+								<table class="table table-striped table-hover table-bordered">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Nome</th>
+											<th>Tenant</th>
+											<th>Template</th>
+											<th class="hidden-xs">CPU</th>
+											<th class="hidden-xs">RAM</th>
+											<th>Stato</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td><code>sample01vm</code></td>
+											<td><code>santer_reply_wg</code></td>
+											<td><i class="fa fa-windows"></i> Windows Server 2008</td>
+											<td class="hidden-xs">4</td>
+											<td class="hidden-xs">8</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-danger btn-xs">Spenta</button>
+														<button type="button"
+															class="btn btn-danger btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Spenta</div>
+											</td>
+										</tr>
+										<tr>
+											<td>2</td>
+											<td><code>sample02vm</code></td>
+											<td><code>santer_reply_wg</code></td>
+											<td><i class="fa fa-linux"></i> Ubuntu Server 12.04</td>
+											<td class="hidden-xs">2</td>
+											<td class="hidden-xs">4</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-success btn-xs">Avviata</button>
+														<button type="button"
+															class="btn btn-success btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Avviata</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				 -->
+				<!-- Fine Macchine Virtuali -->
+
+				<!-- Servizi PAAS -->
+				<!-- 
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-gears"></i>
+								<h3 class="box-title">Servizi PaaS</h3>
+							</div>
+							<div class="box-body table-responsive no-padding">
+								<table class="table table-striped table-hover table-bordered">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Nome</th>
+											<th>Tenant</th>
+											<th>Categoria</th>
+											<th>Prodotto</th>
+											<th>Stato</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td><code>mysql01</code></td>
+											<td><code>santer_reply_wp</code></td>
+											<td>Database</td>
+											<td>MySQL Community Server</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-danger btn-xs">Non
+															attivo</button>
+														<button type="button"
+															class="btn btn-danger btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Non attivo</div>
+											</td>
+										</tr>
+										<tr>
+											<td>2</td>
+											<td><code>hdd750gb_01</code></td>
+											<td><code>santer_reply_wg</code></td>
+											<td>Servizi di storage</td>
+											<td>Disco 750GB</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-success btn-xs">Attivo</button>
+														<button type="button"
+															class="btn btn-success btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Attivo</div>
+											</td>
+										</tr>
+										<tr>
+											<td>3</td>
+											<td><code>postgresql_01</code></td>
+											<td><code>santer_reply_wg</code></td>
+											<td>Database</td>
+											<td>PostgreSQL</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-success btn-xs">Attivo</button>
+														<button type="button"
+															class="btn btn-success btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Attivo</div>
+											</td>
+										</tr>
+										<tr>
+											<td>4</td>
+											<td><code>to_city_opendata01</code></td>
+											<td><code>santer_reply_wg</code></td>
+											<td>Open Data</td>
+											<td>Torino Servizi al cittadino &mdash; Open Data</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-success btn-xs">Attivo</button>
+														<button type="button"
+															class="btn btn-success btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Attivo</div>
+											</td>
+										</tr>
+										<tr>
+											<td>5</td>
+											<td><code>jbpm_01</code></td>
+											<td><code>santer_reply_wg</code></td>
+											<td>Servizi BPM</td>
+											<td>JBPM</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-success btn-xs">Attivo</button>
+														<button type="button"
+															class="btn btn-success btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Attivo</div>
+											</td>
+										</tr>
+										<tr>
+											<td>6</td>
+											<td><code>hdd750gb_01</code></td>
+											<td><code>santer_reply_wg</code></td>
+											<td>Storage</td>
+											<td>Disco 750GB</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-success btn-xs">Attivo</button>
+														<button type="button"
+															class="btn btn-success btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Attivo</div>
+											</td>
+										</tr>
+										<tr>
+											<td>7</td>
+											<td><code>mule_esb01</code></td>
+											<td><code>santer_reply_wg</code></td>
+											<td>Servizi di interoperabilità</td>
+											<td>Mule ESB</td>
+											<td>
+												<div class="hidden-xs">
+													<div class="btn-group">
+														<button type="button" class="btn btn-success btn-xs">Attivo</button>
+														<button type="button"
+															class="btn btn-success btn-xs dropdown-toggle"
+															data-toggle="dropdown">
+															<span class="caret"></span> <span class="sr-only">Toggle
+																Dropdown</span>
+														</button>
+														<ul class="dropdown-menu pull-right" role="menu">
+															<li><a href="#">Action</a></li>
+															<li><a href="#">Another action</a></li>
+															<li><a href="#">Something else here</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Separated link</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="visible-xs">Attivo</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				-->
+			</section>
+			<!-- Footer -->
+
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

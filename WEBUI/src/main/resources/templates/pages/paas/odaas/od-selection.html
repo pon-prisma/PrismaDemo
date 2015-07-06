@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.od}"></title>
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>OpenData
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#" th:text="#{selectionPage.home}"><i
+							class="fa fa-cogs"></i></a></li>
+					<li><a th:href="@{/paas/}"
+						th:text="#{selectionPage.paasService}"> </a></li>
+					<li class="active">ODaaS</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="bs-docs-section" style="margin-bottom: 30px">
+					<p>I dati aperti, comunemente chiamati con il termine inglese
+						open data anche nel contesto italiano, sono alcune tipologie di
+						dati liberamente accessibili a tutti, privi di brevetti o altre
+						forme di controllo che ne limitino la riproduzione e le cui
+						restrizioni di copyright eventualmente si limitano ad obbligare di
+						citare la fonte o al rilascio delle modifiche allo stesso modo.</p>
+				</div>
+				<!-- ./bs-docs-section -->
+				<!-- Selection -->
+				<div class="row">
+					<div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">Ckan</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/ckan-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;">CKAN è la principale
+											piattaforma di dati open-source al mondo. CKAN rende facile
+											pubblicare, condividere e lavorare con i dati. Fornisce una
+											piattaforma per la catalogazione, archiviazione e accesso ai
+											dati tramite una ricca UI e una vasta gamma di API</p>
+										<div>
+
+											<h5 style="font-weight: bolder"
+												th:text="#{selectionPage.version}"></h5>
+											<span class="label label-primary">3.0</span>
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right"
+												th:href="@{/paas/odaas/create/}"> <i
+												class="fa fa-hand-o-right"></i> <span
+												th:text="#{selectionPage.select}"></span>
+											</a>
+										</p>
+									</div>
+									<!-- ./col -->
+
+								</div>
+								<!-- ./row -->
+							</div>
+							<!-- /.box-body-->
+						</div>
+						<!-- /.box -->
+					</div>
+					<!-- ./col -->
+
+
+					<!-- <div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">Pentaho &ndash; BA &amp; DI Server</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/pentaho-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;">Pentaho è una piattaforma
+											di Business Intelligence (BI) open source. Le tecnologie
+											utilizzate sostengono un'ampia serie di operazioni legate al
+											business come l'analisi delle vendite e del profitto,
+											l'analisi del cliente, HR reporting, Financial reporting, KPI
+											dashboards, analisi della Supply Chain e segnalazioni
+											operative.</p>
+										<div>
+
+											<h5 style="font-weight: bolder">Versioni supportate:</h5>
+											<span class="label label-primary">1.0.0</span> <span
+												class="label label-primary">2.1.0</span>
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right disabled"
+												th:href="@{/paas/biaas/create/pentaho}"> <i
+												class="fa fa-hand-o-right"></i>&nbsp; Seleziona
+											</a>
+										</p>
+									</div>
+									./col
+
+								</div>
+								./row
+							</div>
+							/.box-body
+						</div>
+						/.box
+					</div> -->
+					<!-- ./col -->
+				</div>
+				<!-- /.row -->
+
+
+				<!-- <div class="row">
+					<div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">Pentaho Design Tool</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/pentaho-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;">Pentaho è una piattaforma
+											di Business Intelligence (BI) open source. Le tecnologie
+											utilizzate sostengono un'ampia serie di operazioni legate al
+											business come l'analisi delle vendite e del profitto,
+											l'analisi del cliente, HR reporting, Financial reporting, KPI
+											dashboards, analisi della Supply Chain e segnalazioni
+											operative.</p>
+										<div>
+
+											<h5 style="font-weight: bolder">Versioni supportate:</h5>
+											<span class="label label-primary">1.0.0</span> <span
+												class="label label-primary">2.1.0</span>
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right disabled"
+												th:href="@{/paas/biaas/create/pentaho}"> <i
+												class="fa fa-hand-o-right"></i>&nbsp; Seleziona
+											</a>
+										</p>
+									</div>
+									./col
+
+								</div>
+								./row
+							</div>
+							/.box-body
+						</div>
+						/.box
+					</div>
+					./col
+				</div> -->
+				<!-- /.row -->
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+		-->
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

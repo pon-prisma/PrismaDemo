@@ -1,0 +1,6 @@
+package it.prisma.domain.dsl.iaas.vmaas;
+
+public enum VMaaSStatus {
+	
+	DEPLOY_PENDING, DEPLOY_IN_PROGRESS, RUNNING, ERROR, UNDEPLOY_IN_PROGRESS, STOP_IN_PROGRESS, STOPPED, START_IN_PROGRESS, DELETED
+}

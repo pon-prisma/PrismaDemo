@@ -1,0 +1,19 @@
+CONFIGURAZIONE PROPRIETA' AMBIENTE DI PRODUZIONE
+================================================
+
+E' necessario modificare i seguenti file di configurazione, a seconda delle impostazioni dell'ambiente Prisma:
+
+* orc.mailer.properties:
+	Contiene le configurazioni per l'invio delle e-mail di sistema agli utenti (i.e. info@prisma.it) 
+
+* mailaas.mailer.properties:
+	Contiene le configurazioni per il sistema Mail-as-a-Service
+
+* services-endpoints.properties:
+	Contiene le configurazioni legate ai server/servizi che compongono l'infrastruttura
+
+* openstack-presets.properties:
+	Contiene le configurazioni legate alle VM, reti e chiavi impostati su OpenStack
+
+* app.properties:
+	Contiene impostazioni di debug. Accertarsi che siano disabilitate. 

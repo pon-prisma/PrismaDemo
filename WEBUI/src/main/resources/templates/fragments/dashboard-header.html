@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<!-- header logo: style can be found in header.less -->
+	<header th:fragment="dashboard-header" class="header">
+
+		<a th:href="@{/dashboard}" class="logo">
+			<img 
+			alt="Prisma Logo" th:src="#{logo.path}"
+			style="height: 28px; margin-right: 5px;" th:text="#{text.prj}"/><span
+			class="label label-title">Alpha</span>
+		</a>
+
+		<!-- Header Navbar: style can be found in header.less -->
+		<nav class="navbar navbar-static-top" role="navigation">
+			<!-- Sidebar toggle button-->
+			<a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas"
+				role="button"> <span class="sr-only">Toggle navigation</span> <span
+				class="icon-bar"></span> <span class="icon-bar"></span> <span
+				class="icon-bar"></span>
+			</a>
+			<div class="navbar-right">
+				<ul class="nav navbar-nav">
+					<!-- Notifications: style can be found in dropdown.less -->
+<!-- 					<li class="dropdown notifications-menu"><a href="#" -->
+<!-- 						class="dropdown-toggle" data-toggle="dropdown"> <i -->
+<!-- 							class="fa fa-warning"></i> <span class="label label-warning">10</span> -->
+<!-- 						</a> -->
+<!-- 						<ul class="dropdown-menu"> -->
+<!-- 							<li class="header">You have 10 notifications</li> -->
+<!-- 							<li> -->
+<!-- 								inner menu: contains the actual data -->
+<!-- 								<ul class="menu"> -->
+<!-- 									<li><a href="#"> <i class="fa fa-users info"></i> -->
+<!-- 											5 new members joined today -->
+<!-- 									</a></li> -->
+<!-- 									<li><a href="#"> <i class="fa fa-warning danger"></i> -->
+<!-- 											Very long description here that may not fit into the page and -->
+<!-- 											may cause design problems -->
+<!-- 									</a></li> -->
+<!-- 									<li><a href="#"> <i class="fa fa-users warning"></i> 5 -->
+<!-- 											new members joined -->
+<!-- 									</a></li> -->
+<!-- 								</ul> -->
+<!-- 							</li> -->
+<!-- 							<li class="footer"><a href="#">View all</a></li> -->
+<!-- 						</ul> -->
+<!-- 					</li> -->
+
+					<li class="dropdown notifications-menu">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i
+							class="fa fa-group" ></i><span class="user-label" style="margin-left:5px;" th:text="${activeUserWorkgroup!=null} ? ${activeUserWorkgroup.getLabel()} : ''"></span><i class="caret" style="margin-left:5px;"></i>						
+						</a>
+						<ul class="dropdown-menu">
+							<li class="header">Cambia Workgroup</li>
+							<li>
+								<!-- inner menu: contains the actual data -->
+								<div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
+									<li><a href="#"> <i class="fa fa-plug info"></i>
+											Concept Reply - Internal Services
+									</a></li>
+									<li><a href="#"> <i class="fa fa-plug info"></i>
+											Concept Reply - Test
+									</a></li>
+								</ul><div class="slimScrollBar" style="width: 3px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 0px; z-index: 99; right: 1px; height: 200px; background: rgb(0, 0, 0);"></div><div class="slimScrollRail" style="width: 3px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 0px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div></div>
+							</li>
+							<li class="footer"><a href="#">Gestione Workgroups</a></li>
+						</ul>
+					</li>
+					<li class="dropdown user user-menu">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
+							<i class="fa fa-user"></i> 
+							<span class="user-label" th:text="${fullName}"></span>
+							<i class="caret" style="margin-left:5px;" ></i>
+						</a>
+						<ul class="dropdown-menu">
+							<!-- User image -->
+							<li class="user-header bg-light-blue"><img
+								th:src="@{'/static/images/avatars/' + ${avatar} }" class="img-circle"
+								alt="User Image" />
+								<p>
+									<span th:text="${fullName}">Nome Cognome</span> 
+									<small>
+										<span th:text="${employer}" >
+											Workgroup corrente
+										</span>
+									</small>
+								</p></li>
+							<!-- Menu Footer-->
+							<li class="user-footer">
+								<div class="pull-left">
+									<a href="#" class="btn btn-default btn-flat">Profilo</a>
+								</div>
+								<div class="pull-right">
+									<a th:href="@{/logout}" class="btn btn-default btn-flat">Esci</a>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
+</body>
+
+</html>

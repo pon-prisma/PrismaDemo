@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="chooseApp-field">
+
+		<div class="inputs">
+			<div class="wizard-input-section input-group col-md-8">
+
+				<div
+					th:replace="fragments/wizard/radio-field :: radio-field('source', 'source', 'localApp', 'Carica applicazione da File System locale', 'radioDivShow(this.value);')"></div>
+
+				<div style="margin-left: 30px; margin-top: 15px" class="hidden"
+					id="source-localApp">
+
+					<div class="row" style="margin-top: 10px;">
+						<label for="sourceLabel" class="col-md-12 control-label">Etichetta
+							sorgente</label>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<input type="text" class="form-control" id="sourceLabel"
+								name="sourceLabel" placeholder="Es. kunagi versione 1"
+								required="required" />
+						</div>
+					</div>
+					<br />
+					<div class="alert alert-info alert-dismissable col-md-12 hidden"
+						role="alert" id="sourceLabel-error">
+						<button type="button" class="close" data-dismiss="alert">
+							<span>&times;</span><span class="sr-only">Chiudi</span>
+						</button>
+						<div class="error-msg">
+							<strong>Errore!</strong>
+							<ul>
+								<li>Inserisci un'etichetta di almeno 5 carattreri</li>
+							</ul>
+						</div>
+					</div>
+					<div class="row">
+						<label for="appVisibility" class="col-md-6 control-label">Rendi
+							l'applicazione </label>
+						<div class="col-md-3">
+							<input type="radio" name="appVisibility" value="public" />Pubblica
+						</div>
+						<div class="col-md-3">
+							<input type="radio" name="appVisibility" value="private"
+								checked="checked" />Privata
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-3" style="margin-top: 15px;">
+							<span class="btn btn-success fileinput-button btn-sm"
+								disabled="disabled" style="width: 120px !important;"
+								id="localApp"> <i class="glyphicon glyphicon-plus"></i> <span>Carica
+									Sorgente</span> <input id="fileupload" type="file" name="files" /> <input
+								id="fileuploadId" type="hidden" name="fileuploadId" />
+							</span>
+							<!-- <span class="btn btn-danger btn-sm hide"
+							style="width: 160px !important;" id="deleteSourceFile"
+							onclick="deleteSourceFile();"> <i
+							class="glyphicon glyphicon-trash"></i> <span>Elimina</span>
+						</span> -->
+						</div>
+						<div class="col-md-offset-1 col-md-8" style="margin-top: 15px;">
+							<span id="localFile" class="files text-right">Caricato il
+								sorgente non sarà più possibile cambiare i metadati</span>
+						</div>
+					</div>
+
+					<div class="alert alert-info alert-dismissable col-md-12 hidden"
+						role="alert" id="sourceFile-error">
+						<button type="button" class="close" data-dismiss="alert">
+							<span>&times;</span><span class="sr-only">Chiudi</span>
+						</button>
+						<div class="error-msg">
+							<strong>Errore!</strong>
+							<ul>
+								<li>Carica un file correttamente</li>
+							</ul>
+						</div>
+					</div>
+
+
+				</div>
+				<hr />
+
+				<div
+					th:replace="fragments/wizard/radio-field :: radio-field('source', 'source', 'prismaApp', 'Carica applicazione da File System PRISMA', 'radioDivShow(this.value);')"></div>
+
+				<div style="margin-left: 30px; margin-top: 15px"
+					id="source-prismaApp" class="hidden">
+					<div class="row" style="margin-top: 10px;">
+						<label for="urlStorage" class="col-md-12 control-label">URL
+							Storage ad Oggetti</label>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<input type="text" class="form-control" id="urlStorage"
+								name="urlStorage"
+								placeholder="Es. Swift di Openstack, S3 di Amazon" />
+						</div>
+					</div>
+					<br />
+					<div class="alert alert-info alert-dismissable col-md-12 hidden"
+						role="alert" id="urlStorage-error">
+						<button type="button" class="close" data-dismiss="alert">
+							<span>&times;</span><span class="sr-only">Chiudi</span>
+						</button>
+						<div class="error-msg">
+							<strong>Errore!</strong>
+							<ul>
+								<li>Inserisci un URL</li>
+							</ul>
+						</div>
+					</div>
+					<div class="row" style="margin-top: 10px;">
+						<label for="sourceLabelPRISMA" class="col-md-12 control-label">Etichetta
+							sorgente</label>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<input type="text" class="form-control" id="sourceLabelPRISMA"
+								name="sourceLabelPRISMA" placeholder="Es. kunagi versione 1" />
+						</div>
+					</div>
+					<br />
+					<div class="alert alert-info alert-dismissable col-md-12 hidden"
+						role="alert" id="sourceLabelPRISMA-error">
+						<button type="button" class="close" data-dismiss="alert">
+							<span>&times;</span><span class="sr-only">Chiudi</span>
+						</button>
+						<div class="error-msg">
+							<strong>Errore!</strong>
+							<ul>
+								<li>Inserisci un'etichetta</li>
+							</ul>
+						</div>
+					</div>
+					<div class="row" style="margin-top: 10px;">
+						<label for="appVisibilityPRISMA" class="col-md-6 control-label">Rendi
+							l'applicazione </label>
+						<div class="col-md-3">
+							<input type="radio" name="appVisibilityPRISMA" value="public" />Pubblica
+						</div>
+						<div class="col-md-3">
+							<input type="radio" name="appVisibilityPRISMA" value="private"
+								checked="checked" />Privata
+						</div>
+					</div>
+					<div class="alert alert-info alert-dismissable col-md-12 hidden"
+						role="alert" id="fileSystemPRISMA-error">
+						<button type="button" class="close" data-dismiss="alert">
+							<span>&times;</span><span class="sr-only">Chiudi</span>
+						</button>
+						<div class="error-msg">
+							<strong>Errore!</strong> Completa i campi correttamente.
+						</div>
+					</div>
+					<div class="row" style="margin-top: 5px;">
+						<div class="col-md-6">
+							<span class="btn btn-sm btn-primary" onClick="uploadFileFromURL();" id="uploadFromURL" >Carica file da URL</span>
+						</div>
+						<div class="col-md-6">
+							<span id="urlFileResult">Nessun file caricato</span>
+						</div>
+					</div>
+					<input id="fileURLId" type="hidden" name="fileURLId" />
+				</div>
+				<hr />
+
+				<div
+					th:replace="fragments/wizard/radio-field :: radio-field('source', 'source', 'privateApp', 'Scegli tra una applicazione privata precedentemente caricata', 'radioDivShow(this.value);')"></div>
+
+
+				<div style="margin-left: 30px; margin-top: 15px"
+					id="source-privateApp" class="hidden">
+					<div class="row" style="margin-top: 10px;">
+						<div class="col-md-4 col-sm-12">
+							<button type="button" class="btn btn-primary btn-sm"
+								data-toggle="modal" data-target="#modalPrivateRepository">
+								Vai al Repository <strong>privato</strong>
+							</button>
+							<input id="inputPrivateId" type="hidden" name="inputPrivateId"
+								value="" />
+						</div>
+						<div class="col-md-offset-1 col-md-7 col-sm-12">
+							<span><b>Applicazione selezionata: </b></span> <span
+								id="inputPrivateIdSpan"> nessuna </span>
+						</div>
+					</div>
+				</div>
+				<hr />
+
+				<!-- Modal Private (Workgroup) APPs -->
+				<div class="modal fade" id="modalPrivateRepository" tabindex="-1"
+					role="dialog" style="">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<span>&times;</span><span class="sr-only">Chiudi</span>
+								</button>
+								<h4 class="modal-title" id="modalPrivateRepositoryTitle">
+									<b>Applicazioni Private</b>
+								</h4>
+							</div>
+
+							<div class="modal-body">
+								<div class="box-body table-responsive no-padding">
+
+									<div id="divPrivateApps">
+										<table data-toggle="table" id="privateApps"
+											data-url="/async/apprepo/appsrcfiles/private"
+											data-cache="false" data-sort-name="applicationName"
+											data-sort-order="asc" data-pagination="true"
+											data-side-pagination="server" data-page-size="10"
+											data-page-list="[10]">
+											<thead>
+												<th class="col-md-1" data-field="id"
+													data-formatter="inputRadioPrivateFormatter"></th>
+												<th class="col-md-3" data-field="tag">Etichetta</th>
+												<th class="col-md-8" data-field="description">Descrizione</th>
+
+											</thead>
+										</table>
+										<div class="pull-right pagination"></div>
+									</div>
+									<h5 id="divPrivateAppsError" class="hidden" style="color: red;">
+										Servizio momentaneamente non disponibile. <br /> <br />Riprova
+										più tardi.
+									</h5>
+								</div>
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">Chiudi</button>
+								<button type="button" id="selectPrivateAppButton" class="btn btn-primary"
+									data-dismiss="modal" onClick="selectPrivateApp()" disabled="disabled">Seleziona</button>
+								<span id=""></span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div
+					th:replace="fragments/wizard/radio-field :: radio-field('source', 'source', 'publicApp', 'Scegli tra una applicazione pubblica precedentemente caricata', 'radioDivShow(this.value);')"></div>
+
+				<div style="margin-left: 30px; margin-top: 15px"
+					id="source-publicApp" class="hidden">
+					<div class="row" style="margin-top: 10px;">
+						<div class="col-md-4 col-sm-12">
+							<button type="button" class="btn btn-primary btn-sm"
+								data-toggle="modal" data-target="#modalPublicRepository">
+								Vai al Repository <strong>pubblico</strong>
+							</button>
+							<input id="inputPublicId" type="hidden" name="inputPublicId"
+								value="" />
+						</div>
+						<div class="col-md-offset-1 col-md-7 col-sm-12">
+							<span><b>Applicazione selezionata: </b></span> <span
+								id="inputPublicIdSpan"> nessuna </span>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- Modal Public APPs -->
+				<div class="modal fade" id="modalPublicRepository" tabindex="-1"
+					role="dialog" style="">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<span>&times;</span><span class="sr-only">Chiudi</span>
+								</button>
+								<h4 class="modal-title" id="modalPublicRepositoryTitle">
+									<b>Applicazioni pubbliche</b>
+								</h4>
+							</div>
+
+							<div class="modal-body">
+								<div class="box-body table-responsive no-padding">
+
+									<div id="divPublicApps">
+										<table data-toggle="table" id="publicApps"
+											data-url="/async/apprepo/appsrcfiles/public"
+											data-cache="false" data-sort-name="applicationName"
+											data-sort-order="asc" data-pagination="true"
+											data-side-pagination="server" data-page-size="10"
+											data-page-list="[10]">
+											<thead>
+												<th class="col-md-1" data-field="id"
+													data-formatter="inputRadioPublicFormatter"></th>
+												<th class="col-md-3" data-field="tag">Etichetta</th>
+												<th class="col-md-8" data-field="description">Descrizione</th>
+
+											</thead>
+										</table>
+										<div class="pull-right pagination"></div>
+									</div>
+									<h5 id="divPublicAppsError" class="hidden" style="color: red;">
+										Servizio momentaneamente non disponibile. <br /> <br />Riprova
+										più tardi.
+									</h5>
+								</div>
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+								<button type="button" id="selectPublicAppButton" class="btn btn-primary" data-dismiss="modal" onClick="selectPublicApp()" disabled="disabled">Seleziona</button>
+								<span id=""></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

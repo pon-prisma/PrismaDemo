@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.bpm}"></title>
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>Business Process Management
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i><span>PaaS</span>
+					</a></li>
+					<li><a href="#">BPMaaS</a></li>
+					<li class="active">BPM</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="bs-docs-section" style="margin-bottom: 30px">
+					<p>Il Business process management è l’insieme di attività
+						necessarie per definire, ottimizzare, monitorare e integrare i
+						processi aziendali, al fine di creare un processo orientato a
+						rendere efficiente ed efficace il business dell’azienda. Il BPM è
+						una via intermedia fra la gestione d'impresa e l'Information
+						Technology, ed è riferito a processi operativi, che interessano
+						variabili quantitative e sono ripetuti su grandi volumi
+						quotidianamente.</p>
+				</div>
+				<!-- ./bs-docs-section -->
+				<!-- Selection -->
+				<div class="row">
+					<div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">JBPM</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/jbpm-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;">jBPM ( realizzato dalla
+											JBoss) è una piattaforma open source per sviluppare e gestire
+											processi applicati ai dati di business. La piattaforma è uno
+											strumento ampiamente utilizzato, basato sulla tecnologia
+											Java. L’installazione e l’uso dei componenti non richiedono
+											costi per l’acquisto di licenze.</p>
+										<div>
+
+											<h5 style="font-weight: bolder"
+												th:text="#{selectionPage.version}"></h5>
+											<span class="label label-primary">4.0</span>
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right"
+												th:href="@{/paas/bpmaas/create/}"> <i
+												class="fa fa-hand-o-right"></i> <span
+												th:text="#{selectionPage.select}"></span>
+											</a>
+										</p>
+									</div>
+									<!-- ./col -->
+
+								</div>
+								<!-- ./row -->
+							</div>
+							<!-- /.box-body-->
+						</div>
+						<!-- /.box -->
+					</div>
+					<!-- ./col -->
+
+
+					<!-- <div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">Pentaho &ndash; BA &amp; DI Server</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/pentaho-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;">Pentaho è una piattaforma
+											di Business Intelligence (BI) open source. Le tecnologie
+											utilizzate sostengono un'ampia serie di operazioni legate al
+											business come l'analisi delle vendite e del profitto,
+											l'analisi del cliente, HR reporting, Financial reporting, KPI
+											dashboards, analisi della Supply Chain e segnalazioni
+											operative.</p>
+										<div>
+
+											<h5 style="font-weight: bolder">Versioni supportate:</h5>
+											<span class="label label-primary">1.0.0</span> <span
+												class="label label-primary">2.1.0</span>
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right disabled"
+												th:href="@{/paas/biaas/create/pentaho}"> <i
+												class="fa fa-hand-o-right"></i>&nbsp; Seleziona
+											</a>
+										</p>
+									</div>
+									./col
+
+								</div>
+								./row
+							</div>
+							/.box-body
+						</div>
+						/.box
+					</div> -->
+					<!-- ./col -->
+				</div>
+				<!-- /.row -->
+
+
+				<!-- <div class="row">
+					<div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">Pentaho Design Tool</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/pentaho-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;">Pentaho è una piattaforma
+											di Business Intelligence (BI) open source. Le tecnologie
+											utilizzate sostengono un'ampia serie di operazioni legate al
+											business come l'analisi delle vendite e del profitto,
+											l'analisi del cliente, HR reporting, Financial reporting, KPI
+											dashboards, analisi della Supply Chain e segnalazioni
+											operative.</p>
+										<div>
+
+											<h5 style="font-weight: bolder">Versioni supportate:</h5>
+											<span class="label label-primary">1.0.0</span> <span
+												class="label label-primary">2.1.0</span>
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right disabled"
+												th:href="@{/paas/biaas/create/pentaho}"> <i
+												class="fa fa-hand-o-right"></i>&nbsp; Seleziona
+											</a>
+										</p>
+									</div>
+									./col
+
+								</div>
+								./row
+							</div>
+							/.box-body
+						</div>
+						/.box
+					</div>
+					./col
+				</div> -->
+				<!-- /.row -->
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+		-->
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.ca}"></title>
+
+<script th:src="@{/static/assets/js/jquery.blockUI.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.ui.widget.js}"
+	type="text/javascript"></script>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+
+<script th:src="@{/static/assets/js/dialog/caaas.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.fileDownload.js}"
+	type="text/javascript"></script>
+
+<script type="text/javascript"> 
+/*<![CDATA[*/
+
+function certificateButtonsFormatter(value, row) {
+
+	var view = "openViewDialog('" + row["serialNumber"] + "');";
+	var download = "openDownloadDialog('" + row["serialNumber"] + "');";
+	var revoke = "openRevokeDialog('" + row["serialNumber"] + "');";
+	
+	var response = '<button class="btn btn-primary" style="margin-left:5px;" data-toggle="modal" data-target="#modalViewCertificate" onclick="' + view + '"> Visualizza</button>';
+	var response = response + '<button class="btn btn-success" style="margin-left:5px;" data-toggle="modal" id="'+ row["serialNumber"] +'" onclick="' + download + '">Download</button>';
+	if(row["revoked"]){
+		var response = response + '<button class="btn btn-danger" style="margin-left:5px;" disabled="disabled" data-toggle="modal" data-target="#modalRevokeCertificate">Revoca</button>';
+	} else {
+		var response = response + '<button class="btn btn-danger" style="margin-left:5px;" data-toggle="modal" data-target="#modalRevokeCertificate" onclick="' + revoke + '">Revoca</button>';
+	}
+	return response;
+}
+
+(function ($) {
+    'use strict';
+    $.extend($.fn.bootstrapTable.defaults, {
+        formatLoadingMessage: function () {
+            return 'Caricamento in corso…';
+        },
+        formatRecordsPerPage: function (pageNumber) {
+            return pageNumber + ' certificati per pagina';
+        },
+        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+            return 'Certificati mostrati da ' + pageFrom + ' a ' + pageTo + ' (Numero totale di certificati: ' + totalRows + ')';
+        },
+        formatNoMatches: function () {
+            return 'Nessun certificato trovato';
+        },
+        formatToggle: function () {
+            return 'Alternare';
+        },
+        formatColumns: function () {
+            return 'Colonne';
+        }
+    });
+})(jQuery);
+/*]]>*/
+</script>
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>Certificati</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi PaaS</a></li>
+					<li><a th:href="@{/paas/caaas}"> CAaaS</a></li>
+					<li class="active">Certificate Authority</li>
+				</ol>
+			</section>
+
+			<!-- Modal create certificate -->
+			<div class="modal fade" data-backdrop="static"
+				id="modalCreateCertificate" tabindex="-1" role="dialog"
+				aria-labelledby="myModalLabel" aria-hidden="true" style="">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+							</button>
+							<h4 class="modal-title" id="myModalActiveCA">Crea
+								certificato</h4>
+						</div>
+
+						<div class="modal-body">
+							<div class="box-body">
+								<div id="createCertificateInfo">
+									<p>Inserisci il COMMON NAME del certificato</p>
+								</div>
+								<br />
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="input-group" id="commonNameField">
+											<span class="input-group-addon"><i
+												class="fa fa fa-certificate"></i></span> <input type="text"
+												class="form-control" id="commonName" name="commonName"
+												placeholder="Inserisci il CN" required="required" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<i id="loadingIcon" class="fa fa-refresh fa-spin hidden"></i>
+							<button type="button" id="createButton" class="btn btn-primary">Crea</button>
+							<button type="button" id="okButton"
+								class="btn btn-primary hidden">Ok</button>
+							<button type="button" id="okErrorButton"
+								class="btn btn-primary hidden">Ok</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End of Modal -->
+
+			<!-- Start of modal view certificate -->
+			<div class="modal fade" id="modalViewCertificate" tabindex="-1"
+				role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+				style="">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+							</button>
+							<h4 class="modal-title" id="myModalActiveCA">Dettagli
+								certificato</h4>
+						</div>
+						<div class="modal-body">
+							<div id="scroller" class="box-body table-responsive no-padding">
+								<div id="viewCertificateInfo"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End of Modal view certificate -->
+
+			<!-- Start of modal download failed certificate -->
+			<div class="modal fade" id="modalDownloadFailedCertificate"
+				tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+				aria-hidden="true" style="">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+							</button>
+							<h4 class="modal-title" id="myModalActiveCA">Errore nel
+								download</h4>
+						</div>
+						<div class="modal-body">
+							<div class="box-body table-responsive no-padding">
+								<div>
+									<p>Spiacenti, al momento è impossibile scaricare il
+										certificato, riprovare più tardi!</p>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" id="OkErrorDownloadButton"
+								class="btn btn-primary">Ok</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End of Modal download failed certificate -->
+
+			<!-- Modal revoke certificate -->
+			<div class="modal fade" id="modalRevokeCertificate"
+				data-backdrop="static" tabindex="-1" role="dialog"
+				aria-labelledby="myModalLabel" aria-hidden="true" style="">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+							</button>
+							<h4 class="modal-title" id="myModalActiveCA">Revoca
+								certificato</h4>
+						</div>
+
+						<div class="modal-body">
+							<div class="box-body table-responsive no-padding">
+								<div id="revokeCertificateInfo"></div>
+								<br />
+								<div class="input-group" id="reasonDiv">
+									<span class="input-group-addon"><i class="fa fa-times"></i></span>
+									<select name="reasonSelect" id="reasonSelect"
+										class="form-control" required="required">
+										<option value="10">AA compromessa</option>
+										<option value="3">Affiliazione cambiata</option>
+										<option value="2">CA compromessa</option>
+										<option value="6">Certificato scaduto</option>
+										<option value="5">Cessazione del funzionamento</option>
+										<option value="1">Chiave compromessa</option>
+										<option value="9">Privilegi ritirati</option>
+										<option value="4">Sostituito</option>
+										<option value="0">Non specificato</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<i id="loadingRevokeIcon" class="fa fa-refresh fa-spin hidden"></i>
+							<button type="button" id="backRevokeButton"
+								class="btn btn-primary">Annulla</button>
+							<button type="button" id="confirmRevokeButton"
+								class="btn btn-danger ">Conferma</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End of Modal -->
+
+
+			<!-- Main content -->
+			<section class="content">
+
+
+				<div class="bs-docs-section" style="margin-bottom: 20px">
+					<div class="row">
+						<div class="col-lg-10 col-md-9 hidden-sm hidden-xs">
+							<p class="text-justify" th:utext="#{text.ca}"></p>
+						</div>
+						<div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 pull-right">
+							<a class="btn btn-primary navbar-btn pull-right" role="button"
+								data-toggle="modal" id="buttonCreateAccount"
+								data-target="#modalCreateCertificate">Crea un certificato</a>
+						</div>
+					</div>
+					<hr />
+				</div>
+
+
+				<div class="row" style="margin-top: 10px;">
+					<div class="col-xs-12">
+						<div class="box box-primary" style="margin-bottom: 0;">
+							<div class="box-header">
+								<i class="fa fa-list-ul"></i>
+								<h3 class="box-title">Lista Certificati</h3>
+							</div>
+							<div class="box-body">
+								<table id="tableCa" data-toggle="table"
+									data-url="/async/paas/caaas" data-cache="false"
+									data-pagination="true" data-side-pagination="server"
+									data-page-size="10" data-page-list="[10]">
+									<thead>
+										<th class="col-md-9" data-field="name">Nome</th>
+										<th class="col-md-3" data-field="serialNumber"
+											data-formatter="certificateButtonsFormatter"></th>
+									</thead>
+								</table>
+								<div class="pull-right pagination"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+	</section>
+
+	<!-- Footer -->
+	<div th:replace="fragments/footer :: footer"></div>
+	</aside>
+	</div>
+
+
+
+	<!-- End content -->
+</body>
+
+</html>

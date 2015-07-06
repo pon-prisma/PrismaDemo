@@ -1,0 +1,82 @@
+<!-- 
+
+	Parametri: 
+				@param id: 				id and name of the input
+				@param label:			label above the input
+				@param inputvalue: 	  	input value
+				@param inputText:     	input text
+				@param colSize:			column size of the div. Use 8 ad default, use 12 for inner input
+				
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div
+		th:fragment="certificate-field (id, label, inputValue, inputText, colSize)">
+
+		<div
+			th:replace="fragments/wizard/checkbox-field :: checkbox-field ('secureConnection', 'Connessioni Sicure (Https)', 'secure', 'Abilita https', 8)"></div>
+
+
+
+		<div class="inputs hide" id="secureDiv" style="margin-left: 15px;">
+			<div class="row fileupload-buttonbar">
+				<div class="col-md-8">
+					<!-- The fileinput-button span is used to style the file input field as button -->
+					<span class="btn btn-success fileinput-button btn-sm"
+						style="width: 160px !important;" id="addCertificato"> <i
+						class="glyphicon glyphicon-plus"></i> <span>Carica
+							certificato</span> <input id="file" type="file" name="file" />
+					</span> <span class="btn btn-danger btn-sm hide"
+						style="width: 160px !important;" id="deleteCertificato"
+						onclick="deleteCert();"> <i
+						class="glyphicon glyphicon-trash"></i> <span>Elimina</span>
+					</span> <span id="files" class="files text-right">Nessun
+						certificato caricato</span>
+				</div>
+			</div>
+			<br />
+			<div class="alert alert-info alert-dismissable col-md-8 hidden"
+				role="alert" id="file-error">
+				<button type="button" class="close" data-dismiss="alert">
+					<span>&times;</span><span class="sr-only">Chiudi</span>
+				</button>
+				<div class="error-msg">
+					<strong>Errore!</strong>
+					<ul>
+						<li>Carica un certificato</li>
+					</ul>
+				</div>
+			</div>
+			<div class="row fileupload-buttonbar" style="margin-top: 5px;">
+				<div class="col-md-8">
+					<span class="btn btn-success btn-sm fileinput-button disabled"
+						style="width: 160px !important;" id="loadCertPrisma"> <i
+						class="glyphicon glyphicon-plus"></i> <span th:text="#{text.certificate}"></span>
+					</span> <span class="btn btn-danger btn-sm hide"
+						style="width: 160px !important;" id="deleteCertPrisma"
+						onclick="deleteCertPrisma();"> <i
+						class="glyphicon glyphicon-trash"></i> <span>Elimina</span>
+					</span> <span id="filesPrisma" class="files text-right">Nessun
+						certificato richiesto</span>
+				</div>
+			</div>
+
+			<div class="row" style="margin-top: 15px;">
+				<div class="col-md-3"></div>
+				<div class="col-md-5">
+					<span id="certificateUpload-error" style="color: red;"> </span>
+				</div>
+			</div>
+		</div>
+
+
+
+	</div>
+</body>
+
+</html>

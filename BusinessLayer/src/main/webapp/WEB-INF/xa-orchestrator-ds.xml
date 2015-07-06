@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+	
+<!-- 	<xa-datasource jta="true" jndi-name="java:jboss/datasources/PRISMA/PRISMA-DS" -->
+<!-- 		pool-name="PRISMA-DS" enabled="true" use-java-context="true" use-ccm="true"> -->
+<!-- 		<driver>mysql-connector-java.jar</driver> -->
+<!-- 		<xa-datasource-property name="URL"> -->
+<!-- 		</xa-datasource-property> -->
+<!-- 		<xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource -->
+<!-- 		</xa-datasource-class> -->
+<!-- 		<xa-pool> -->
+<!-- 			<min-pool-size>10</min-pool-size> -->
+<!-- 			<max-pool-size>20</max-pool-size> -->
+<!-- 			<prefill>true</prefill> -->
+<!-- 		</xa-pool> -->
+<!-- 		<security> -->
+<!-- 			<user-name></user-name> -->
+<!-- 			<password></password> -->
+<!-- 		</security> -->
+<!-- 	</xa-datasource> -->
+	
+<!-- 	<xa-datasource jta="true" jndi-name="java:jboss/datasources/PRISMA/JBPM-DS" -->
+<!-- 		pool-name="JBPM-DS" enabled="true" use-java-context="true" use-ccm="true"> -->
+<!-- 		<driver>mysql-connector-java.jar</driver> -->
+<!-- 		<xa-datasource-property name="URL"> -->
+<!-- 		</xa-datasource-property> -->
+<!-- 		<xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource -->
+<!-- 		</xa-datasource-class> -->
+<!-- 		<xa-pool> -->
+<!-- 			<min-pool-size>10</min-pool-size> -->
+<!-- 			<max-pool-size>20</max-pool-size> -->
+<!-- 			<prefill>true</prefill> -->
+<!-- 		</xa-pool> -->
+<!-- 		<security> -->
+<!-- 			<user-name></user-name> -->
+<!-- 			<password></password> -->
+<!-- 		</security> -->
+<!-- 	</xa-datasource> -->
+
+</datasources>

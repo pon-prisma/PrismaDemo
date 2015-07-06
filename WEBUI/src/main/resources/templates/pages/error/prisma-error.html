@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<head>
+
+<title th:text="#{title.error}"></title>
+
+</head>
+
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+
+			<section class="content-header">
+				<h1>
+					Dashboard <small>Pannello di Controllo</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+					<li class="active">Error</li>
+				</ol>
+			</section>
+
+			<section class="content">
+
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-exclamation-triangle"></i>
+								<h3 class="box-title">Errore</h3>
+							</div>
+							<div class="box-body">
+								<div class="jumbotron" style="margin: 0 0 0 0">
+									<div class="row">
+										<div class="col-md-3">
+											<img alt="Prisma Logo"
+												th:src="#{logo.path}"
+												style="height: 100px; margin-right: 5px;" />
+										</div>
+										<div class="col-md-9">
+											<p>Si &eacute; verificato un errore. (Errore <span th:text="${error.errorCode.value()}"></span>)</p>
+											<p th:text="${error.message}"></p>
+											<br />
+											<p>Per favore riprova.</p>
+										</div>
+									</div>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+</body>
+</html>

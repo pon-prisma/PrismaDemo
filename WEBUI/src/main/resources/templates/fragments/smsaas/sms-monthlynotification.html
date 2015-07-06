@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="sms-monthlynotification">
+
+		<form id="monthlyNotificationsForm"
+			th:action="@{/async/paas/smsaas/monthly}"
+			th:object="${MonthlyNotificationForm}" method="post">
+
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="checkbox">
+						<label>
+							<div th:if="${notification.isMonth}">
+								<input type="checkbox" name="monthlyNot" id="monthlyNot"
+									checked="checked" value="monthlyNot" />
+							</div>
+							<div th:unless="${notification.isMonth}">
+								<input type="checkbox" name="monthlyNot" id="monthlyNot"
+									value="monthlyNot" />
+							</div> <b>Attiva notifica mensile</b>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div id="divMonthly" th:class="${!notification.isMonth}? 'hide'"
+				style="margin-left: 15px;">
+				<div class="row">
+					<div class="col-md-6 col-xs-6">
+						<div class="checkbox">
+							<label>
+								<div th:if="${notification.isMonthSms}">
+									<input type="checkbox" name="monthlySms" id="monthlySms"
+										value="monthlySms" checked="checked" />
+								</div>
+								<div th:unless="${notification.isMonthSms}">
+									<input type="checkbox" name="monthlySms" id="monthlySms"
+										value="monthlySms" />
+								</div> SMS
+							</label>
+						</div>
+					</div>
+					<div class="col-md-6 col-xs-6">
+						<div class="checkbox">
+							<label>
+								<div th:if="${notification.isMonthEmail}">
+									<input type="checkbox" name="monthlyEmail" id="monthlyEmail"
+										value="monthlyEmail" checked="checked" />
+								</div>
+								<div th:unless="${notification.isMonthEmail}">
+									<input type="checkbox" name="monthlyEmail" id="monthlyEmail"
+										value="monthlyEmail" />
+								</div> Email
+							</label>
+						</div>
+					</div>
+				</div>
+				<div th:class="${notification.isMonthSms}? 'row' : 'row hide'"
+					id="rowMonthlyNumber">
+					<div class="col-md-12">
+						<label>Inserisci numero di telefono</label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-slack"></i></span>
+							<input type="text" class="form-control" id="numberMonthly"
+								name="numberMonthly" th:value="${notification.monthSms}" />
+						</div>
+					</div>
+				</div>
+
+				<div th:class="${notification.isMonthEmail}? 'row' : 'row hide'"
+					id="rowMonthlyEmail">
+
+					<div class="col-md-12">
+						<label>Indirizzo di notifica</label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+							<input type="email" class="form-control" id="emailAddressMonthly"
+								name="emailAddressMonthly"
+								placeholder="Inserisci indirizzo email"
+								th:value="${notification.monthEmail}" required="required" />
+						</div>
+					</div>
+				</div>
+				<div
+					th:class="${notification.isMonthEmail or notification.isMonthSms}? 'row' : 'hide row'"
+					id="rowMonthlyThreshold">
+
+					<div class="col-md-12">
+						<label>Inserisci soglia</label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-slack"></i></span>
+							<input type="number" class="form-control"
+								id="smsThresholdMonthly" name="smsThresholdMonthly" min="1"
+								th:value="${notification.thresholdMonth}" step="1" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 15px;">
+
+				<div class="col-md-offset-9 col-md-3">
+					<button type="button" id="saveMonthlyNotification"
+						class="btn btn-primary">Salva</button>
+				</div>
+				<div class="row" style="margin-top: 20px;">
+					<div id="notifyMonthlySaved"
+						class="col-md-offset-9 col-md-3 invisible"
+						style="color: #0000FF; font-size: 13pt; font-family: Arial">
+						<p id="textNotifyMonthly">Notifiche salvate!</p>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>

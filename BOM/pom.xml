@@ -1,0 +1,241 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>it.prisma</groupId>
+	<artifactId>prisma-bom</artifactId>
+	<version>1.4.1-ALPHA</version>
+	<packaging>pom</packaging>
+	<name>Prisma - Bill of Materials (BOM)</name>
+	<url>http://www.ponsmartcities-prisma.it</url>
+	<description>
+		PRISMA Bill of Materials: it bundles several dependencies to assure that the versions will work together.
+	</description>
+
+	<!-- License -->
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<distribution>repo</distribution>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+
+	<!-- Project Properties -->
+	<properties>
+		<start-class>it.prisma.presentationlayer.webui.Application</start-class>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.7</java.version>
+		<jboss.bom.version>1.0.3.Final</jboss.bom.version>
+		<resteasy.version>3.0.7.Final</resteasy.version>
+		<jbpm.version>6.2.0.Final</jbpm.version>
+		<spring.platform.version>1.0.2.RELEASE</spring.platform.version>
+		<spring.saml.version>1.0.0.RELEASE</spring.saml.version>
+		<jackson.version>2.3.2</jackson.version>
+		<xml.apis.version>1.4.01</xml.apis.version>
+		<prisma.platform.version>1.4.1-ALPHA</prisma.platform.version>
+		<log4j.version>2.1</log4j.version>
+		<slf4j.version>1.7.5</slf4j.version>
+
+		<mockito.version>1.8.4</mockito.version>
+		<version.javax.validation>1.0.0.GA</version.javax.validation>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
+				of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
+				of artifacts. We use this here so that we always get the correct versions 
+				of artifacts. Here we use the jboss-javaee-6.0-with-tools stack (you can 
+				read this as the JBoss stack of the Java EE 6 APIs, with some extras tools 
+				for your project, such as Arquillian for testing) and the jboss-javaee-6.0-with-hibernate 
+				stack you can read this as the JBoss stack of the Java EE 6 APIs, with extras 
+				from the Hibernate family of projects) -->
+			<dependency>
+				<groupId>org.jboss.bom</groupId>
+				<artifactId>jboss-javaee-6.0-with-tools</artifactId>
+				<version>${jboss.bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.bom</groupId>
+				<artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
+				<version>${jboss.bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- JBPM -->
+			<dependency>
+				<groupId>org.jbpm</groupId>
+				<artifactId>jbpm-bom</artifactId>
+				<version>${jbpm.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<!-- RestEasy -->
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-bom</artifactId>
+				<version>${resteasy.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<!-- Spring Platform -->
+			<dependency>
+				<groupId>io.spring.platform</groupId>
+				<artifactId>platform-bom</artifactId>
+				<version>${spring.platform.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- Spring Security SAML Extension -->
+			<dependency>
+				<groupId>org.springframework.security.extensions</groupId>
+				<artifactId>spring-security-saml2-core</artifactId>
+				<version>${spring.saml.version}</version>
+			</dependency>
+			<!-- Jackson -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<!-- XML API -->
+			<dependency>
+				<groupId>xml-apis</groupId>
+				<artifactId>xml-apis</artifactId>
+				<version>${xml.apis.version}</version>
+			</dependency>
+			<!-- Logging (slf4j with log4j2) -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<!-- Binding for Log4J -->
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<!-- Log4J -->
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+
+			<!-- Validation -->
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>${version.javax.validation}</version>
+			</dependency>
+
+			<!-- Prisma Platform Dependencies -->
+			<dependency>
+				<groupId>it.prisma</groupId>
+				<artifactId>prisma-domain</artifactId>
+				<version>${prisma.platform.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>it.prisma</groupId>
+				<artifactId>prisma-utility</artifactId>
+				<version>${prisma.platform.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>it.prisma</groupId>
+				<artifactId>prisma-dal</artifactId>
+				<version>${prisma.platform.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>it.prisma</groupId>
+				<artifactId>prisma-business-layer</artifactId>
+				<version>${prisma.platform.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-all</artifactId>
+				<version>${mockito.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<repositories>
+		<!-- Spring Source Repository -->
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>http://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<!-- Publish versioned releases here -->
+		<repository>
+			<id>nexus-repo-public-prisma</id>
+			<name>PRISMA - Domain</name>
+			<url>http://prismanexus.cloud.reply.eu:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<!-- Publish snapshots here -->
+		<snapshotRepository>
+			<id>nexus-repo-public-prisma</id>
+			<name>PRISMA - Domain</name>
+			<url>http://prismanexus.cloud.reply.eu:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-updates-report</report>
+							<report>plugin-updates-report</report>
+							<report>property-updates-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+</project>

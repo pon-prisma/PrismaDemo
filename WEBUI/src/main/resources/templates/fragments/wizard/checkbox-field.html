@@ -1,0 +1,28 @@
+<!-- 
+
+	Parametri: 
+				@param id: 				id and name of the input
+				@param label:			label above the input
+				@param inputvalue: 	  	input value
+				@param inputText:     	input text
+				@param colSize:			column size of the div. Use 8 ad default, use 12 for inner input
+				
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="checkbox-field (id, label, inputValue, inputText, colSize)"
+		class="inputs">
+		<label th:for="${id}" th:text="${label}"></label>
+		<div th:class="'checkbox wizard-input-section input-group col-md-' + ${colSize}" style="margin-top: 0">
+			<label><input type="checkbox" th:id="${id}" th:name="${id}"
+				th:value="${inputValue}" th:text="${inputText}"/></label>
+		</div>
+	</div>
+</body>
+
+</html>

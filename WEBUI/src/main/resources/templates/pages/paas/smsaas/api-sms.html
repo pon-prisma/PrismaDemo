@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.sms}"></title>
+
+
+<script th:src="@{/static/assets/js/jquery.bootstrap.wizard.min.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.ui.widget.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.validate.min.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/dialog/smsaas.js}"
+	type="text/javascript"></script>
+
+<!-- faq theme style -->
+<link href="../../../webapp/static/assets/css/docs.min.css"
+	th:href="@{/static/assets/css/docs.min.css}" rel="stylesheet"
+	type="text/css" />
+<!-- Faq Scripts -->
+<script src="../../../webapp/static/assets/js/docs.min.js"
+	th:src="@{/static/assets/js/docs.min.js}"></script>
+
+
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	$(document).ready(function() {
+
+		(function($) {
+
+			$('#filter').keyup(function() {
+				var rex = new RegExp($(this).val(), 'i');
+				$('.searchable tr').hide();
+				$('.searchable tr').filter(function() {
+					console.log("here");
+					return rex.test($(this).text());
+				}).show();
+			})
+
+		}(jQuery));
+
+	});
+
+	/*]]>*/
+</script>
+
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					REST APIs
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi PaaS</a></li>
+					<li><a th:href="@{/paas/smsaas}"> SMSaaS</a></li>
+					<li class="active">SMS</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+
+				<!-- <h1></h1> -->
+				<div class="bs-docs-container">
+					<div class="row">
+						<div class="col-md-9" role="main">
+							<div class="bs-docs-section">
+
+								<h2 id="c1"></h2>
+								<hr />
+
+								<h3 id="c1-lorem-ipsum">API per l'invio dei messaggi:</h3>
+								<div class="row">
+									<div class="col-xs-12">
+
+										<div class="box-body table-responsive no-padding">
+
+											<table class="table table-striped table-hover table-bordered">
+												<thead>
+
+													<tr>
+														<th>Metodo</th>
+														<th>URL</th>
+														<th>Descrizione</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td><span class="label label-success">POST</span></td>
+														<td>/biz/rest/SMSaas/sendSms/{workgroup}</td>
+														<td>Invio sms:
+															<ul>
+																<li>workgroup: workgroup di appartenenza;</li></ul>
+																<b>Body:</b>
+															<ul><li>password: associato all'utente è visualizzabile
+																	nella schermata <b>informazioni</b>;
+																</li>
+																<li>text: testo del messaggio;</li>
+																<li>num: numero di cellulare del destinatario;</li>
+																<li>scheduling: <b>true</b> se si vuole schedulare
+																	l'invio, <b>false</b> se si desidera inviare
+																	immediatamente;
+																</li>
+																<li>sendDate: data in cui si desidera schedulare
+																	l'invio del messaggio(necessario settare a true il parametro
+																	scheduling), il formato da utilizzare è YYYY-MM-DD hh:mm:ss;</li>
+																<li>from: mittente del messaggio.</li>
+															</ul>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+
+
+
+
+							</div>
+
+						</div>
+						<div class="col-md-3">
+							<div
+								class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top"
+								role="complementary">
+								<ul class="nav bs-docs-sidenav">
+									<li class="active"><a href="#c1">REST APIs</a></li>
+								</ul>
+								<a class="back-to-top" href="#top"> <i
+									class="fa fa-arrow-up"></i>&nbsp;Torna Su
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

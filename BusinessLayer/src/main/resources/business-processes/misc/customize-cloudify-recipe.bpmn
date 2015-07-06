@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- origin at X=0.0 Y=0.0 -->
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" xmlns="http://www.jboss.org/drools" xmlns:java="http://www.java.com/javaTypes" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.1.0.201409051710" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn2:itemDefinition id="ItemDefinition_46" structureRef="it.prisma.dal.entities.orchestrator.lrt.LRT"/>
+  <bpmn2:itemDefinition id="ItemDefinition_157" structureRef="it.prisma.domain.dsl.prisma.prismaprotocol.Error"/>
+  <bpmn2:itemDefinition id="ItemDefinition_251" structureRef="String"/>
+  <bpmn2:itemDefinition id="ItemDefinition_397" structureRef="java.util.Map"/>
+  <bpmn2:itemDefinition id="ItemDefinition_510" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="ItemDefinition_540" structureRef="Object"/>
+  <bpmn2:error id="Error_1" errorCode="GenericError" name="GenericError" structureRef="ItemDefinition_157"/>
+  <bpmn2:process id="it.prisma.orchestrator.bp.misc.CustomizeCloudifyRecipe" drools:version="1" drools:packageName="defaultPackage" drools:adHoc="false" name="Customize Cloudify Recipe" isExecutable="true" processType="Public">
+    <bpmn2:extensionElements/>
+    <bpmn2:property id="LRTInfo" itemSubjectRef="ItemDefinition_46"/>
+    <bpmn2:property id="Error" itemSubjectRef="ItemDefinition_157"/>
+    <bpmn2:property id="RecipePath" itemSubjectRef="ItemDefinition_251"/>
+    <bpmn2:property id="CustomRecipePath" itemSubjectRef="ItemDefinition_251"/>
+    <bpmn2:property id="ReplaceParams" itemSubjectRef="ItemDefinition_397"/>
+    <bpmn2:property id="Result" itemSubjectRef="ItemDefinition_540"/>
+    <bpmn2:property id="ResultStatus" itemSubjectRef="ItemDefinition_251"/>
+    <bpmn2:property id="CfyRecipeInfo" itemSubjectRef="ItemDefinition_397"/>
+    <bpmn2:property id="PaaSService" itemSubjectRef="ItemDefinition_540"/>
+    <bpmn2:property id="DeployRequest" itemSubjectRef="ItemDefinition_540"/>
+    <bpmn2:startEvent id="StartEvent_1" name="Start Event 1">
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" drools:priority="1" sourceRef="StartEvent_1" targetRef="Task_1"/>
+    <bpmn2:task id="Task_1" drools:taskName="syncEJB" name="Customize Cloudify Recipe">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_1">
+        <bpmn2:dataInput id="DataInput_1" itemSubjectRef="ItemDefinition_46" name="LRT"/>
+        <bpmn2:dataInput id="DataInput_2" itemSubjectRef="ItemDefinition_251" name="RecipePath"/>
+        <bpmn2:dataInput id="DataInput_3" itemSubjectRef="ItemDefinition_251" name="CustomRecipePath"/>
+        <bpmn2:dataInput id="DataInput_4" itemSubjectRef="ItemDefinition_397" name="ReplaceParams"/>
+        <bpmn2:dataInput id="DataInput_7" itemSubjectRef="ItemDefinition_251" name="EJBCommandClass"/>
+        <bpmn2:dataInput id="DataInput_8" itemSubjectRef="ItemDefinition_397" name="CfyRecipeInfo"/>
+        <bpmn2:dataInput id="DataInput_9" itemSubjectRef="ItemDefinition_540" name="PaaSService"/>
+        <bpmn2:dataInput id="DataInput_6" itemSubjectRef="ItemDefinition_540" name="DeployRequest"/>
+        <bpmn2:dataOutput id="DataOutput_2" itemSubjectRef="ItemDefinition_157" name="Error"/>
+        <bpmn2:dataOutput id="DataOutput_3" itemSubjectRef="ItemDefinition_251" name="ResultStatus"/>
+        <bpmn2:dataOutput id="DataOutput_4" itemSubjectRef="ItemDefinition_540" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_10" name="Input Set 10">
+          <bpmn2:dataInputRefs>DataInput_1</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_2</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_3</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_4</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_7</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_8</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_9</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_6</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_1" name="Output Set 1">
+          <bpmn2:dataOutputRefs>DataOutput_2</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_3</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_4</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_1">
+        <bpmn2:sourceRef>LRTInfo</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_1</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_2">
+        <bpmn2:sourceRef>RecipePath</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_2</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_3">
+        <bpmn2:sourceRef>CustomRecipePath</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_3</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_4">
+        <bpmn2:sourceRef>ReplaceParams</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_4</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_7">
+        <bpmn2:targetRef>DataInput_7</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_1">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_5" evaluatesToTypeRef="ItemDefinition_251">it.prisma.businesslayer.orchestrator.bpm.ejbcommands.cloudify.CustomizeCloudifyRecipeCommand</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_3">DataInput_7</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_8">
+        <bpmn2:sourceRef>CfyRecipeInfo</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_8</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_9">
+        <bpmn2:sourceRef>PaaSService</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_9</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_6">
+        <bpmn2:sourceRef>DeployRequest</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_6</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_2">
+        <bpmn2:sourceRef>DataOutput_2</bpmn2:sourceRef>
+        <bpmn2:targetRef>Error</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_3">
+        <bpmn2:sourceRef>DataOutput_3</bpmn2:sourceRef>
+        <bpmn2:targetRef>ResultStatus</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_4">
+        <bpmn2:sourceRef>DataOutput_4</bpmn2:sourceRef>
+        <bpmn2:targetRef>Result</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" name="Error occured" gatewayDirection="Diverging" default="SequenceFlow_4">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" drools:priority="1" sourceRef="Task_1" targetRef="ExclusiveGateway_1"/>
+    <bpmn2:endEvent id="EndEvent_2" name="End Event 2">
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_3" drools:priority="1" name="No" sourceRef="ExclusiveGateway_1" targetRef="EndEvent_2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_2">ResultStatus == &quot;OK&quot;</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="EndEvent_3" name="End Event 3">
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+      <bpmn2:dataInput id="DataInput_5" itemSubjectRef="ItemDefinition_157" name="Error_1_Input"/>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_5">
+        <bpmn2:sourceRef>Error</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_5</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:inputSet id="InputSet_1" name="Input Set 1">
+        <bpmn2:dataInputRefs>DataInput_5</bpmn2:dataInputRefs>
+      </bpmn2:inputSet>
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_1" errorRef="Error_1"/>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_4" drools:priority="1" name="Yes" sourceRef="ExclusiveGateway_1" targetRef="EndEvent_3"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1" name="Default Process Diagram">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="it.prisma.orchestrator.bp.misc.CustomizeCloudifyRecipe">
+      <bpmndi:BPMNShape id="BPMNShape_1" bpmnElement="StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="100.0" y="100.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1">
+          <dc:Bounds height="34.0" width="76.0" x="80.0" y="136.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="Task_1">
+        <dc:Bounds height="50.0" width="110.0" x="275.0" y="93.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2">
+          <dc:Bounds height="34.0" width="102.0" x="279.0" y="101.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_1" bpmnElement="ExclusiveGateway_1" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="460.0" y="93.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3">
+          <dc:Bounds height="34.0" width="53.0" x="459.0" y="143.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="EndEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="578.0" y="100.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4">
+          <dc:Bounds height="17.0" width="79.0" x="557.0" y="136.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_2" bpmnElement="EndEvent_3">
+        <dc:Bounds height="36.0" width="36.0" x="578.0" y="200.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5">
+          <dc:Bounds height="17.0" width="79.0" x="557.0" y="236.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="BPMNShape_1" targetElement="BPMNShape_Task_1">
+        <di:waypoint xsi:type="dc:Point" x="136.0" y="118.0"/>
+        <di:waypoint xsi:type="dc:Point" x="275.0" y="118.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_6"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_ExclusiveGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="385.0" y="118.0"/>
+        <di:waypoint xsi:type="dc:Point" x="460.0" y="118.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_7"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="510.0" y="118.0"/>
+        <di:waypoint xsi:type="dc:Point" x="578.0" y="118.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_8">
+          <dc:Bounds height="17.0" width="18.0" x="536.0" y="119.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_EndEvent_2">
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="143.0"/>
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="218.0"/>
+        <di:waypoint xsi:type="dc:Point" x="578.0" y="218.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_9">
+          <dc:Bounds height="17.0" width="25.0" x="482.0" y="219.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

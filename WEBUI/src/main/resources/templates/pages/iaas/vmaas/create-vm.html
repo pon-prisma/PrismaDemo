@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.vm}"></title>
+
+
+<script th:src="@{/static/assets/js/jquery.bootstrap.wizard.min.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.validate.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery-ui-11.1.1-min.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.blockUI.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/wizard/wizard-commonsV2.js}"
+	type="text/javascript"></script>
+	
+<script th:src="@{/static/assets/js/validator/validatorVM.js}"
+	type="text/javascript"></script>
+
+
+</head>
+
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Dashboard <small>Pannello di Controllo</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi IaaS</a></li>
+					<li><a th:href="@{/iaas/vmaas/}"> Macchina Virtuale</a></li>
+					<li class="active">Crea</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="bs-docs-section" style="margin-bottom: 30px">
+
+					<h1 id="c1">Creazione guidata di una Macchina Virtuale</h1>
+					<br />
+					<p>
+						In informatica il termine <b>macchina virtuale</b> indica un
+						software che, attraverso un processo di virtualizzazione, crea un
+						ambiente virtuale che emula il comportamento di una macchina
+						fisica grazie all'assegnazione parziale di risorse hardware quali
+						il disco rigido, la RAM e la CPU.
+					</p>
+				</div>
+				<hr />
+
+				<form id="DeployForm" th:object="${VMForm}"
+					th:action="@{/async/iaas/vmaas/deploy}" action="/deploy" method="post">
+
+					<div id="rootwizard" class="row">
+						<div class="col-md-3 col-xs-12">
+
+							<ul class="nav nav-pills nav-stacked">
+								<li><a href="#tab1" data-toggle="tab">Informazioni
+										Generali</a></li>
+								<li><a href="#tab2" data-toggle="tab">Informazioni
+										sulla VM</a></li>
+								<li><a href="#tab3" data-toggle="tab">Rete e Sicurezza</a></li>
+<!-- 								<li><a href="#tab4" data-toggle="tab">Script
+										Post-Creazione</a></li>
+								<li><a href="#tab5" data-toggle="tab">Opzioni Avanzate</a></li> -->
+								<li><a href="#tab6" data-toggle="tab">Riepilogo</a></li>
+							</ul>
+
+						</div>
+
+						<div class="col-md-9 col-xs-12">
+							<div class="tab-content well">
+
+								<article class="tab-pane" id="tab1">
+									<h2>
+										<i class="fa fa-sliders"></i> Informazioni Generali
+									</h2>
+									<hr />
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" aria-valuenow="45" aria-valuemin="0"
+											aria-valuemax="100" style="width: 20%"></div>
+									</div>
+									<div
+										th:replace="fragments/wizard/text-field :: text-field('serviceName', 'Nome Macchina Virtuale', 'fa fa-cog', 'Es. prisma01', '16', 8)"></div>
+									<div
+										th:replace="fragments/wizard/description-field :: description-field('description', 'Descrizione del servizio', 'fa fa-file-text-o', 'Descrizione..', '200', 4, 50, 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/url-field :: url-field('url', 'Domain Name (URL del Servizio)', 'fa fa-globe', '', '100', 'urlName', ${@urlService.getDefaultDNSSuffix()}, 8)"></div>
+									<div
+										th:replace="fragments/wizard/email-field-current-user :: email-field-current-user('notificationEmail', 'Email per le notifiche', 'fa fa-envelope', 8)"></div>
+
+									<div class="clearfix"></div>
+								</article>
+
+
+								<article class="tab-pane" id="tab2">
+									<h2>
+										<i class="fa fa-sliders"></i> Informazioni sulla VM
+									</h2>
+									<hr />
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" aria-valuenow="45" aria-valuemin="0"
+											aria-valuemax="100" style="width: 40%"></div>
+									</div>
+
+									<div
+										th:replace="fragments/wizard/select-field :: select-field('zoneSelect', 'Availability Zone', 'fa fa-globe', 'Scegli una Zona', ${zone}, 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/select-field :: select-field('qosSelect', 'Profilo (Determina la QoS del servizio)', 'fa fa-bolt', 'Scegli il profilo', ${iaasProfile}, 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/select-field :: select-field('flavorSelect', 'Flavor (determina la potenza di
+											calcolo del servizio)', 'fa fa-desktop', 'Scegli un Flavor', ${iaasFlavor}, 8)"></div>
+
+
+
+									<!-- div class="inputs">
+										<label
+											title="Overbooking: indica il rapporto tra risorse hardware disponibili e risorse virtuali allocate. Il rapporto uguale a 1 assicura di avere per ogni risorsa virtuale una risorsa fisica allocata."
+											class="masterTooltip">Profilo (QoS nei termini di
+											overbooking delle risorse)</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span class="input-group-addon"><i
+												class="fa fa-desktop"></i></span> <select name="profile"
+												id="profile" class="form-control" required="required">
+												<option value="">Scegli un profilo</option>
+												<option th:each="profile : ${profiles}" th:value="${profile[0].toLowerCase()}" th:text="${profile[0]} + ' ' + ${profile[1]}"> </option>
+											</select>
+										</div>
+									</div>
+ -->
+
+									<!-- <div class="inputs">
+										<label for="virtualMachineName">Nome Macchina Virtuale</label>
+										<div class="wizard-input-section input-group col-md-8"
+											style="margin-top: 0">
+											<span class="input-group-addon"><i class="fa fa-cog"></i></span>
+											<input type="text" class="form-control"
+												id="virtualMachineName" name="virtualMachineName"
+												placeholder="Es. kunagi-app" data-serialize="1"
+												maxlength="20" required="required" />
+										</div>
+										<div
+											class="alert alert-info alert-dismissable col-md-8 hidden"
+											role="alert" id="virtualMachineName-error">
+											<button type="button" class="close" data-dismiss="alert">
+												<span aria-hidden="true">&times;</span><span class="sr-only">Chiudi</span>
+											</button>
+											<div class="error-msg">
+												<strong>Errore!</strong> Il nome del servizio deve:
+												<ul>
+													<li>avere una lunghezza minima di 4 caratteri ed una
+														massima di 30;</li>
+													<li>iniziare con una lettera;</li>
+													<li>contenere solo caratteri alfanumerici, trattini ed
+														underscore.</li>
+												</ul>
+											</div>
+										</div>
+									</div> -->
+
+									<!-- <div th:replace="fragments/wizard/number-field :: number-field('instanceCount', 'Numero di Istanze', 'fa fa-cubes', '1', '1', '4', 8)"></div>  -->
+
+									<!-- 	<div class="inputs">
+										<label>Sorgente per il Boot</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span class="input-group-addon"><i
+												class="fa fa-desktop"></i></span> <select name="bootSource"
+												id="bootSource" class="form-control" required="required">
+												<option value="">Scegli una tipologia</option>
+												<option value="image">Immagine</option>
+											</select>
+										</div>
+									</div> -->
+
+									<div
+										th:replace="fragments/wizard/select-field :: select-field('imageName', 'Nome Immagine', 'fa fa-desktop', 'Scegli un&#96; immagine', ${imageName}, 8)"></div>
+
+
+									<!-- <div class="inputs hidden" id="input-image-name">
+										<label>Nome Immagine</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span class="input-group-addon"><i
+												class="fa fa-desktop"></i></span> <select name="imageName"
+												id="imageName" class="form-control" required="required">
+												<option value="">Scegli un' immagine</option>
+												<option value="1">1</option>
+											</select>
+										</div>
+									</div> -->
+									<div class="inputs hidden" id="input-snapshot-name">
+										<label>Nome Snapshot</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span class="input-group-addon"><i
+												class="fa fa-desktop"></i></span> <select name="snapshotName"
+												id="snapshotName" class="form-control" required="required">
+												<option value="">Scegli uno snapshot</option>
+												<option value="1">1</option>
+											</select>
+										</div>
+									</div>
+									<div class="inputs hidden" id="input-volume-name">
+										<label>Nome Volume</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span class="input-group-addon"><i
+												class="fa fa-desktop"></i></span> <select name="volumeName"
+												id="volumeName" class="form-control" required="required">
+												<option value="">Scegli un volume</option>
+												<option value="1">1</option>
+											</select>
+										</div>
+									</div>
+
+									<div
+										th:replace="fragments/wizard/number-field :: number-field('volume', 'Dimensione del disco dati (GB)', 'fa fa-cubes', '0', '0', '1024', 8)"></div>
+
+
+									<div class="clearfix"></div>
+								</article>
+
+
+
+								<article class="tab-pane" id="tab3">
+
+									<h2>
+										<i class="fa fa-sliders"></i> Rete e Sicurezza
+									</h2>
+									<hr />
+
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" aria-valuenow="45" aria-valuemin="0"
+											aria-valuemax="100" style="width: 40%"></div>
+									</div>
+
+									<div class="inputs">
+										<label>Reti di Appartenenza</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span class="input-group-addon"><i
+												class="fa fa-desktop"></i></span> 
+												<select name="network" id="network" class="form-control" required="required">
+												<option th:each="network : ${networks}" th:value="${network.id}"
+													th:text="${network.name}"></option>
+												
+											</select>
+										</div>
+									</div>
+
+
+
+									<!-- FIX LAYOUT -->
+									<div class="inputs">
+
+										<label>Chiavi per l'accesso</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span id="addKey" class="input-group-addon"
+												data-toggle="modal" data-target="#dialog"> <i
+												class="fa fa-plus"></i>
+											</span>
+											 <select name="key" id="key" class="form-control"
+												required="required">
+												<option th:each="keypair : ${keypairs}" th:value="${keypair.getName()}"
+													th:text="${keypair.getName()}"></option>
+												
+											</select> <input type="hidden" id="publicKeyValue" />
+										</div>
+									</div>
+
+									<div class="modal fade" id="dialog" tabindex="-1" role="dialog"
+										aria-labelledby="myModalLabel" aria-hidden="true" style="">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">
+														<span aria-hidden="true">&times;</span><span
+															class="sr-only">Chiudi</span>
+													</button>
+													<h4 class="modal-title">Importa chiave pubblica</h4>
+												</div>
+
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-md-6">
+															<div class="inputs">
+																<label for="keyName">Nome Chiave</label>
+																<div class="wizard-input-section input-group"
+																	style="margin-top: 0">
+																	<span class="input-group-addon"><i
+																		class="fa fa-file-text-o"></i></span> <input type="text"
+																		class="form-control" id="keyName" name="keyName"
+																		placeholder="Es: chiave-Ubuntu" data-serialize="1"
+																		maxlength="40" required="required" />
+																</div>
+															</div>
+															<div class="inputs">
+																<label for="publicKey">Chiave pubblica</label>
+																<div class="wizard-input-section input-group"
+																	style="margin-top: 0">
+																	<span class="input-group-addon"><i
+																		class="fa fa-key"></i></span>
+																	<textarea class="form-control" id="publicKey"
+																		name="publicKey" placeholder="" data-serialize="1"
+																		required="required" rows="20" cols="50"
+																		maxlength="4000" style="resize: none"></textarea>
+																</div>
+															</div>
+														</div>
+														<div class="col-md-6">
+															<h3>Descizione:</h3>
+															<p>Carica la chiave pubblica e conserva la chiave
+																privata per accedere alla macchina virtuale.</p>
+															<p>Scegli un nome per la chiave e incolla la chiave
+																pubblica nella apposita area.</p>
+															<p>Per generare una coppia di chiavi usa il comando:</p>
+															<p></p>
+															<pre>ssh-keygen -t rsa -f cloud.key</pre>
+															<p></p>
+															<p>L'output del comando è una coppia di chiavi: una
+																chiave privata (cloud.key) e una pubblica
+																(cloud.key.pub).</p>
+															<p>Per effettuare il login alla macchina utilizza il
+																comando:</p>
+															<p></p>
+															<pre>ssh -i cloud.key ubuntu@&lt;instance_ip&gt;</pre>
+															<p></p>
+															<p>oppure:</p>
+															<p></p>
+															<pre>ssh -i cloud.key ec2_user@&lt;instance_ip&gt;</pre>
+															<p></p>
+														</div>
+
+													</div>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-default"
+														data-dismiss="modal">Chiudi</button>
+													<button id="importKey" type="button" data-dismiss="modal"
+														class="btn btn-primary">Importa</button>
+												</div>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="inputs hidden">
+										<label>Gruppi di sicurezza</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<div class="row">
+
+												<div class="col-md-3">
+													<div class="checkbox">
+														<label><input type="checkbox" name="securityGroup"
+															id="default" value="default" />Default</label>
+													</div>
+												</div>
+
+												<div class="col-md-3">
+													<div class="checkbox">
+														<label><input type="checkbox" name="securityGroup"
+															id="https" value="https" />https</label>
+													</div>
+												</div>
+
+												<div class="col-md-3">
+													<div class="checkbox">
+														<label><input type="checkbox" name="securityGroup"
+															id="smtp" value="smtp" />SMTP</label>
+													</div>
+												</div>
+												<div class="col-md-3">
+													<div class="checkbox">
+														<label><input type="checkbox" name="securityGroup"
+															id="myGroup" value="myGroup" />myGroup</label>
+													</div>
+												</div>
+												<div class="clearfix"></div>
+											</div>
+										</div>
+
+									</div>
+									<div class="clearfix"></div>
+
+								</article>
+
+<!-- 								<article class="tab-pane" id="tab4">
+
+									<h2>
+										<i class="fa fa-sliders"></i> Script Post Creazione
+									</h2>
+									<hr />
+
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" aria-valuenow="45" aria-valuemin="0"
+											aria-valuemax="100" style="width: 60%"></div>
+									</div>
+
+									<div class="inputs">
+										<label for="script">Script (Opzionale)</label>
+										<div class="wizard-input-section input-group col-md-8"
+											style="margin-top: 0">
+											<span class="input-group-addon"><i
+												class="fa fa-file-text-o"></i></span>
+											<textarea class="form-control" id="script"
+												name="script" placeholder="Script.."
+												data-serialize="1" rows="8" cols="50" maxlength="1000"
+												style="resize: none"></textarea>
+										</div>
+									</div>
+								</article> -->
+<!-- 								<article class="tab-pane" id="tab5">
+
+									<h2>
+										<i class="fa fa-sliders"></i> Opzioni Avanzate
+									</h2>
+									<hr />
+
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" aria-valuenow="75" aria-valuemin="0"
+											aria-valuemax="100" style="width: 80%"></div>
+									</div>
+
+
+									<div class="inputs">
+										<label>Partizionamento del disco</label>
+										<div class="wizard-input-section input-group col-md-8">
+											<span class="input-group-addon"><i
+												class="fa fa-desktop"></i></span> <select name="diskPartition"
+												id="diskPartition" class="form-control" required="required">
+												<option value="">Scegli un partizionamento</option>
+												<option value="automatic">Automatico</option>
+												<option value="manual">Manuale</option>
+											</select>
+										</div>
+									</div>
+									<div class="clearfix"></div>
+
+								</article> -->
+								<article class="tab-pane" id="tab6">
+
+									<h2>
+										<i class="fa fa-sliders"></i> Riepilogo
+									</h2>
+
+									<hr />
+
+									<div class="progress">
+										<div class="progress-bar progress-bar-striped active"
+											role="progressbar" aria-valuenow="45" aria-valuemin="0"
+											aria-valuemax="100" style="width: 100%"></div>
+									</div>
+
+									<div class="control-group">
+										<table class="table table-striped table-hover table-bordered">
+											<thead>
+												<tr>
+													<th>Nome</th>
+													<th>Valore</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Nome del Servizio</td>
+													<td><span id="tableServiceName"></span></td>
+												</tr>
+												<tr>
+													<td>Descrizione del Servizio</td>
+													<td><span id="tableDescription"></span></td>
+												</tr>
+												<tr>
+													<td>Domain Name</td>
+													<td><span id="tableDomainName"></span></td>
+												</tr>
+												<tr>
+													<td>Email per le Notifiche</td>
+													<td><span id="tableEmail"></span></td>
+												</tr>
+												<tr>
+													<td>Zona</td>
+													<td><span id="tableZoneSelect"></span></td>
+												</tr>
+												<tr>
+													<td>Profilo</td>
+													<td><span id="tableProfile"></span></td>
+												</tr>
+												<tr>
+													<td>Flavor</td>
+													<td><span id="tableFlavor"></span></td>
+												</tr>
+												<tr>
+													<td>Sorgente per il Boot</td>
+													<td><span id="tableSourceBoot"></span></td>
+												</tr>
+												<tr>
+													<td>Disco Secondario</td>
+													<td><span id="tableVolume"></span></td>
+												</tr>
+												<tr>
+													<td>Rete di appartenenza</td>
+													<td><span id="tableNetwork"></span></td>
+												</tr>
+												<tr>
+													<td>Chiavi per l'accesso</td>
+													<td><span id="tableKey"></span></td>
+												</tr>
+												<!-- <tr>
+													<td>Partizionamento del disco</td>
+													<td><span id="tablePartition"></span></td>
+												</tr> -->
+											</tbody>
+										</table>
+									</div>
+								</article>
+
+								<ul class="pager wizard">
+									<li class="previous"><a href="#">Indietro</a></li>
+									<li class="next"><a href="#">Avanti</a></li>
+									<li id="finishButton" class="next finish"
+										style="display: none;"><a href="javascript:{}"
+										onclick="deploy('vmaas');"
+										onmouseover="$('#finishButton').removeClass('disabled');">Crea
+											servizio</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</form>
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+
+</body>
+
+</html>

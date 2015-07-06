@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="sms-dailynotification">
+
+		<form id="dailyNotificationsForm"
+			th:action="@{/async/paas/smsaas/daily}"
+			th:object="${DailyNotificationForm}" method="post">
+
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="checkbox">
+						<label>
+							<div th:if="${notification.isDaily}">
+								<input type="checkbox" name="dailyNot" id="dailyNot"
+									checked="checked" value="dailyNot" />
+							</div>
+							<div th:unless="${notification.isDaily}">
+								<input type="checkbox" name="dailyNot" id="dailyNot"
+									value="dailyNot" />
+							</div> <b>Attiva notifica giornaliera</b>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div id="divDaily" th:class="${!notification.isDaily}? 'hide'"
+				style="margin-left: 15px;">
+				<div class="row">
+					<div class="col-md-6 col-xs-6">
+						<div class="checkbox">
+							<label>
+								<div th:if="${notification.isDailySms}">
+									<input type="checkbox" name="dailySms" id="dailySms"
+										value="dailySms" checked="checked" />
+								</div>
+								<div th:unless="${notification.isDailySms}">
+									<input type="checkbox" name="dailySms" id="dailySms"
+										value="dailySms" />
+								</div> SMS
+							</label>
+						</div>
+					</div>
+					<div class="col-md-6 col-xs-6">
+						<div class="checkbox">
+							<label>
+								<div th:if="${notification.isDailyEmail}">
+									<input type="checkbox" name="dailyEmail" id="dailyEmail"
+										value="dailyEmail" checked="checked" />
+								</div>
+								<div th:unless="${notification.isDailyEmail}">
+									<input type="checkbox" name="dailyEmail" id="dailyEmail"
+										value="dailyEmail" />
+								</div> Email
+							</label>
+						</div>
+					</div>
+				</div>
+				<div th:class="${notification.isDailySms}? 'row' : 'row hide'"
+					id="rowDailyNumber">
+					<div class="col-md-12">
+						<label>Inserisci numero di telefono</label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-slack"></i></span>
+							<input type="text" class="form-control" id="numberDaily"
+								name="numberDaily" th:value="${notification.dailySms}" />
+						</div>
+					</div>
+				</div>
+
+				<div th:class="${notification.isDailyEmail}? 'row' : 'row hide'"
+					id="rowDailyEmail">
+
+					<div class="col-md-12">
+						<label>Indirizzo di notifica</label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+							<input type="email" class="form-control" id="emailAddressDaily"
+								name="emailAddressDaily" placeholder="Inserisci indirizzo email"
+								th:value="${notification.dailyEmail}" required="required" />
+						</div>
+					</div>
+				</div>
+				<div
+					th:class="${notification.isDailyEmail or notification.isDailySms}? 'row' : 'hide row'"
+					id="rowDailyThreshold">
+
+					<div class="col-md-12">
+						<label>Inserisci soglia</label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-slack"></i></span>
+							<input type="number" class="form-control" id="smsThresholdDaily"
+								name="smsThresholdDaily" min="1"
+								th:value="${notification.thresholdDay}" step="1" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 15px;">
+
+				<div class="col-md-offset-9 col-md-3">
+					<button type="button" id="saveDailyNotification"
+						class="btn btn-primary">Salva</button>
+				</div>
+				<div class="row" style="margin-top: 20px;">
+					<div id="notifySaved"
+						class="col-md-offset-9 col-md-3 invisible"
+						style="color: #0000FF; font-size: 13pt; font-family: Arial">
+						<p id="textNotifyDaily">Notifiche salvate!</p>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>

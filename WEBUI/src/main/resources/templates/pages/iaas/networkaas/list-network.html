@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.network}"></title>
+
+<script th:src="@{/static/assets/js/jquery.blockUI.js}"
+	type="text/javascript"></script>
+
+<script th:src="@{/static/assets/js/jquery.ui.widget.js}"
+	type="text/javascript"></script>
+
+<link rel="stylesheet"
+	th:href="@{/static/assets/css/bootstrap-table.css}" />
+<script th:src="@{/static/assets/js/bootstrap-table.js}"
+	type="text/javascript"></script>
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+		
+	//TODO è la copia di key perchè simila ma da implementare 
+
+
+		var Network= "";
+		function selectNetwork(name){
+			Network = name;
+			$("#modalKeyName").text(name);
+		}
+
+
+		function cleanCreateModal(){
+			$('#createKeyName').val("");
+			$('#modalCreate').removeClass("hidden");
+			$('#modalCreateDownload').addClass("hidden");
+		}
+
+		function dowload(){ 
+			$('#modalCreateNetwork').modal('hide');
+			$.fileDownload("/async/iaas/keyaas/download").done(function () {})
+	        .fail(function () { });
+	 
+			return false; 
+		}
+		
+		function createNetwork(){
+
+			var response;
+			$.ajax({
+				url : "/async/iaas/keyaas/" + $('#createKeyName').val(),
+				type: 'POST', 
+				statusCode : {
+					404 : function() {
+						console.log("404");
+						window.location.href = path + '404';
+					},
+					500 : function() {
+						console.log("500");
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				beforeSend : function() {
+					$.blockUI({
+						css : {
+							border : 'none',
+							padding : '15px',
+							backgroundColor : '#000',
+							'-webkit-border-radius' : '10px',
+							'-moz-border-radius' : '10px',
+							opacity : .5,
+							color : '#fff'
+						}
+					});
+					
+				},
+				success : function(data) {
+					response = data;
+					if (data.status) {
+						if(data.success){
+							console.log(data.result)
+					  		$("#keyNameCreated").val($('#createKeyName').val());
+							$("#publicKeyCreated").val(data.result);
+							$("#modalCreate").addClass("hidden");
+							$("#modalCreateDownload").removeClass("hidden");
+							$('table > tbody > tr:first').before('<tr><td class="col-md-6"><span>' + data.result.name + '</span></td><td class="col-md-4"><span>' + data.result.fingerprint + '</span></td><td class="col-md-2"><button type="button" data-toggle="modal" data-target="#modalDeleteNetwork" class="btn btn-sm btn-danger" id="button' + data.result.name + '" onclick="javascript:selectNetwork(\'' + data.result.name +'\');">Elimina</button></td></tr>');
+						} else {							
+							console.log(data.error.errorCode);
+							console.log(data.error.message);
+						}
+						
+					} else {
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				complete : function(){
+					Network = "";
+					$('#modalCreateNetwork').modal('show');
+					if(!response.success){
+						switch(response.error.errorCode){
+						case "CONFLICT":
+							$('#modalCreateFooterError').text("Chiave duplicata");
+							break;
+						default:
+							$('#modalCreateFooterError').text("Errore durante la creazione");
+							break;
+						}
+					}
+					$.unblockUI();
+				}
+			});
+		}
+
+
+
+		
+		function cleanImportModal(){
+			$('#importKeyName').val("");
+			$('#importPublicKey').val("");
+			$('#modalImportFooterError').text("");
+		}
+		
+		function importNetwork(){
+
+			var data = { "name" : $("#importKeyName").val(),  "publicKey": $("#importPublicKey").val()};
+			var response;
+			$.ajax({
+				url : "/async/iaas/keyaas",
+				type: 'POST', 
+				contentType: 'application/json',
+			    data: JSON.stringify(data),
+				statusCode : {
+					404 : function() {
+						console.log("404");
+						window.location.href = path + '404';
+					},
+					500 : function() {
+						console.log("500");
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				beforeSend : function() {
+					$.blockUI({
+						css : {
+							border : 'none',
+							padding : '15px',
+							backgroundColor : '#000',
+							'-webkit-border-radius' : '10px',
+							'-moz-border-radius' : '10px',
+							opacity : .5,
+							color : '#fff'
+						}
+					});
+					
+				},
+				success : function(data) {
+					response = data;
+					if (data.status) {
+						if(data.success){
+							console.log(data.result)
+							$('table > tbody > tr:first').before('<tr><td class="col-md-6"><span>' + data.result.name + '</span></td><td class="col-md-4"><span>' + data.result.fingerprint + '</span></td><td class="col-md-2"><button type="button" data-toggle="modal" data-target="#modalDeleteNetwork" class="btn btn-sm btn-danger" id="button' + data.result.name + '" onclick="javascript:selectNetwork(\'' + data.result.name +'\');">Elimina</button></td></tr>');
+						} else {							
+							console.log(data.error.errorCode);
+							console.log(data.error.message);
+						}
+						
+					} else {
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				complete : function(){
+					Network = "";
+					if(!response.success){
+						$('#dialogImportNetwork').modal('show');
+						switch(response.error.errorCode){
+						case "BAD_REQUEST":
+							$('#modalImportFooterError').text("La chiave inserita non è valida");
+							break;
+						case "CONFLICT":
+							$('#modalImportFooterError').text("Chiave duplicata");
+							break;
+						default:
+							$('#modalImportFooterError').text("Errore durante l'import");
+							break;
+						}
+					}
+					$.unblockUI();
+				}
+			});
+		}
+
+
+		
+		
+	    
+		function deleteNetwork(){
+			if(Network == ""){
+				return;
+			}
+			$.ajax({
+				url : "/async/iaas/keyaas/" + Network,
+				type : "DELETE",
+				statusCode : {
+					404 : function() {
+						console.log("404");
+						window.location.href = path + '404';
+					},
+					500 : function() {
+						console.log("500");
+						window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+					}
+				},
+				beforeSend : function() {
+					$.blockUI({
+						css : {
+							border : 'none',
+							padding : '15px',
+							backgroundColor : '#000',
+							'-webkit-border-radius' : '10px',
+							'-moz-border-radius' : '10px',
+							opacity : .5,
+							color : '#fff'
+						}
+					});
+					$('#modalDeleteNetwork').modal('hide');
+				},
+				success : function(data) {
+					if (data) {
+						//remove from DOM
+						console.log(data);
+						var id = "#button" + Network;
+						$(id).parent().parent().remove();
+					} else {
+						console.log("Errore durante la cancellazione");
+					}
+				},
+				complete : function(){
+					Network = "";
+					$.unblockUI();
+				}
+			});
+			
+		}
+
+	
+		
+
+   		
+	/*]]>*/		
+</script>
+
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>Reti</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi IaaS</a></li>
+					<li><a th:href="@{/iaas/networkaas/}"> Reti</a></li>
+					<li class="active">Dashboard</li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<div class="col-md-offset-8 col-md-4">
+						<h3>
+							<div class="row">
+								<div class="col-xs-12">
+									<button class="btn btn-primary navbar-btn pull-right"
+										data-toggle="modal" data-target="#modalCreateNetwork"
+										onClick="cleanCreateModal();">Crea una Rete</button>
+								</div>
+							</div>
+						</h3>
+					</div>
+				</div>
+
+				<div class="modal" id="modalCreateNetwork" tabindex="-1"
+					role="dialog" aria-labelledby="modalCreateNetworkLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="myModalLabel">Crea Rete</h4>
+							</div>
+							<div class="modal-body">
+								<div id="modalCreate">
+									<!-- <div class="row">
+										<div class="col-md-6 col-xs-12">
+											<div class="inputs">
+												<label for="virtualMachineName">Nome della Chiave</label>
+												<div style="margin-top: 0"
+													class="wizard-input-section input-group">
+													<span class="input-group-addon"><i class="fa fa-cog"></i></span>
+													<input type="text" class="form-control" data-serialize="1"
+														required="required" id="createKeyName"
+														name="createKeyName" placeholder="Chiave" maxlength="30"
+														aria-required="true" />
+												</div>
+											</div>
+
+										</div>
+									</div> -->
+								</div>
+								<div id="modalCreateDownload" class="hidden">
+									<a id="fileDownload" href="#" target="_top"
+										onClick="dowload();" style="color: blue;">Scarica la tua
+										chiave</a>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<div class="row">
+									<div class="col-md-offset-4 col-md-4">
+										<span id="modalCreateFooterError"></span>
+									</div>
+									<div class="col-md-4">
+										<button type="button" class="btn btn-default"
+											data-dismiss="modal">Chiudi</button>
+										<button id="createNetwork" type="button" data-dismiss="modal"
+											class="btn btn-primary" onclick="createNetwork();">Crea</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row" style="margin-top: 10px;">
+					<div class="col-xs-12">
+						<div class="box box-primary" style="margin-bottom: 0;">
+							<div class="box-header">
+								<i class="fa fa-user"></i>
+								<h3 class="box-title">Reti create nel workgroup</h3>
+							</div>
+							<div class="box-body">
+								<table id="table" data-toggle="table"
+									data-url="/async/iaas/networks" data-cache="false"
+									data-pagination="true" data-side-pagination="server"
+									data-page-size="10" data-page-list="[10]">
+									<thead>
+										<th class="col-md-3" data-field="name">Nome</th>
+										<th class="col-md-4" data-field="subnets">Sottoreti</th>
+										<th class="col-md-3" data-field="shared">Condivisa</th>
+										<th class="col-md-2" data-field="id"
+											data-formatter="deleteKeyFormatter">Elimina</th>
+									</thead>
+								</table>
+								<div class="pull-right pagination"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal" id="modalDeleteNetwork" tabindex="-1"
+					role="dialog" aria-labelledby="modalDeleteNetworkLabel"
+					aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="myModalLabel">Elimina Network</h4>
+							</div>
+							<div class="modal-body">
+								Sei sicuro di voler eliminare la chiave <strong><span
+									id="modalKeyName"></span></strong>?
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">Chiudi</button>
+								<button type="button" class="btn btn-danger"
+									onclick="deleteNetwork();">Elimina</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+</body>
+</html>

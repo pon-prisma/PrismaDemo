@@ -1,0 +1,44 @@
+<!-- 
+
+	Parametri: 
+				@param id: 				id and name of the input
+				@param label:			label above the input
+				@param iconClass:		class of the icon
+				@param placeholder:     input placeholder
+				@param maxlenght:     	input maxlength
+				@param colSize:			column size of the div. Use 8 ad default, use 12 for inner input
+
+
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="email-field-current-user (id, label, iconClass, colSize)"
+		class="inputs">
+		<label th:for="${id}" th:text="${label}">Nome</label>
+		<div
+			th:class="'wizard-input-section input-group col-md-' + ${colSize}"
+			style="margin-top: 0">
+			<span class="input-group-addon"><i th:class="${iconClass}"></i></span>
+			<input type="email" class="form-control" th:id="${id}"
+				th:name="${id}" placeholder=""
+				th:value="${currentUser.email!=null} ? ${currentUser.email} : ''" data-serialize="1"
+				th:maxlength="200" required="required" />
+		</div>
+		<div class="alert alert-info alert-dismissable col-md-8 hidden"
+			role="alert" th:id="${id + '-error'}">
+			<button type="button" class="close" data-dismiss="alert">
+				<span aria-hidden="true">&times;</span><span class="sr-only">Chiudi</span>
+			</button>
+			<div class="error-msg">
+				<strong>Errore!</strong> Email non corretta.
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

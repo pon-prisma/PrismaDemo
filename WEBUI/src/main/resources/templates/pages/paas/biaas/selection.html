@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:title="#{selectionPage.title}"></title>
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>Business Intelligence</h1>
+				<ol class="breadcrumb">
+					<li><a href="#" th:text="#{selectionPage.home}"><i
+							class="fa fa-cogs"></i></a></li>
+					<li><a th:href="@{/paas/biaas/}">BIaaS</a></li>
+					<li class="active" th:text="#{selectionPage.businessIntell}"></li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="bs-docs-section" style="margin-bottom: 30px">
+					<p>
+						<span th:text="#{selectionPage.BIDesc}"></span> <strong
+							th:text="#{selectionPage.BIDesc1}"></strong> <span
+							th:text="#{selectionPage.BIDesc2}"></span> <em
+							th:text="#{selectionPage.BIDesc3}"></em> <span
+							th:text="#{selectionPage.BIDesc4}"></span> <em
+							th:text="#{selectionPage.BIDesc5}"></em>
+					</p>
+				</div>
+				<!-- ./bs-docs-section -->
+				<!-- Selection -->
+				<div class="row">
+					<div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">
+								    Pentaho Server CE e Client Tools
+								</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/pentaho-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;"
+											th:text="#{selectionPage.pentahodesc}"></p>
+										<div>
+
+											<h5 style="font-weight: bolder"
+												th:text="#{selectionPage.version}"></h5>
+											<span class="label label-primary"
+												th:text="#{selectionPage.version1}"></span> <span
+												class="label label-primary"
+												th:text="#{selectionPage.version2}"></span>
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right" th:href="@{/paas/biaas/create/pentaho?type=server-and-client}">
+												<i class="fa fa-hand-o-right"></i> <span th:text="#{selectionPage.select}" ></span>
+											</a>
+										</p>
+									</div>
+									<!-- ./col -->
+
+								</div>
+								<!-- ./row -->
+							</div>
+							<!-- /.box-body-->
+						</div>
+						<!-- /.box -->
+					</div>
+					<!-- ./col -->
+
+
+					<div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">
+									Pentaho Server CE
+								</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/pentaho-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;">Provisioning on-demand di
+											Pentaho BI Server CE (Community Edition) versione 5.1 con
+											repository PostgreSQL 9.3. I dati del database vengono
+											memorizzati su un volume della dimensione specificata
+											dall&rsquo;utente. L&rsquo;utente potr&agrave; accedere alla user-console (Web UI
+											per amministrare il server) tramite l’URL
+											http://host:8080/pentaho usando l’account &quot;admin&quot; con la
+											password specificata nel form di richiesta del servizio.</p>
+										<div>
+										
+											<h5 style="font-weight: bolder">Versione:</h5>
+											<span class="label label-primary">5.1.0</span> 
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right" th:href="@{/paas/biaas/create/pentaho?type=server}">
+												<i class="fa fa-hand-o-right"></i>&nbsp; Seleziona
+											</a>
+										</p>
+									</div>
+									<!-- ./col -->
+
+								</div>
+								<!-- ./row -->
+							</div>
+							<!-- /.box-body-->
+						</div>
+						<!-- /.box -->
+					</div>
+					<!-- ./col -->
+				</div>
+				<!-- /.row -->
+
+
+				<div class="row">
+					<div class="col-xs-12 col-md-6">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-puzzle-piece"></i>
+								<h3 class="box-title">
+									Pentaho Client Tools
+								</h3>
+							</div>
+
+							<div class="box-body" id="lineChartBox">
+								<div class="row">
+									<div class="col-sm-4 hidden-xs">
+										<img alt="pentaho-logo" class="img-thumbnail img-responsive"
+											th:src="@{/static/images/pentaho-logo.png}" />
+									</div>
+									<div class="col-xs-12 col-sm-8">
+										<p style="text-align: justify;">Provisioning on-demand di un ambiente desktop contenente i tool Pentaho Data Integration (Kettle) versione 5.1 
+										e Report Designer versione 5.1. L’utente può accedere all'ambiente desktop usando il client <a href="https://github.com/pon-prisma/Tutorials/blob/master/X2go%20Client%20Setup%20Tutorial.pdf" target="_blank">X2GO</a> che va pre-installato sul proprio computer 
+										</p>
+										<div>
+										
+											<h5 style="font-weight: bolder">Versioni supportata:</h5>
+											<span class="label label-primary">5.1.0</span>
+										</div>
+										<p>
+											<a class="btn btn-primary pull-right" th:href="@{/paas/biaas/create/pentaho?type=client}">
+												<i class="fa fa-hand-o-right"></i>&nbsp; Seleziona
+											</a>
+										</p>
+									</div>
+									<!-- ./col -->
+
+								</div>
+								<!-- ./row -->
+							</div>
+							<!-- /.box-body-->
+						</div>
+						<!-- /.box -->
+					</div>
+					<!-- ./col -->
+				</div>
+				<!-- /.row -->
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+		
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

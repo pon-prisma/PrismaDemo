@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/public-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{signinPage.title}"></title>
+</head>
+
+<!-- Page body -->
+<body>
+	<div layout:fragment="content">
+		<div class="box box-primary shadowbox">
+			<div class="box-header">
+				<i class="fa fa-sign-in"></i>
+				<h3 class="box-title"  th:text="#{signinPage.provider}"></h3>
+			</div>
+			<!-- ./box-header -->
+			<div class="box-body">
+				<div class="row">
+					<aside class="col-md-4">
+						<div class="list-group" style="margin-bottom: 0;">
+							<a href="./signup.html" th:href="@{/accounting/signup}"
+								th:title="#{signinPage.reqNewAccount}"  class="list-group-item">
+								<h4 class="list-group-item-heading" th:text="#{signinPage.reqAccount}"></h4>
+								<p id="signup" class="list-group-item-text" th:text="#{signinPage.createAcc}"></p>
+							</a> <a href="./signin.html" th:href="@{/accounting/signin}"
+								th:title="#{signinPage.login}"  class="list-group-item active">
+								<h4 class="list-group-item-heading" th:text="#{signinPage.login}"></h4>
+								<p class="list-group-item-text" th:text="#{signinPage.sso}"></p>
+							</a> <a href="./accounting-support.html"
+								th:href="@{/accounting/support}" th:title="#{signinPage.reqAssist}"
+								class="list-group-item">
+								<h4 class="list-group-item-heading" th:text="#{signinPage.reqAssist}"></h4>
+								<p class="list-group-item-text" th:text="#{signinPage.problem}"></p>
+							</a>
+						</div>
+					</aside>
+					<div class="col-md-8">
+						<hr class="hidden-md hidden-lg" />
+						<!-- Alert about SSO -->
+						<div class="alert prisma-green-alert alert-dismissable hidden-xs">
+							<button type="button" class="close" data-dismiss="alert"
+								aria-hidden="true">&times;</button>
+							<p> <span th:text="#{signinPage.support}"></span>
+								 <strong th:text="#{signinPage.support2}"></strong>
+								 <span th:text="#{signinPage.support3}"></span>
+							</p>
+							
+						</div>
+						<!-- ./alert -->
+						<form th:action="${idpDiscoReturnURL}" method="get">
+							<!-- SSO Box (Visible only in LG-size) -->
+							<div class="bhoechie-tab-container row-xs-height visible-lg">
+								<!-- IdP Selection -->
+								<div class="col-lg-3 bhoechie-tab-menu col-xs-height">
+									<div class="list-group">
+										<a href="#"
+											class="list-group-item idp-group-item active text-center">
+											<div class="col-middle">
+												<strong th:text="#{signinPage.prisma}"></strong><br /> <span th:text="#{signinPage.platform}">
+												</span>
+											</div>
+										</a> <a href="#"
+											class="list-group-item idp-group-item text-center">
+											<div class="col-middle">
+												<strong th:text="#{signinPage.reply}"></strong><br /> <span th:text="#{signinPage.livNet}"></span>
+											</div>
+										</a> <a href="#"
+											class="list-group-item idp-group-item text-center">
+											<div class="col-middle">
+												<strong th:text="#{signinPage.infn}"></strong><br /><span th:text="#{signinPage.istituteNat}"></span> 
+											</div>
+										</a> <a href="#"
+											class="list-group-item idp-group-item text-center">
+											<div class="col-middle">
+												<strong th:text="#{signinPage.sielte}"></strong><br /> <span th:text="#{signinPage.sielteCO}"></span>
+											</div>
+										</a>
+										<a href="#"
+											class="list-group-item idp-group-item text-center">
+											<div class="col-middle">
+												<strong>UniBa</strong><br />Università degli Studi di Bari
+											</div>
+										</a>
+									</div>
+									<!-- ./list-group -->
+								</div>
+								<!-- ./bhoechie-tab-menu -->
+								<!-- IdP Descriptions -->
+								<div class="col-lg-9 bhoechie-tab col-xs-height col-middle">
+									<!-- Prisma IdP Description -->
+									<div class="bhoechie-tab-content active">
+										<div style="text-align:center">
+											<img th:src="#{logo.path}" style="max-width: 200px;" />
+											<h3 th:text="#{signinPage.idp}">
+												<a href="#"> <small> <span
+														class="glyphicon glyphicon-globe"></span>
+												</small>
+												</a>
+											</h3>
+											<p><span th:text="#{signinPage.desc}"></span>
+												 <em th:text="#{signinPage.selfservice}"></em>
+											</p>
+										</div>
+										<button type="submit" th:name="${idpDiscoReturnParam}"
+											th:id="'idp_' + ${prismaIdP.entityId}" th:value="${prismaIdP.entityId}"
+											class="btn btn-primary btn btn-idp pull-right">
+											<i class="fa fa-user"></i> <span th:text="#{signinPage.login2}"></span>
+										</button>
+										<div class="clearfix"></div>
+									</div>
+									<!-- ./bhoechie-tab-content -->
+									<!-- IdP Reply Description -->
+									<div class="bhoechie-tab-content">
+										<div style="text-align:center">
+											<img th:src="@{/static/images/reply-logo.png}" style="max-width: 250px;" />
+											<h3 th:text="#{signinPage.replyLiving}">
+												<a href="#"> <small>
+														<span class="glyphicon glyphicon-globe"></span>
+												</small>
+												</a>
+											</h3>
+											<p th:text="#{signinPage.replyDesc}"></p>
+										</div>
+										<button type="submit" th:name="${idpDiscoReturnParam}"
+											th:id="'idp_' + ${replyIdP.entityId}" th:value="${replyIdP.entityId}"
+											class="btn btn-primary btn btn-idp pull-right">
+											<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+										</button>
+										<div class="clearfix"></div>
+									</div>
+									<!-- ./bhoechie-tab-content -->
+									<!-- IdP INFN Description -->
+									<div class="bhoechie-tab-content">
+										<div style="text-align:center">
+											<img th:src="@{/static/images/infn-logo.png}" style="max-width: 250px;" />
+											<h3 th:text="#{signinPage.infn2}">
+												<a href="#"> <small> <span
+														class="glyphicon glyphicon-globe"></span>
+												</small>
+												</a>
+											</h3>
+											<p th:text="#{signinPage.infnDesc}"></p>
+										</div>
+										<button type="submit" th:name="${idpDiscoReturnParam}"
+											th:id="'idp_' + ${infnIdP.entityId}"
+											th:value="${infnIdP.entityId}"
+											class="btn btn-primary btn btn-idp pull-right">
+											<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+										</button>
+										<div class="clearfix"></div>
+									</div>
+									<!-- ./bhoechie-tab-content -->
+									<!-- IdP SIELTE Description -->
+									<div class="bhoechie-tab-content">
+										<div style="text-align:center">
+											<img th:src="@{/static/images/sielte-logo.png}" style="max-width: 230px;" />
+											<h3 th:text="#{signinPage.sielte}">
+												<a href="#"> <small> <span
+														class="glyphicon glyphicon-globe"></span>
+												</small>
+												</a>
+											</h3>
+											<p th:text="#{signinPage.sielteDesc}"></p>
+										</div>
+										<button type="submit" th:name="${idpDiscoReturnParam}"
+											th:id="'idp_' + ${sielteIdP.entityId}" th:value="${sielteIdP.entityId}"
+											class="btn btn-primary btn btn-idp pull-right">
+											<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+										</button>
+										<div class="clearfix"></div>
+									</div>
+									<!-- IdP UniBa Description -->
+									<div class="bhoechie-tab-content">
+										<div style="text-align:center">
+											<img th:src="@{/static/images/uniba-logo.png}" style="max-width: 230px;" />
+											<h3>UniBa IdP
+												<a href="http://www.uniba.it"> <small> <span
+														class="glyphicon glyphicon-globe"></span>
+												</small>
+												</a>
+											</h3>
+											<p>L’Università degli Studi di Bari Aldo Moro è un'università pubblica italiana con sede a Bari. È la maggiore università pugliese per numero di studenti.
+													L'Ateneo, fondato nel 1925, ha sede presso il palazzo storico di Piazza Umberto I nel cuore del moderno centro cittadino. L'attuale rettore per il triennio 2013/2016 è Antonio Felice Uricchio, che succede alla gestione di Corrado Petrocelli.</p>
+										</div>
+										<button type="submit" th:name="${idpDiscoReturnParam}"
+											th:id="'idp_' + ${unibaIdP.entityId}" th:value="${unibaIdP.entityId}"
+											class="btn btn-primary btn btn-idp pull-right">
+											<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+										</button>
+										<div class="clearfix"></div>
+									</div>
+									<!-- ./bhoechie-tab-content -->
+								</div>
+								<!-- ./bhoechie-tab -->
+							</div>
+							<!-- ./bhoechie-tab-container ./visible-lg -->
+
+							<!-- SSO Box (Visible in XS, MD) -->
+							<div class="panel-group hidden-lg" id="accordion">
+								<!-- IdP Prisma -->
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">
+											<a data-toggle="collapse" data-parent="#accordion"
+												href="#collapsePrismaIdP" th:text="#{signinPage.idp}"></a>
+										</h4>
+									</div>
+									<!-- ./panel-heading -->
+									<div id="collapsePrismaIdP" class="panel-collapse collapse in">
+										<div class="panel-body">
+											<div style="text-align:center">
+												<img th:src="#{logo.path}" style="max-width: 250px;" />
+												<h3 th:text="#{signinPage.idp}">
+													<a href="#"> <small> <span
+															class="glyphicon glyphicon-globe"></span>
+													</small>
+													</a>
+												</h3>
+												<p style="text-align:justify;"> <span th:text="#{signinPage.desc}"></span>
+													<em th:text="#{signinPage.selfservice}"></em>
+												</p>
+											</div>
+											<button type="submit" th:name="${idpDiscoReturnParam}"
+												th:id="'idp_' + ${prismaIdP.entityId}"
+												th:value="${prismaIdP.entityId}"
+												class="btn btn-primary btn btn-idp pull-right">
+												<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+											</button>
+											<div class="clearfix"></div>
+										</div>
+										<!-- Panel Body -->
+									</div>
+									<!-- ./panel-collapse #/collapseOne -->
+								</div>
+								<!-- ./panel -->
+								<!-- IdP Reply -->
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">
+											<a data-toggle="collapse" data-parent="#accordion"
+												href="#collapseReplyIdP" th:text="#{signinPage.replyLiving}"> </a>
+										</h4>
+									</div>
+									<!-- ./panel-heading -->
+									<div id="collapseReplyIdP" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div style="text-align:center">
+												<img th:src="@{/static/images/reply-logo.png}" style="max-width: 250px;" />
+												<h3 th:text="#{signinPage.replyLiving}">
+													<a href="#"> <small>
+															<span class="glyphicon glyphicon-globe"></span>
+													</small>
+													</a>
+												</h3>
+												<p style="text-align:justify;" th:text="#{signinPage.replyDesc}">
+													</p>
+											</div>
+											<button type="submit" th:name="${idpDiscoReturnParam}"
+												th:id="'idp_' + ${replyIdP.entityId}" th:value="${replyIdP.entityId}"
+												class="btn btn-primary btn btn-idp pull-right">
+												<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+											</button>
+											<div class="clearfix"></div>
+										</div>
+										<!-- Panel Body -->
+									</div>
+									<!-- ./panel-collapse #/collapseOne -->
+								</div>
+								<!-- ./panel -->
+								<!-- IdP INFN -->
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">
+											<a data-toggle="collapse" data-parent="#accordion"
+												href="#collapseINFNIdP" th:text="#{signinPage.infn2}"></a>
+										</h4>
+									</div>
+									<!-- ./panel-heading -->
+									<div id="collapseINFNIdP" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div style="text-align:center">
+												<img th:src="@{/static/images/infn-logo.png}" style="max-width: 250px;" />
+												<h3 th:text="#{signinPage.infn2}">
+													<a href="#"> <small> <span
+															class="glyphicon glyphicon-globe"></span>
+													</small>
+													</a>
+												</h3>
+												<p style="text-align:justify;" th:text="#{signinPage.infnDesc}">
+													</p>
+											</div>
+											<button type="submit" th:name="${idpDiscoReturnParam}"
+												th:id="'idp_' + ${infnIdP.entityId}"
+												th:value="${infnIdP.entityId}"
+												class="btn btn-primary btn btn-idp pull-right">
+												<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+											</button>
+											<div class="clearfix"></div>
+										</div>
+										<!-- Panel Body -->
+									</div>
+									<!-- ./panel-collapse #/collapseOne -->
+								</div>
+								<!-- ./panel -->
+								<!-- IdP SIELTE -->
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">
+											<a data-toggle="collapse" data-parent="#accordion"
+												href="#collapseSIELTEIdP" th:text="#{signinPage.sielte}"></a>
+										</h4>
+									</div>
+									<!-- ./panel-heading -->
+									<div id="collapseSIELTEIdP" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div style="text-align:center">
+												<img th:src="@{/static/images/sielte-logo.png}" style="max-width: 230px;" />
+												<h3 th:text="#{signinPage.sielte}">
+													<a href="#"> <small> <span
+															class="glyphicon glyphicon-globe"></span>
+													</small>
+													</a>
+												</h3>
+												<p style="text-align:justify;" th:text="#{signinPage.sielteDesc}">
+													</p>
+											</div>
+											<button type="submit" th:name="${idpDiscoReturnParam}"
+												th:id="'idp_' + ${sielteIdP.entityId}"
+												th:value="${sielteIdP.entityId}"
+												class="btn btn-primary btn btn-idp pull-right" >
+												<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+											</button>
+											<div class="clearfix"></div>
+										</div>
+										<!-- Panel Body -->
+									</div>
+									<!-- ./panel-collapse #/collapseOne -->
+								</div>
+								<!-- ./panel -->
+								<!-- IdP UniBA -->
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">
+											<a data-toggle="collapse" data-parent="#accordion"
+												href="#collapseUniBaIdP">UniBa IdP</a>
+										</h4>
+									</div>
+									<!-- ./panel-heading -->
+									<div id="collapseUniBaIdP" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div style="text-align:center">
+												<img th:src="@{/static/images/uniba-logo.png}" style="max-width: 230px;" />
+												<h3>UniBa IdP
+													<a href="#"> <small> <span
+															class="glyphicon glyphicon-globe"></span>
+													</small>
+													</a>
+												</h3>
+												<p style="text-align:justify;">
+													L’Università degli Studi di Bari Aldo Moro è un'università pubblica italiana con sede a Bari. È la maggiore università pugliese per numero di studenti.
+													L'Ateneo, fondato nel 1925, ha sede presso il palazzo storico di Piazza Umberto I nel cuore del moderno centro cittadino. L'attuale rettore per il triennio 2013/2016 è Antonio Felice Uricchio, che succede alla gestione di Corrado Petrocelli.
+												
+												
+												</p>
+											</div>
+											<button type="submit" th:name="${idpDiscoReturnParam}"
+												th:id="'idp_' + ${unibaIdP.entityId}"
+												th:value="${unibaIdP.entityId}"
+												class="btn btn-primary btn btn-idp pull-right">
+												<i class="fa fa-user"></i><span th:text="#{signinPage.login2}"></span>
+											</button>
+											<div class="clearfix"></div>
+										</div>
+										<!-- Panel Body -->
+									</div>
+									<!-- ./panel-collapse #/collapseOne -->
+								</div>
+								<!-- ./panel -->
+							</div>
+							<!-- ./panel-group ./hidden-lg -->
+						</form>
+						<!-- Clearfix -->
+						<div class="clearfix"></div>
+					</div>
+					<!-- ./col -->
+				</div>
+				<!-- ./row -->
+			</div>
+			<!-- ./box-body -->
+		</div>
+		<!-- ./box -->
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

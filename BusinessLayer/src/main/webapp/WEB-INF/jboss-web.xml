@@ -1,0 +1,4 @@
+<!DOCTYPE jboss-web PUBLIC "http://www.jboss.org/j2ee/dtd" "http://www.jboss.org/j2ee/dtd/jboss-service_5_0.dtd">
+<jboss-web>
+	<context-root>biz</context-root>
+</jboss-web>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.app}"></title>
+
+
+<script th:src="@{/static/assets/js/jquery.bootstrap.wizard.min.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.validate.min.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/jquery.ui.widget.js}"
+	type="text/javascript"></script>
+
+<script th:src="@{/static/assets/js/jquery.blockUI.js}"
+	type="text/javascript"></script>
+<script th:src="@{/static/assets/js/wizard/wizard-commonsV2.js}"
+	type="text/javascript"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+
+	
+	var $validator = $("#DeployForm").validate({
+		rules: {
+			serviceName: {
+				minlength: 4,
+				maxlength: 16,
+				regex : "^[a-zA-Z0-9][-a-zA-Z0-9]+$"
+			},
+			description: {
+				minlength: 4,
+				maxlength: 200
+			}
+		},
+		errorPlacement: function(error, element) {
+		},
+		highlight: function(element, errorClass, validClass) {
+			$(element).parent().removeClass('has-success').addClass('has-error');
+			$('#' + $(element).attr('id') + '-error').removeClass('hidden');
+		},
+		unhighlight: function(element, errorClass, validClass) {
+			$(element).parent().removeClass('has-error').addClass('has-success');
+			$('#' + $(element).attr('id') + '-error').addClass('hidden');
+		}
+	});
+
+
+/* 
+	function deploy(serviceName) {
+
+		var $form = $("#DeployForm");
+		$.ajax({
+			url : $form.attr("action"),
+			data : $form.serialize(),
+			type : "POST",
+			statusCode : {
+				404 : function() {
+					console.log("404");
+					window.location.href = path + '404';
+				},
+				500 : function() {
+					console.log("500");
+					window.location.href = path + '500';
+				}
+			},
+			beforeSend : function() {
+				$.blockUI({
+					css : {
+						border : 'none',
+						padding : '15px',
+						backgroundColor : '#000',
+						'-webkit-border-radius' : '10px',
+						'-moz-border-radius' : '10px',
+						opacity : .5,
+						color : '#fff'
+					}
+				});
+			},
+			success : function(data) {
+				response = data;
+				if (data.status) {
+					if(data.success){
+						console.log(data.result)
+						window.location.href = '/paas/appaas/' + data.result.id;
+				  	} else {
+					  	if(data.result){				
+							data.result.forEach(function(entry){
+								console.log(entry);
+								$("#"+entry.field + "-error").removeClass("hidden");
+								
+							});
+					  	} else {
+					  		$('#errorSpan').html("<p>"+ data.error.message +"</p>");
+						}
+					}
+				} else {
+					window.location.href = "/prisma/error?description=Servizio momentaneamente non disponibile";
+				}
+			},
+			complete : function(){
+				if(!response.success){
+
+				}
+					switch(response.error.errorCode){
+					case "CONFLICT":
+						$('#errorSpan').text("Nome applicazione duplicato");
+						break;
+					default:
+						$('#errorSpan').text("Errore durante la creazione");
+						break;
+					}
+				} 
+				$.unblockUI();
+			}
+		});
+		return false;
+	}
+
+	$(function() {
+
+		$('#rootwizard').bootstrapWizard({
+			'tabClass' : 'nav nav-pills',
+			'onTabClick' : function(tab, navigation, index) {
+				return false;
+			},
+			'onNext' : function(tab, navigation, index) {
+				var $valid = $("#DeployForm").valid();
+				if (!$valid) {
+					$validator.focusInvalid();
+					return false;
+				}
+				deploy("appaas");
+			}
+		});
+
+		$('#rootwizard .finish').click(function() {
+			return true;
+		});
+
+		$.validator.addMethod("regex", function(value, element,
+				regexp) {
+			var re = new RegExp(regexp);
+			return this.optional(element) || re.test(value);
+		}, "regex error.");
+
+
+	}); */
+	
+});
+/*]]>*/		
+</script>
+
+
+</head>
+
+
+
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Dashboard <small>Pannello di Controllo</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi PaaS</a></li>
+					<li><a th:href="@{/paas/appaas}"> APPlication as a Service</a></li>
+					<li class="active"></li>
+				</ol>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				<div class="bs-docs-section" style="margin-bottom: 30px">
+					<h1 id="c1">Creazione guidata di un servizio APPaaS</h1>
+					<p>
+						<strong>APP</strong>lication <strong>as a S</strong>ervice è un
+						servizio pronto all&rsquo;uso per effettuare il deploy di
+						applicazioni web e servizi sviluppati in Java, .NET, PHP, Node.js,
+						Python, Ruby, e Docker su uno tra gli application server messi a
+						disposizione tra cui Apache HTTP Server, Apache Tomcat, JBoos, e
+						IIS 7.5/8. Potrai semplicemente caricare una tua applicazione o
+						utilizzare quelle messe a disposizione dal portale ed accedere al
+						servizio.
+					</p>
+				</div>
+				<hr />
+
+				<!-- 				<form id="appaasForm" th:object="${APPaaSForm}"
+					th:action="@{/async/paas/appaas/deploy}" action="" method="post">
+					<div class="col-md-8">
+						<h2>
+							<i class="fa fa-sliders"></i> <span>Configurazione
+								Generale</span>
+						</h2>
+						<hr />
+						<div
+							th:replace="fragments/wizard/text-field :: text-field('applicationName', 'Nome Applicazione', 'fa fa-cog', 'kunagi', '30', 8)"></div>
+
+						<div
+							th:replace="fragments/wizard/description-field :: description-field('appDescription', 'Descrizione dell&rsquo; applicazione', 'fa fa-file-text-o', 'Descrizione..', '200', 4, 50, 8)"></div>
+					
+						<ul class="pager wizard">
+							<li id="finishButton" class="next finish" ><a href="javascript:{}"
+								onclick="deploy('env');">Crea App</a></li>
+						</ul>
+					</div>
+				</form> -->
+				<form id="DeployForm" th:object="${APPaaSForm}"
+					th:action="@{/async/paas/appaas/deploy}" action="" method="post">
+					<div id="rootwizard" class="row">
+						<div class="col-md-3 col-xs-12">
+							<ul class="nav nav-pills nav-stacked">
+								<li><a href="#tab1" data-toggle="tab">Configurazione
+										Applicazione</a></li>
+							</ul>
+						</div>
+
+						<div class="col-md-9 col-xs-12">
+							<div class="tab-content well">
+								<article class="tab-pane" id="tab1">
+									<h2>
+										<i class="fa fa-sliders"></i> <span>Configurazione
+											Applicazione</span>
+									</h2>
+									<hr />
+									<div
+										th:replace="fragments/wizard/text-field :: text-field('serviceName', 'Nome dell&rsquo; Applicazione', 'fa fa-cog', 'Es. kunagi-app', '16', 8)"></div>
+
+									<div
+										th:replace="fragments/wizard/description-field :: description-field('description', 'Descrizione dell&rsquo; applicazione', 'fa fa-file-text-o', 'Descrizione..', '200', 4, 50, 8)"></div>
+
+									<div class="clearfix"></div>
+									<span id="errorSpan" style="color: red;"></span>
+								</article>
+
+								<ul class="pager wizard">
+									<li id="finishButton" class="next finish"><a
+										href="javascript:{}" onclick="deploy('app');"
+										onmouseover="$('#finishButton').removeClass('disabled');">Crea
+											Applicazione</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</form>
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+
+	<!-- End content -->
+</body>
+
+
+
+</html>

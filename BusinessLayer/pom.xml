@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2013, Red Hat, Inc. 
+	and/or its affiliates, and individual contributors by the @authors tag. See 
+	the copyright.txt in the distribution for a full listing of individual contributors. 
+	Licensed under the Apache License, Version 2.0 (the "License"); you may not 
+	use this file except in compliance with the License. You may obtain a copy 
+	of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>it.prisma</groupId>
+	<artifactId>prisma-business-layer</artifactId>
+	<version>1.4.1-ALPHA</version>
+	<packaging>war</packaging>
+	<name>PRISMA - Business Layer</name>
+	<url>http://www.istc.cnr.it/project/prisma-piattaforme-cloud-interoperabili-smart-government</url>
+	<description>
+		PRISMA Business Layer - Defines and exposes core functionalities and processes as RESTful WebService in a SOA Environment.
+	</description>
+
+	<properties>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+
+		<java.version>1.7</java.version>
+		<version.war.plugin>2.1.1</version.war.plugin>
+		<version.spring.security>3.2.5.RELEASE</version.spring.security>
+		<version.spring>4.1.1.RELEASE</version.spring>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<distribution>repo</distribution>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+
+	<!-- Bill of Materials -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>it.prisma</groupId>
+				<artifactId>prisma-bom</artifactId>
+				<version>1.4.1-ALPHA</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>${version.spring}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+
+		<!-- JBoss provided Java EE 6.0 API -->
+		<dependency>
+			<groupId>org.jboss.spec</groupId>
+			<artifactId>jboss-javaee-6.0</artifactId>
+			<version>3.0.2.Final</version>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- First declare the APIs we depend on and need for compilation. All 
+			of them are provided by JBoss AS 7 -->
+		<!-- Import the CDI API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the Common Annotations API (JSR-250), we use provided scope 
+			as the API is included in JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.annotation</groupId>
+			<artifactId>jboss-annotations-api_1.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the JPA API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the JAX-RS API, we use provided scope as the API is included 
+			in JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ws.rs</groupId>
+			<artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the EJB API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the JSF API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.faces</groupId>
+			<artifactId>jboss-jsf-api_2.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Now we declare any tools needed -->
+		<!-- Annotation processor to generate the JPA 2.0 metamodel classes for 
+			typesafe criteria queries -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Hibernate module for JPA provided by JBoss -->
+		<dependency>
+			<groupId>org.jboss.as</groupId>
+			<artifactId>jboss-as-jpa-hibernate4</artifactId>
+			<version>7.1.1.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- JSR-303 (Bean Validation) Implementation -->
+		<!-- Provides portable constraints such as @Email -->
+
+		<!-- Hibernate Validator -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Needed for running tests (you may also use TestNG) -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Arquillian allows you to test enterprise code such as EJBs and Transactional 
+			(JTA) JPA from JUnit/TestNG -->
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Google Guava Libs -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+
+		<!-- ShrinkWrap Maven Resolver for Arquillian Tests -->
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.collections</groupId>
+					<artifactId>google-collections</artifactId>
+				</exclusion>
+				<!-- <exclusion> -->
+				<!-- <groupId>log4j</groupId> -->
+				<!-- <artifactId>log4j</artifactId> -->
+				<!-- </exclusion> -->
+			</exclusions>
+		</dependency>
+
+		<!-- MySQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.30</version>
+		</dependency>
+
+		<!-- Resteasy -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>jaxrs-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Jackson 2 Provider -->
+		<!-- To force JBoss's RestEasy to use the newer version of Jackson -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson2-provider</artifactId>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.resteasy</groupId> -->
+		<!-- <artifactId>resteasy-validator-provider-11</artifactId> -->
+		<!-- </dependency> -->
+
+		<!-- Multipart Provider for Resteasy client -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<version>3.0.1.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxb-provider</artifactId>
+			<version>3.0.1.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
+			<version>3.0.1.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.btm</groupId>
+			<artifactId>btm</artifactId>
+			<version>2.1.4</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javatuples</groupId>
+			<artifactId>javatuples</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<!-- Logging (slf4j with log4j2) -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<!-- Binding for Log4J -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+		</dependency>
+		<!-- Log4J 2 -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+		</dependency>
+		<!-- Log4J Legacy -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+
+
+
+		<!-- Fix to avoid export of the library (which conflicts with the one on 
+			JBoss AS 7.1.1.Final) -->
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- jBPM 6 dependencies -->
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>kie-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-audit</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-bpmn2</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-human-task-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jackson-core-asl</artifactId>
+					<groupId>org.codehaus.jackson</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-human-task-audit</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-kie-services</artifactId>
+			<exclusions>
+				<!-- to enable all examples run together on the same app server -->
+				<exclusion>
+					<groupId>org.jboss.netty</groupId>
+					<artifactId>netty</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-shared-services</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-persistence-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-runtime-manager</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jackson-core-asl</artifactId>
+					<groupId>org.codehaus.jackson</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-services-cdi</artifactId>
+		</dependency>
+
+		<!-- Spring & Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.security</groupId> -->
+		<!-- <artifactId>spring-security-aspects</artifactId> -->
+		<!-- </dependency> -->
+
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.aspectj</groupId> -->
+		<!-- <artifactId>aspectjrt</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.aspectj</groupId> -->
+		<!-- <artifactId>aspectjweaver</artifactId> -->
+		<!-- </dependency> -->
+
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-workitems</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.cxf</groupId>
+					<artifactId>cxf-rt-databindings-jaxb</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>cxf-rt-databinding-jaxb</artifactId>
+					<groupId>org.apache.cxf</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-test</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- jBPM Executor -->
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-executor</artifactId>
+		</dependency>
+
+		<!-- can compile, but cannot deploy without these seam dependencies -->
+		<dependency>
+			<groupId>org.jboss.seam.persistence</groupId>
+			<artifactId>seam-persistence</artifactId>
+			<version>3.1.0.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.seam.transaction</groupId>
+			<artifactId>seam-transaction</artifactId>
+			<version>3.1.0.Final</version>
+		</dependency>
+
+		<!-- to enable all examples run together on the same app server -->
+		<dependency>
+			<groupId>org.jboss.netty</groupId>
+			<artifactId>netty</artifactId>
+			<version>3.2.5.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- JBoss Weld -->
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-core</artifactId>
+			<version>2.2.3.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-api</artifactId>
+			<version>2.2.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-core-impl</artifactId>
+			<version>2.2.3.Final</version>
+		</dependency>
+
+		<!-- Cloudify properties mgmt -->
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+		</dependency>
+
+		<!-- EJBCA maven dependencies -->
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>1.45</version>
+		</dependency>
+
+		<!-- Commons -->
+
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+
+		<!-- EJBCA Nexus dependencies -->
+		<dependency>
+			<groupId>it.prisma.ejbca</groupId>
+			<artifactId>cert-cvc</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>it.prisma.ejbca</groupId>
+			<artifactId>ejbca-util</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>it.prisma.ejbca</groupId>
+			<artifactId>ejbca-ws</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>it.prisma.ejbca</groupId>
+			<artifactId>ejbca-ws-cli</artifactId>
+			<version>3.0</version>
+		</dependency>
+
+		<!-- EJBCA NECESSITA DI CXF 2.4.6 -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>2.4.6</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>2.4.6</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Jetty is needed if you're are not using the CXFServlet -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-jetty</artifactId>
+			<version>2.4.6</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Openstack -->
+		<dependency>
+			<groupId>org.pacesys</groupId>
+			<artifactId>openstack4j-core</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.pacesys.openstack4j.connectors</groupId>
+			<artifactId>openstack4j-resteasy</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+
+		<!-- Prisma dependencies -->
+		<dependency>
+			<groupId>it.prisma</groupId>
+			<artifactId>prisma-domain</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jackson-annotations</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jackson-databind</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jackson-core</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>it.prisma</groupId>
+			<artifactId>prisma-dal</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>it.prisma</groupId>
+			<artifactId>prisma-utility</artifactId>
+			<exclusions>
+				<!-- <exclusion> -->
+				<!-- <artifactId>jackson-annotations</artifactId> -->
+				<!-- <groupId>com.fasterxml.jackson.core</groupId> -->
+				<!-- </exclusion> -->
+				<!-- <exclusion> -->
+				<!-- <artifactId>jackson-databind</artifactId> -->
+				<!-- <groupId>com.fasterxml.jackson.core</groupId> -->
+				<!-- </exclusion> -->
+				<!-- <exclusion> -->
+				<!-- <artifactId>jackson-core</artifactId> -->
+				<!-- <groupId>com.fasterxml.jackson.core</groupId> -->
+				<!-- </exclusion> -->
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+	</dependencies>
+
+	<!-- Arquillian profiles -->
+	<profiles>
+		<!-- Arquillian test profile managed by JBoss AS 7 -->
+		<profile>
+			<id>arq-jbossas-managed</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.as</groupId>
+					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<scope>test</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>com.google.collections</groupId>
+							<artifactId>google-collections</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- Arquillian remote container on JBoss -->
+		<profile>
+			<id>arq-jbossas-remote</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.as</groupId>
+					<artifactId>jboss-as-arquillian-container-remote</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.arquillian.protocol</groupId>
+					<artifactId>arquillian-protocol-servlet</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- REC TESTBED CONFIGURATION Profile -->
+		<profile>
+			<id>config-rec</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<echo>Using REC Configuration properties !</echo>
+										<!-- <delete file="${project.build.outputDirectory}/var-configs" 
+											/> -->
+										<move file="src/main/resources/var-configs-profiles/rec"
+											toDir="${project.build.outputDirectory}/var-configs" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<classifier>test</classifier>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<build>
+		<!-- Maven will append the version to the finalName (which is the name 
+			given to the generated war, and hence the context root) -->
+		<finalName>MIUR_PRISMA-2.1-BusinessLayer</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>${version.war.plugin}</version>
+					<configuration>
+						<!-- Java EE 6 doesn't require web.xml, Maven needs to catch up! -->
+						<failOnMissingWebXml>false</failOnMissingWebXml>
+					</configuration>
+				</plugin>
+				<!-- The JBoss AS plugin deploys your war to a local JBoss AS container -->
+				<!-- To use, run: mvn package jboss-as:deploy -->
+				<plugin>
+					<groupId>org.jboss.as.plugins</groupId>
+					<artifactId>jboss-as-maven-plugin</artifactId>
+					<version>${version.jboss.maven.plugin}</version>
+				</plugin>
+				<!-- Needed to set JDK version -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.7</source>
+						<target>1.7</target>
+					</configuration>
+				</plugin>
+				<!-- Needed to have versione reference at runtime -->
+				<plugin>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.4</version>
+					<configuration>
+						<archive>
+							<manifest>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							</manifest>
+						</archive>
+						<archiveClasses>true</archiveClasses>
+						<webResources>
+							<!-- Resource filtering to replace parameters at compile time -->
+							<resource>
+								<directory>${basedir}/src/main/resources</directory>
+								<filtering>true</filtering>
+								<targetPath>WEB-INF/classes</targetPath>
+								<includes>
+									<include>**/*.properties</include>
+								</includes>
+							</resource>
+						</webResources>
+					</configuration>
+				</plugin>
+
+				<!-- For AspectJ -->
+				<!-- <plugin> -->
+				<!-- <groupId>org.codehaus.mojo</groupId> -->
+				<!-- <artifactId>aspectj-maven-plugin</artifactId> -->
+				<!-- <version>1.4</version> -->
+				<!-- <configuration> -->
+				<!-- <showWeaveInfo>true</showWeaveInfo> -->
+				<!-- <source>1.7</source> -->
+				<!-- <target>1.7</target> -->
+				<!-- <Xlint>ignore</Xlint> -->
+				<!-- <complianceLevel>1.7</complianceLevel> -->
+				<!-- <encoding>UTF-8</encoding> -->
+				<!-- <verbose>false</verbose> -->
+				<!-- <aspectLibraries> -->
+				<!-- <aspectLibrary> -->
+				<!-- <groupId>org.springframework.security</groupId> -->
+				<!-- <artifactId>spring-security-aspects</artifactId> -->
+				<!-- </aspectLibrary> -->
+				<!-- </aspectLibraries> -->
+				<!-- </configuration> -->
+				<!-- <executions> -->
+				<!-- <execution> -->
+				<!-- <goals> -->
+				<!-- <goal>compile</goal> -->
+				<!-- <goal>test-compile</goal> -->
+				<!-- </goals> -->
+				<!-- </execution> -->
+				<!-- </executions> -->
+				<!-- <dependencies> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.aspectj</groupId> -->
+				<!-- <artifactId>aspectjrt</artifactId> -->
+				<!-- <version>${aspectj.version}</version> -->
+				<!-- </dependency> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.aspectj</groupId> -->
+				<!-- <artifactId>aspectjtools</artifactId> -->
+				<!-- <version>${aspectj.version}</version> -->
+				<!-- </dependency> -->
+				<!-- </dependencies> -->
+				<!-- </plugin> -->
+			</plugins>
+		</pluginManagement>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>jboss-public-repository-group</id>
+			<name>JBoss Public Maven Repository Group</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>st-snapshots</id>
+			<name>sonatype-snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+			<id>jboss-public-repository</id>
+			<name>JBoss Public</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-updates-report</report>
+							<report>plugin-updates-report</report>
+							<report>property-updates-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+</project>

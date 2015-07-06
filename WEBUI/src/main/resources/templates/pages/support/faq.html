@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.faq}"></title>
+
+<!-- faq theme style -->
+<link href="../../../webapp/static/assets/css/docs.min.css"
+	th:href="@{/static/assets/css/docs.min.css}" rel="stylesheet"
+	type="text/css" />
+<!-- Faq Scripts -->
+<script src="../../../webapp/static/assets/js/docs.min.js"
+	th:src="@{/static/assets/js/docs.min.js}"></script>
+
+<script type="text/javascript">								
+	function toggleElement(element) {
+		$('#' + element.parentElement.id).addClass('active');
+	}
+</script>
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Assistenza <small>F.A.Q.</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Home</a></li>
+					<li><a href="#"> Assistenza</a></li>
+					<li class="active">FAQ</li>
+				</ol>
+			</section>
+
+			<!-- Main content -->
+			<section class="content">
+
+
+				<div class="bs-docs-container">
+					<div class="row">
+						<div class="col-md-9" role="main">
+							<div class="bs-docs-section">
+
+								<h1 id="c1" th:text="#{text.prj}"></h1>
+								<hr />
+								<h3 id="c1-whatIs" th:text="#{text.what}"></h3>
+								<p th:text="#{text.whatInfo}"></p>
+								<h3 id="c1-why" th:text="#{text.why}"></h3>
+								<p th:text="#{text.whyInfo}"></p>
+							</div>
+
+							<div class="bs-docs-section">
+								<h1 id="c2">Servizi Cloud</h1>
+								<hr />
+
+								<h3 id="c2-whatIs-Iaas">Cos'è Iaas?</h3>
+								<p>IaaS è l’acronimo di Infrastructure as a Service ed è il
+									servizio più vicino a ciò che forma il cloud. Attraverso questo
+									sistema si hanno a disposizione tutte le potenzialità e
+									flessibilità di un computer fisico, senza avere la
+									preoccupazione di dover pensare all’hardware o alla continuità
+									di servizio in caso di guasto hardware, in quanto è compito del
+									fornitore di servizi occuparsi di questi aspetti di livello
+									basso.</p>
+
+								<h3 id="c2-whatIs-Paas">Cos'è Paas?</h3>
+								<p>PaaS è l’acronimo di Platform as a Service, cioè la
+									virtualizzazione di una piattaforma. Non è necessario occuparsi
+									dell' infrastruttra attraverso la quale è realizzata una
+									piattaforma (ad esempio la gestione dello spazio occupato dal
+									proprio database o la distribuzione del carico di lavoro tra
+									più servizi IaaS). Tali problematiche sono già state affrontate
+									da chi offre il servizio PaaS; bisogna solo preoccuparsi di
+									creare la propria applicazione per poter offrire il relativo
+									servizio.</p>
+
+								<h3 id="c2-whatIs-Saas">Cos'è Saas?</h3>
+								<p>SaaS è l’acronimo di Software as a Service, cioè un
+									servizio software realizzato su una piattaforma che a sua volta
+									poggia su una infrastruttura. E’ il servizio di più alto
+									livello che può essere offerto ad un utente finale.</p>
+
+							</div>
+
+
+							<div class="bs-docs-section">
+								<h1 id="c3">IaaS</h1>
+								<hr />
+								<h3 id="c3-keypair">Chiavi Pubbliche</h3>
+								<p></p>
+								<h3 id="c3-virtualMachine">Macchine Virtuali</h3>
+								<p></p>
+							</div>
+						</div>
+
+
+
+
+
+						<div class="col-md-3">
+							<div
+								class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top"
+								role="complementary">
+								<ul class="nav bs-docs-sidenav">
+
+
+									<li id="project" class="active"><a href="#c1"
+										onClick="toggleElement(this);" th:text="#{text.prj}"></a>
+										<ul class="nav">
+											<li class=""><a href="#c1-whatIs" th:text="#{text.what}"></a></li>
+											<li class=""><a href="#c1-Why" th:text="#{text.why}"></a></li>
+
+										</ul></li>
+									<li id="cloudService" class=""><a href="#c2"
+										onClick="toggleElement(this);">Servizi Cloud</a>
+										<ul class="nav">
+											<li class=""><a href="#c2-whatIs-Iaas">Cos&rsquo;
+													&eacute; Iaas?</a></li>
+											<li class=""><a href="#c2-whatIs-Paas">Cos&rsquo;
+													&eacute; Paas?</a></li>
+											<li class=""><a href="#c2-whatIs-Saas">Cos&rsquo;
+													&eacute; Saas?</a></li>
+
+										</ul></li>
+									<li id="iaas" class=""><a href="#c3"
+										onClick="toggleElement(this);">IaaS</a>
+										<ul class="nav">
+											<li class=""><a href="#c3-keypair">Chiavi Pubbliche</a></li>
+											<li class=""><a href="#c3-virtualMachine">Macchine
+													Virtuali</a></li>
+
+										</ul></li>
+								</ul>
+								<a class="back-to-top" href="#top"> <i
+									class="fa fa-arrow-up"></i>&nbsp; Torna Su
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- Footer -->
+			<div th:replace="fragments/footer :: footer"></div>
+		</aside>
+	</div>
+	<!-- End content -->
+</body>
+
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/dashboard-layout">
+
+<!-- Page head -->
+<head>
+<title th:text="#{title.email}"></title>
+
+<script th:src="@{/static/assets/js/jquery.ui.widget.js}"
+	type="text/javascript"></script>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+
+<script th:src="@{/static/assets/js/dialog/emailaas.js}"
+	type="text/javascript"></script>
+<link rel="stylesheet"
+	th:href="@{/static/assets/css/bootstrap-table.css}" />
+<script th:src="@{/static/assets/js/bootstrap-table.js}"
+	type="text/javascript"></script>
+
+
+<script type="text/javascript"> 
+(function ($) {
+    'use strict';
+    $.extend($.fn.bootstrapTable.defaults, {
+        formatLoadingMessage: function () {
+            return 'Caricamento in corso…';
+        },
+        formatRecordsPerPage: function (pageNumber) {
+            return pageNumber + ' account per pagina';
+        },
+        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+            return 'Account mostrati da ' + pageFrom + ' a ' + pageTo + ' (Numero totale di account: ' + totalRows + ')';
+        },
+        formatNoMatches: function () {
+            return 'Nessun account trovato';
+        },
+        formatToggle: function () {
+            return 'Alternare';
+        },
+        formatColumns: function () {
+            return 'Colonne';
+        }
+    });
+})(jQuery);
+
+</script>
+</head>
+
+<!-- Page body -->
+<body class="skin-blue">
+	<div layout:fragment="content">
+		<aside class="right-side">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>Email</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-cogs"></i> Servizi PaaS</a></li>
+					<li><a th:href="@{/paas/emailaas}"> EMAILaaS</a></li>
+					<li class="active">EMAIL</li>
+				</ol>
+			</section>
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalCreateAccount"
+				data-backdrop="static" tabindex="-1" role="dialog"
+				aria-labelledby="myModalLabel" aria-hidden="true" style="">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+							</button>
+							<h4 class="modal-title" id="myModalActiveEMAIL">Crea un
+								account</h4>
+						</div>
+
+						<div class="modal-body">
+							<div class="box-body table-responsive no-padding">
+								<div class="form-group">
+
+									<div th:replace="fragments/emailaas/email-create"></div>
+
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<i id="loadingCreateIcon" class="fa fa-refresh fa-spin hidden"></i>
+							<button type="button" id="createButton" class="btn btn-primary">Crea</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End of Modal -->
+
+
+			<!-- Main content -->
+			<section class="content">
+
+				<div class="bs-docs-section" style="margin-bottom: 20px">
+
+					<div class="row">
+						<div class="col-lg-10 col-md-9 hidden-sm hidden-xs">
+							<p class="text-justify" th:utext="#{text.email}"></p>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 pull-right">
+							<a class="btn btn-primary navbar-btn pull-right" role="button"
+								data-toggle="modal" id="buttonCreateAccount"
+								data-target="#modalCreateAccount">Crea un account</a>
+						</div>
+					</div>
+					<hr />
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+							<div class="box-header">
+								<i class="fa fa-list-ul"></i>
+								<h3 class="box-title">Lista Account</h3>
+							</div>
+
+							<!-- Prova tabella inizio    table-responsive no-padding -->
+							<div class="box-body">
+								<table id="tableEmail" data-toggle="table"
+									data-url="/async/paas/emailaas" data-cache="false"
+									data-pagination="true" data-side-pagination="server"
+									data-page-size="10" data-page-list="[10]">
+
+									<thead>
+										<tr>
+											<th class="col-md-9" data-field="email">Account email</th>
+											<th class="col-md-2" data-field="email"
+												data-formatter="emailModifyButtonFormatter">Modifica
+												Password</th>
+											<th class="col-md-1" data-field="email"
+												data-formatter="emailDeleteButtonFormatter">Elimina</th>
+										</tr>
+									</thead>
+
+								</table>
+								<div class="pull-right pagination"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Inizio dialog cambio password -->
+					<div class="modal fade" id="modalChangePassword"
+						data-backdrop="static" tabindex="-1" role="dialog"
+						aria-labelledby="myModalLabel" aria-hidden="true" style="">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">
+										<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+									</button>
+									<h4 class="modal-title" id="myModalChangePassword">Cambia
+										password</h4>
+								</div>
+								<div class="modal-body">
+									<div class="box-body">
+										<div id="changePasswordInfo">
+											<p>Per modificare la password inserisci l'attuale e la
+												nuova?</p>
+										</div>
+										<br />
+										<div class="row">
+											<div class="col-xs-12">
+												<label>Inserisci la password attuale</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="fa fa fa-key"></i></span> <input type="password"
+														class="form-control" id="actualPassword"
+														name="actualPassword" placeholder="Inserisci la password"
+														required="required" />
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-xs-12">
+												<label>Inserisci la nuova password</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="fa fa fa-key"></i></span> <input type="password"
+														class="form-control" id="newPassword" name="newPassword"
+														placeholder="Inserisci la password" required="required" />
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-xs-12">
+												<label>Conferma la nuova password</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="fa fa fa-key"></i></span> <input type="password"
+														class="form-control" id="confirmNewPassword"
+														name="confirmNewPassword"
+														placeholder="Inserisci la password" required="required" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<i id="loadingSaveIcon" class="fa fa-refresh fa-spin hidden"></i>
+									<button type="button" id="saveChangeButton"
+										class="btn btn-primary">Salva</button>
+									<button type="button" id="okChangeButton"
+										class="btn btn-primary hidden">Ok</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Fine dialog cambio password -->
+
+
+					<!-- Inizio dialog conferma -->
+
+					<div class="modal fade" id="modalDeleteAccount"
+						data-backdrop="static" tabindex="-1" role="dialog"
+						aria-labelledby="myModalLabel" aria-hidden="true" style="">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">
+										<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+									</button>
+									<h4 class="modal-title" id="mymodalDeleteAccout">Elimina
+										Account</h4>
+								</div>
+								<div class="modal-body">
+									<div class="box-body table-responsive no-padding">
+										<div id="deleteAccountInfo"></div>
+										<br />
+										<div class="row">
+											<div class="col-xs-12">
+												<label>Inserisci la password per eliminare l'account</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="fa fa fa-key"></i></span> <input type="password"
+														class="form-control" id="password" name="password"
+														placeholder="Inserisci la password" required="required" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<i id="loadingDeleteIcon" class="fa fa-refresh fa-spin hidden"></i>
+									<button type="button" id="okDeleteButton"
+										class="btn btn-primary">Conferma</button>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- fine dialog conferma -->
+
+				</div>
+	</section>
+
+
+	<!-- Footer -->
+	<div th:replace="fragments/footer :: footer"></div>
+	</aside>
+	</div>
+
+
+
+	<!-- End content -->
+</body>
+
+</html>

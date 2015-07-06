@@ -1,0 +1,60 @@
+<!-- 
+
+	Parametri: 
+				@param id: 				id and name of the input
+				@param label:			label above the input
+				@param iconClass:		class of the icon
+				@param placeholder:     input placeholder
+				@param maxlength:     	input maxlength
+				@param colSize:			column size of the div. Use 8 as default, use 12 for inner input
+
+
+ -->
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+		<div th:fragment="text-field (id, label, iconClass, placeholder, maxlength, colSize)" class="inputs">
+			<label th:for="${id}" th:text="${label}">Nome</label>
+			<div th:class="'wizard-input-section input-group col-md-' + ${colSize}"
+				style="margin-top: 0">
+				<span class="input-group-addon"><i th:class="${iconClass}"></i></span> <input
+					type="text" class="form-control" th:id="${id}"
+					th:name="${id}" th:placeholder="${placeholder}"
+					data-serialize="1" th:maxlength="${maxlength}" required="required" />
+			</div>
+			<div th:class="'hidden alert alert-info alert-dismissable col-md-' + ${colSize}"
+				role="alert" th:id="${id + '-error'}">
+				<button type="button" class="close" data-dismiss="alert">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Chiudi</span>
+				</button>
+				<div class="error-msg">
+					<strong>Errore!</strong> Il nome del servizio deve:
+					<ul>
+						<li>avere una lunghezza minima di 4 caratteri ed una massima
+							di <span th:text="${maxlength}"></span>;</li>
+						<li>iniziare con una lettera;</li>
+						<li>contenere solo caratteri alfanumerici, trattini ed
+							underscore.</li>
+					</ul>
+				</div>
+			</div>
+			<div th:class="'hidden alert alert-info alert-dismissable col-md-' + ${colSize}"
+				role="alert" th:id="${id + '-errorUnique'}">
+				<button type="button" class="close" data-dismiss="alert">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Chiudi</span>
+				</button>
+				<div class="error-msg">
+					<strong>Errore!</strong> Il nome del servizio deve:
+					<ul>
+						<li>essere univoco all'interno del workgroup.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+</body>
+
+</html>
